@@ -1,0 +1,100 @@
+-- phpMyAdmin SQL Dump
+-- version 4.2.12deb2+deb8u2
+-- http://www.phpmyadmin.net
+--
+-- Värd: mydb6.surf-town.net
+-- Tid vid skapande: 23 jun 2018 kl 01:24
+-- Serverversion: 5.6.40-log
+-- PHP-version: 5.6.33-0+deb8u1
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+
+--
+-- Databas: `dannil1_data_logging_db`
+--
+CREATE DATABASE IF NOT EXISTS `dannil1_data_logging_db` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `dannil1_data_logging_db`;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellstruktur `T_ACQUIRED_DATA`
+--
+
+DROP TABLE IF EXISTS `T_ACQUIRED_DATA`;
+CREATE TABLE IF NOT EXISTS `T_ACQUIRED_DATA` (
+`UNIQUE_INDEX` int(11) unsigned NOT NULL,
+  `CHANNEL_INDEX` smallint(5) unsigned NOT NULL,
+  `ACQUIRED_TIME` int(11) unsigned NOT NULL,
+  `ACQUIRED_VALUE` double DEFAULT NULL,
+  `ACQUIRED_SUBSAMPLES` mediumtext,
+  `ACQUIRED_BASE64` mediumblob,
+  `ADDED_TIMESTAMP` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `STATUS` tinyint(4) DEFAULT '-1'
+) ENGINE=InnoDB AUTO_INCREMENT=10002 DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellstruktur `T_CHANNELS`
+--
+
+DROP TABLE IF EXISTS `T_CHANNELS`;
+CREATE TABLE IF NOT EXISTS `T_CHANNELS` (
+  `UNIQUE_INDEX` int(11) NOT NULL,
+  `UNIQUE_ID` int(11) NOT NULL,
+  `DESCRIPTION` text NOT NULL,
+  `DEVICE_INDEX` int(11) NOT NULL,
+  `GATEWAY_INDEX` int(11) NOT NULL,
+  `HOST_INDEX` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellstruktur `T_SUBSYSTEMS`
+--
+
+DROP TABLE IF EXISTS `T_SUBSYSTEMS`;
+CREATE TABLE IF NOT EXISTS `T_SUBSYSTEMS` (
+  `UNIQUE_INDEX` int(11) DEFAULT NULL,
+  `UNIQUE_ID` varchar(50) DEFAULT NULL,
+  `DESCRIPTION` varchar(100) DEFAULT NULL,
+  `IMAGE_URL` varchar(200) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Index för dumpade tabeller
+--
+
+--
+-- Index för tabell `T_ACQUIRED_DATA`
+--
+ALTER TABLE `T_ACQUIRED_DATA`
+ ADD PRIMARY KEY (`UNIQUE_INDEX`), ADD KEY `ACQUIRED_TIME_CHANNEL_INDEX_IDX` (`ACQUIRED_TIME`,`CHANNEL_INDEX`), ADD KEY `CHANNEL_INDEX_STATUS_IDX` (`CHANNEL_INDEX`,`STATUS`);
+
+--
+-- Index för tabell `T_CHANNELS`
+--
+ALTER TABLE `T_CHANNELS`
+ ADD PRIMARY KEY (`UNIQUE_INDEX`);
+
+--
+-- AUTO_INCREMENT för dumpade tabeller
+--
+
+--
+-- AUTO_INCREMENT för tabell `T_ACQUIRED_DATA`
+--
+ALTER TABLE `T_ACQUIRED_DATA`
+MODIFY `UNIQUE_INDEX` int(11) unsigned NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=10002;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
