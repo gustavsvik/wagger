@@ -1,5 +1,6 @@
 <?php
 
+include("../db_ini.php");
 
 $data_string = NULL;
 $data_string = strval(getPost('channelrange', '-1;;'));
@@ -40,24 +41,40 @@ while ($channel_start < $data_end)
 }
 $channels_list .= ")";
 
-$servername = "mydb6.surf-town.net";
-$username = "dannil1_daq";
-$password = "2k8Y8!16";
-$dbname = "dannil1_data_logging_db";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-if (mysqli_connect_errno())
+$conn = mysqli_init();
+if (!$conn) 
 {
-  printf("Connect failed: %s\n", mysqli_connect_error());
-  exit();
+  die('mysqli_init failed');
 }
+if (!$conn->options(MYSQLI_OPT_CONNECT_TIMEOUT, 5)) 
+{
+  die('Setting MYSQLI_OPT_CONNECT_TIMEOUT failed');
+}
+if (!$conn->real_connect($servername, $username, $password, $dbname)) 
+{
+  die('Connect Error (' . mysqli_connect_errno() . ') ' . mysqli_connect_error());
+}
+
+//$conn = new mysqli($servername, $username, $password, $dbname);
+//if (mysqli_connect_errno())
+//{
+//  printf("Connect failed: %s\n", mysqli_connect_error());
+//  exit();
+//}
+
 $conn->autocommit(FALSE);
 $conn->begin_transaction();
-$stmt=$conn->prepare("DELETE FROM T_ACQUIRED_DATA WHERE CHANNEL_INDEX IN " . $channels_list . " AND STATUS = -1");
+$stmt=$conn->prepare("DELETE FROM " . $acquired_data_table_name . " WHERE CHANNEL_INDEX IN " . $channels_list . " AND STATUS = -1");
 if(!$stmt->execute())
 {
   $conn->rollback();
-  exit();
+  //exit();
+}
+$stmt=$conn->prepare("OPTIMIZE TABLE " . $acquired_data_table_name);
+if(!$stmt->execute())
+{
+  $conn->rollback();
+  //exit();
 }
 
 $stmt->close();
