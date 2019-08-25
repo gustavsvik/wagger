@@ -1,13 +1,9 @@
 <?php
 
+include("../db_ini.php");
 
 $data_string = NULL;
 $data_string = strval(getPost('returnstring', ';,,,;'));
-
-$servername = "mydb6.surf-town.net";
-$username = "dannil1_daq";
-$password = "2k8Y8!16";
-$dbname = "dannil1_data_logging_db";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 if (mysqli_connect_errno())
