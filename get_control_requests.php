@@ -1,5 +1,6 @@
 <?php
 
+include("../db_ini.php");
 
 $data_string = NULL;
 $data_string = strval(getPost('channelrange', '-1;;'));
@@ -42,11 +43,6 @@ $channels_list .= ")";
 
 $return_string = NULL;
 
-$servername = "mydb6.surf-town.net";
-$username = "dannil1_daq";
-$password = "2k8Y8!16";
-$dbname = "dannil1_data_logging_db";
-
 $conn = new mysqli($servername, $username, $password, $dbname);
 if (mysqli_connect_errno())
 {
@@ -54,14 +50,14 @@ if (mysqli_connect_errno())
   exit();
 }
 
-$sql_request_channels = "SELECT DISTINCT AD.CHANNEL_INDEX FROM T_ACQUIRED_DATA AD WHERE AD.CHANNEL_INDEX IN " . $channels_list . " AND AD.STATUS = -1";
+$sql_request_channels = "SELECT DISTINCT AD.CHANNEL_INDEX FROM " . $acquired_data_table_name . " AD WHERE AD.CHANNEL_INDEX IN " . $channels_list . " AND AD.STATUS = -1";
 $channels_requested = $conn->query($sql_request_channels);
 if ($channels_requested->num_rows > 0) 
 {
   while ($channel_row = $channels_requested->fetch_assoc()) 
   {
     $return_string .= $channel_row["CHANNEL_INDEX"] . ";";
-    $sql_get_channel_points = "SELECT ACQUIRED_TIME,ACQUIRED_VALUE FROM T_ACQUIRED_DATA AD WHERE AD.STATUS = -1 AND AD.CHANNEL_INDEX = " . $channel_row["CHANNEL_INDEX"] . " LIMIT 1000";
+    $sql_get_channel_points = "SELECT ACQUIRED_TIME,ACQUIRED_VALUE FROM " . $acquired_data_table_name . " AD WHERE AD.STATUS = -1 AND AD.CHANNEL_INDEX = " . $channel_row["CHANNEL_INDEX"] . " LIMIT 1000";
     $channel_points = $conn->query($sql_get_channel_points);
     if ($channel_points->num_rows > 0) 
     {
