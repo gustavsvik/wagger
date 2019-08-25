@@ -1,15 +1,9 @@
 <?php
 
+include("../db_ini.php");
 
 $data_string = NULL;
-
 $data_string = strval(getPost('returnstring', ';,,,;'));
-
-
-$servername = "mydb6.surf-town.net";
-$username = "dannil1_daq";
-$password = "2k8Y8!16";
-$dbname = "dannil1_data_logging_db";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 if (mysqli_connect_errno())
@@ -63,7 +57,7 @@ while ($channel_start < $data_end)
     //echo $base64_string;
 
 
-    $stmt=$conn->prepare("UPDATE T_ACQUIRED_DATA SET ACQUIRED_VALUE=?,ACQUIRED_SUBSAMPLES=?,ACQUIRED_BASE64=?,STATUS=0 WHERE CHANNEL_INDEX=? AND ACQUIRED_TIME=? AND STATUS=-1");
+    $stmt=$conn->prepare("UPDATE " . $acquired_data_table_name . " SET ACQUIRED_VALUE=?,ACQUIRED_SUBSAMPLES=?,ACQUIRED_BASE64=?,STATUS=0 WHERE CHANNEL_INDEX=? AND ACQUIRED_TIME=? AND STATUS=-1");
     $stmt->bind_param('sssss',$value,$subsamples_string,$base64_string,$channel,$timestamp);
     if(!$stmt->execute())
     {
