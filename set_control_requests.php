@@ -62,7 +62,5 @@ $stmt->close();
 $conn->commit();
 $conn->close();
 
-}
-
 
 ?>
