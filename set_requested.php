@@ -2,6 +2,7 @@
 
 
 include("../db_ini.php");
+include("../utils.php");
 include("header.php");
 
 $conn = mysqli_init();
