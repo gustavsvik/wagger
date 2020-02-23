@@ -1,2 +1,2 @@
-# upload
-Working prototype web service for retrieving and fulfilling client requests for measurement data and image feed from IoT nodes/gateways/hosts.
+# wagger
+Work in progress on front-end part of project aimed at consolidating prototypes into a general back-to-front solution for hosting, initialization, configuration and data acquisition from wired and wireless nodes and gateways, local data storage, on-demand web host data replication and streaming to a basic browser view and control interface.
