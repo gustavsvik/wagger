@@ -1,13 +1,6 @@
 <?php
 
 
-function getPost($key, $default) 
-{
-  if (isset($_POST[$key]))
-    return $_POST[$key];
-  return $default;
-}
-
 $request_string = NULL;
 $return_string = NULL;
 $duration = NULL;
