@@ -22,7 +22,6 @@ if (!$conn->real_connect($servername, $username, $password, $dbname))
 $conn->autocommit(FALSE);
 $conn->begin_transaction();
 
-
 $data_start = 0;
 $data_end = strlen($return_string);
 $channel_start = $data_start;
@@ -62,7 +61,6 @@ while ($channel_start < $data_end)
       exit();
     }
     $stmt->close();
-
     $points_start = $base64_end+1;
   }
 
