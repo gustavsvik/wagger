@@ -5,12 +5,20 @@ include("../db_ini.php");
 include("../utils.php");
 include("header.php");
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-if (mysqli_connect_errno())
+$conn = mysqli_init();
+if (!$conn) 
 {
-  printf("Connect failed: %s\n", mysqli_connect_error());
-  exit();
+  die('mysqli_init failed');
 }
+if (!$conn->options(MYSQLI_OPT_CONNECT_TIMEOUT, 5)) 
+{
+  die('Setting MYSQLI_OPT_CONNECT_TIMEOUT failed');
+}
+if (!$conn->real_connect($servername, $username, $password, $dbname)) 
+{
+  die('Connect Error (' . mysqli_connect_errno() . ') ' . mysqli_connect_error());
+}
+
 $conn->autocommit(FALSE);
 $conn->begin_transaction();
 
@@ -52,14 +60,13 @@ while ($channel_start < $data_end)
       $conn->rollback();
       exit();
     }
-
+    $stmt->close();
     $points_start = $base64_end+1;
   }
 
   $channel_start = $points_end+1;
 }
 
-$stmt->close();
 $conn->commit();
 $conn->close();
 
