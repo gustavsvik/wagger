@@ -32,7 +32,9 @@ if ($data_end > 0)
     {
       if ($end_time === -9999)
       {
-        $sql_latest_available = "SELECT MAX(AD.ACQUIRED_TIME) FROM " . $acquired_data_table_name . " AD WHERE AD.CHANNEL_INDEX = " . $channel_string . " AND AD.STATUS >= 0";
+        $sql_latest_available = "SELECT MAX(AD.ACQUIRED_TIME) FROM " . $acquired_data_table_name . " AD WHERE AD.CHANNEL_INDEX = " . $channel_string;
+        $sql_latest_available .= " AND AD.STATUS>=" . strval($lowest_status);
+
         $latest_available = $conn->query($sql_latest_available);
         if ($latest_available->num_rows > 0) 
         {
