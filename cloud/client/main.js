@@ -192,7 +192,7 @@ function draw()
 
   if (App.frames_active < App.display_timeout * App.FRAME_RATE)
   {
-    App.DISPLAY_SELECT.style.visibility = "visible"; 
+    if (App.DISPLAY_SELECT !== null) App.DISPLAY_SELECT.style.visibility = "visible"; 
     fill(color(App.fg_color));
     textSize(App.font_size);
     App.img = loadImage(App.img_url);
@@ -757,7 +757,7 @@ function display_select_listener()
     _active_label.appendChild(_textForButton);
 
     _chanbkg.style.width = (_disp.size * 13.9).toString() + "px";
-    _chanbkg.style.height = (_disp.size * 4.1).toString() + "px";
+    _chanbkg.style.height = (_disp.size * 4.1 + 4).toString() + "px";
     _chanbkg.style.position = "absolute";
     _chanbkg.style.left = (_disp.pos.x + App.CANVAS_POS_X - _disp.size/2 + 1).toString() + "px";
     _chanbkg.style.top = (_disp.pos.y + App.CANVAS_POS_Y - _disp.size + 1).toString() + "px"; 
@@ -919,4 +919,3 @@ function display_select_listener()
 
   reset_display_variables();
 }
-
