@@ -21,7 +21,7 @@ $duration = intval(getPost('duration', 10));
 $unit = intval(getPost('unit', 1));
 $value = floatval(getPost('value', -9999.0));
 $delete_horizon = intval(getPost('delete_horizon', 3600));
-$lowest_status = intval(getPost('lowest_status', 0));
+$lowest_status = intval(getPost('lowest_status', -1));
 
 $channel_start = 0;
 $data_end = strlen($channels);
