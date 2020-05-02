@@ -192,7 +192,7 @@ function draw()
 
   if (App.frames_active < App.display_timeout * App.FRAME_RATE)
   {
-    if (App.DISPLAY_SELECT !== null) App.DISPLAY_SELECT.style.visibility = "visible"; 
+    if (App.DISPLAY_SELECT != null) App.DISPLAY_SELECT.style.visibility = "visible"; 
     fill(color(App.fg_color));
     textSize(App.font_size);
     App.img = loadImage(App.img_url);
