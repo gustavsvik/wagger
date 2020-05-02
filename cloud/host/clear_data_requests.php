@@ -22,22 +22,30 @@ if (!$conn->real_connect($servername, $username, $password, $dbname))
   die('Connect Error (' . mysqli_connect_errno() . ') ' . mysqli_connect_error());
 }
 
-$conn->autocommit(FALSE);
-$conn->begin_transaction();
-$stmt=$conn->prepare("DELETE FROM " . $acquired_data_table_name . " WHERE CHANNEL_INDEX IN (" . $channels_list . ") AND STATUS = -1");
-if(!$stmt->execute())
+if ($conn)
 {
-  $conn->rollback();
+  $conn->autocommit(FALSE);
+  $conn->begin_transaction();
+  $sql_delete = "DELETE FROM " . $acquired_data_table_name . " WHERE CHANNEL_INDEX IN (" . $channels_list . ")";
+  $sql_delete .= " AND AD.STATUS>=" . strval($lowest_status);
+  $stmt=$conn->prepare($sql_delete);
+  if ($stmt)
+  {
+    if(!$stmt->execute())
+    {
+      $conn->rollback();
+    }
+    $sql_optimize = "OPTIMIZE TABLE " . $acquired_data_table_name;
+    $stmt=$conn->prepare($sql_optimize);
+    if(!$stmt->execute())
+    {
+      $conn->rollback();
+    }
+    $stmt->close();
+  }
+  $conn->commit();
+  $conn->close();
 }
-$stmt=$conn->prepare("OPTIMIZE TABLE " . $acquired_data_table_name);
-if(!$stmt->execute())
-{
-  $conn->rollback();
-}
-
-$stmt->close();
-$conn->commit();
-$conn->close();
 
 $return_string = "";
 $return_string = $channels_list;
@@ -49,4 +57,3 @@ echo json_encode($json_array);
 
 
 ?>
-
