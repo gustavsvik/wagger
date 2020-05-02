@@ -197,43 +197,47 @@ function draw()
     textSize(App.font_size);
     App.img = loadImage(App.img_url);
 
-    let _screen = Display.data[App.display_index].screens[0];
+    let _screen = null;
+    if (Display.data[App.display_index] != null) _screen = Display.data[App.display_index].screens[0];
     
-    let _time = _screen.time;
-    if (_time !== null) // All displays except the title page
+    if (_screen != null)
     {
-      let _time_disp = _time.disp;
-      textSize(_time_disp.size);
-      fill(color(_time_disp.col.r, _time_disp.col.g, _time_disp.col.b, _time_disp.col.a));
-      text(_time.str_val, _time_disp.pos.x, _time_disp.pos.y);
-    }
-    
-    let _hovered_tag = "";
-    let _hovered_index = "";
-    if ( App.hovered_clicked_label !== null ) [_hovered_tag, _hovered_index] = getTagChannelIndex(App.hovered_clicked_label);
-    
-    for (let _i = 0; _i < _screen.channels.length; _i++)
-    {
-      let _channel = _screen.channels[_i];
-      let _index_str = (_channel.index).toString();
-      let _label = getChannelElement( [ "label", _index_str ] );
-      _label.innerHTML = _channel.str_val + _channel.padding;
-      if ( _hovered_index === _index_str ) _label.innerHTML = _channel.str_val + _channel.info;
-    }
-    for (let _img_channel_index = 0; _img_channel_index < _screen.img_channels.length; _img_channel_index++)
-    {
-    }
-    for (let _i = 0; _i < _screen.ctrl_channels.length; _i++)
-    {
-      let _ctrl = _screen.ctrl_channels[_i];
-      let _index_str = (_ctrl.index).toString();
-      let _setval = getChannelElement( [ "setval", _index_str ] );
-      _setval.innerHTML = _ctrl.str_val + _ctrl.padding;
-      if ( _hovered_index === _index_str ) 
+      let _time = _screen.time;
+      if (_time !== null) // All displays except the title page
       {
-        _setval.innerHTML = _ctrl.str_val + _ctrl.info;
-        let _slider = getChannelElement (["slider", _index_str]);
-        _slider.value = _ctrl.val;
+        let _time_disp = _time.disp;
+        textSize(_time_disp.size);
+        fill(color(_time_disp.col.r, _time_disp.col.g, _time_disp.col.b, _time_disp.col.a));
+        text(_time.str_val, _time_disp.pos.x, _time_disp.pos.y);
+      }
+    
+      let _hovered_tag = "";
+      let _hovered_index = "";
+      if ( App.hovered_clicked_label !== null ) [_hovered_tag, _hovered_index] = getTagChannelIndex(App.hovered_clicked_label);
+    
+      for (let _i = 0; _i < _screen.channels.length; _i++)
+      {
+        let _channel = _screen.channels[_i];
+        let _index_str = (_channel.index).toString();
+        let _label = getChannelElement( [ "label", _index_str ] );
+        _label.innerHTML = _channel.str_val + _channel.padding;
+        if ( _hovered_index === _index_str ) _label.innerHTML = _channel.str_val + _channel.info;
+      }
+      for (let _img_channel_index = 0; _img_channel_index < _screen.img_channels.length; _img_channel_index++)
+      {
+      }
+      for (let _i = 0; _i < _screen.ctrl_channels.length; _i++)
+      {
+        let _ctrl = _screen.ctrl_channels[_i];
+        let _index_str = (_ctrl.index).toString();
+        let _setval = getChannelElement( [ "setval", _index_str ] );
+        _setval.innerHTML = _ctrl.str_val + _ctrl.padding;
+        if ( _hovered_index === _index_str ) 
+        {
+          _setval.innerHTML = _ctrl.str_val + _ctrl.info;
+          let _slider = getChannelElement (["slider", _index_str]);
+          _slider.value = _ctrl.val;
+        }
       }
     }
   }
