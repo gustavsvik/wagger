@@ -4,7 +4,7 @@ Front-end part of project aimed at creating a general back-to-front solution for
 ![](cloud/client/images/4.jpg)
 <!-- blank line -->
 <figure class="video_container">
-  <iframe src="https://drive.google.com/open?id=1D-FsUaLIGC_kvwJi002GezC3-dXiR3s_" frameborder="0" allowfullscreen="true"> </iframe>
+  <iframe src="https://drive.google.com/file/d/1D-FsUaLIGC_kvwJi002GezC3-dXiR3s_/preview" frameborder="0" allowfullscreen="true"> </iframe>
 </figure>
 <!-- blank line -->
 <dl>
