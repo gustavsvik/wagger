@@ -1,5 +1,5 @@
 # wagger
-![](https://drive.google.com/uc?export=view&id=1D-FsUaLIGC_kvwJi002GezC3-dXiR3s_)
+![](https://drive.google.com/uc?export=view&id=1KZQRGU4EwSu6-NQWGOy9lfdbmKzJP1-r)
 ![](cloud/client/images/0.png)
 Front-end part of project aimed at creating a general back-to-front solution for hosting, initialization, configuration and data acquisition from wired and wireless nodes and gateways, local data storage, on-demand cloud host data replication and streaming to a basic browser view and control interface.
 ![](cloud/client/images/4.jpg)
