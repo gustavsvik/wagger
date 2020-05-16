@@ -3,7 +3,6 @@ Front-end part of project aimed at creating a general back-to-front solution for
 <!-- [![Watch the video](https://i.imgur.com/vKb2F1B.png)](https://drive.google.com/open?id=1D-FsUaLIGC_kvwJi002GezC3-dXiR3s_) -->
 [![](https://drive.google.com/uc?export=view&id=1hE8TcAl5VEDyHfAsqux7QceFkRrCJTdY)](https://drive.google.com/uc?export=view&id=1D-FsUaLIGC_kvwJi002GezC3-dXiR3s_)
 <!-- ![](cloud/client/images/0.png) -->
-![](cloud/client/images/0.png)
 <dl>
   <!-- <dt>Definition list</dt> -->
   <!-- <dd>Is something people use sometimes.</dd> -->
