@@ -31,7 +31,7 @@
         "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 20}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}} },
         "channels": 
         [
-          { "index": 98, "show": true, "label": "Measured temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e6, "unit": "\u00B0C", "disp": {"len": 6, "size": 30, "pos": {"x": 300, "y": 300}, "col": {"r": 0, "g": 255, "b": 0, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 255, "a": 127}} }
+          { "index": 98, "show": true, "label": "Measured temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 6, "size": 30, "pos": {"x": 300, "y": 300}, "col": {"r": 0, "g": 255, "b": 0, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 255, "a": 127}} }
         ],
         "img_channels":
         [
@@ -62,8 +62,8 @@
         "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 20}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}} },
         "channels":
         [
-          { "index": 21, "show": true, "label": "Global insolation", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "W/m\u00B2", "disp": {"len": 5, "size": 20, "pos": { "x": 230, "y": 380 }, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} },
-          { "index": 23, "show": true, "label": "Ambient temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 4 , "size": 20, "pos": { "x": 330, "y": 480 }, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
+          { "index": 21, "show": true, "label": "Global insolation", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e-0, "unit": "W/m\u00B2", "disp": {"len": 5, "size": 20, "pos": { "x": 230, "y": 380 }, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} },
+          { "index": 23, "show": true, "label": "Ambient temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 2.0e-1, "unit": "\u00B0C", "disp": {"len": 4 , "size": 20, "pos": { "x": 330, "y": 480 }, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
         ],
         "img_channels": [],
         "ctrl_channels": []
@@ -89,7 +89,7 @@
     ]
   },
   {
-    "title": "Valmet DNA screen (live)",
+    "title": "Supervision screen (live)",
     "show": true,
     "screens":
     [
@@ -156,7 +156,7 @@
         "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 20}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}} },
         "channels":
         [
-          { "index": 20, "show": true, "label": "Cooling water temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 4, "size": 14, "pos": {"x": 210, "y": 580}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
+          { "index": 98, "show": true, "label": "Cooling water temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 6, "size": 14, "pos": {"x": 210, "y": 580}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
         ],
         "img_channels": [],
         "ctrl_channels": []
@@ -177,7 +177,7 @@
         "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 20}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}} },
         "channels":
         [
-          { "index": 97, "show": true, "label": "Makeup water conductivity", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e6, "unit": "\u03BCS", "disp": {"len": 5, "size": 14, "pos": {"x": 160, "y": 480}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 255}} }
+          { "index": 97, "show": true, "label": "Makeup water conductivity", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e6, "unit": "\u03BCS", "disp": {"len": 6, "size": 14, "pos": {"x": 160, "y": 480}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 255}} }
         ],
         "img_channels": [],
         "ctrl_channels": []
@@ -198,7 +198,7 @@
         "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 20}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}} },
         "channels":
         [
-          { "index": 40, "show": true, "label": "Air temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 5, "size": 14, "pos": {"x": 290, "y": 430}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 255}} }
+          { "index": 40, "show": true, "label": "Air temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 6, "size": 14, "pos": {"x": 290, "y": 430}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 255}} }
         ],
         "img_channels": [],
         "ctrl_channels": []
@@ -219,7 +219,7 @@
         "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 30, "pos": {"x": 10, "y": 20}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}} },
         "channels":
         [
-          { "index": 162, "show": true, "label": "Radon activity concentration", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 5, "size": 30, "pos": {"x": 290, "y": 430}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 255}} }
+          { "index": 162, "show": true, "label": "Radon activity concentration", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 6, "size": 30, "pos": {"x": 290, "y": 430}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 255}} }
         ],
         "img_channels": [],
         "ctrl_channels": []
