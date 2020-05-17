@@ -5,7 +5,9 @@ include("../db_ini.php");
 include("../utils.php");
 include("header.php");
 
+
 $conn = mysqli_init();
+
 if (!$conn) 
 {
   die('mysqli_init failed');
@@ -20,6 +22,7 @@ if (!$conn->real_connect($servername, $username, $password, $dbname))
 }
 
 $conn->autocommit(FALSE);
+
 $conn->begin_transaction();
 
 $data_start = 0;
@@ -53,12 +56,12 @@ while ($channel_start < $data_end)
     $base64_end = strpos($return_string, ",", $base64_start);
     $base64_string = mb_substr($return_string, $base64_start, $base64_end-$base64_start);
 
-    $stmt=$conn->prepare("UPDATE " . $acquired_data_table_name . " SET ACQUIRED_VALUE=?,ACQUIRED_SUBSAMPLES=?,ACQUIRED_BASE64=?,STATUS=0 WHERE CHANNEL_INDEX=? AND ACQUIRED_TIME=? AND STATUS=-1");
-    $stmt->bind_param('sssss',$value,$subsamples_string,$base64_string,$channel,$timestamp);
+    $stmt = $conn->prepare("UPDATE " . $acquired_data_table_name . " SET ACQUIRED_VALUE=?,ACQUIRED_SUBSAMPLES=?,ACQUIRED_BASE64=?,STATUS=0 WHERE CHANNEL_INDEX=? AND ACQUIRED_TIME=? AND STATUS=-1");
+    $stmt->bind_param('sssss', $value, $subsamples_string, $base64_string, $channel, $timestamp);
     if(!$stmt->execute())
     {
       $conn->rollback();
-      exit();
+      die();
     }
     $stmt->close();
     $points_start = $base64_end+1;
@@ -68,6 +71,7 @@ while ($channel_start < $data_end)
 }
 
 $conn->commit();
+
 $conn->close();
 
 
