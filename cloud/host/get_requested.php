@@ -6,19 +6,29 @@ include("../utils.php");
 include("header.php");
 
 
-$channels_list = getListByIDs($request_string);
+$conn = mysqli_init();
 
-$return_string = NULL;
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_errno)
+if (!$conn) 
 {
-  printf("Connect failed: %s\n", mysqli_connect_error());
-  exit();
+  die('mysqli_init failed');
 }
+if (!$conn->options(MYSQLI_OPT_CONNECT_TIMEOUT, 5)) 
+{
+  die('Setting MYSQLI_OPT_CONNECT_TIMEOUT failed');
+}
+if (!$conn->real_connect($servername, $username, $password, $dbname)) 
+{
+  die('Connect Error (' . mysqli_connect_errno() . ') ' . mysqli_connect_error());
+}
+
+$conn->autocommit(TRUE);
+
+$channels_list = getListByIDs($request_string);
+$return_string = NULL;
 
 $sql_request_channels = "SELECT DISTINCT AD.CHANNEL_INDEX FROM " . $acquired_data_table_name . " AD WHERE AD.CHANNEL_INDEX IN (" . $channels_list . ") AND AD.STATUS = -1";
 $channels_requested = $conn->query($sql_request_channels);
+
 if ($channels_requested->num_rows > 0) 
 {
   while ($channel_row = $channels_requested->fetch_assoc()) 
