@@ -12,12 +12,23 @@ if ($duration === -9999) $select_all = true;
 
 if ($data_end > 0)
 {
-  $conn = new mysqli($servername, $username, $password, $dbname);
-  if (mysqli_connect_errno())
+
+  $conn = mysqli_init();
+
+  if (!$conn) 
   {
-    printf("Connect failed: %s\n", mysqli_connect_error());
-    exit();
+    die('mysqli_init failed');
   }
+  if (!$conn->options(MYSQLI_OPT_CONNECT_TIMEOUT, 5)) 
+  {
+    die('Setting MYSQLI_OPT_CONNECT_TIMEOUT failed');
+  }
+  if (!$conn->real_connect($servername, $username, $password, $dbname)) 
+  {
+    die('Connect Error (' . mysqli_connect_errno() . ') ' . mysqli_connect_error());
+  }
+
+  $conn->autocommit(FALSE);
 
   $return_string = "";
   $base64_string = "";
@@ -27,7 +38,7 @@ if ($data_end > 0)
     $channel_end = strpos($channels, ';', $channel_start);
     $channel_string = mb_substr($channels, $channel_start, $channel_end-$channel_start);
     $channel = intval($channel_string);
-
+    
     if ($start_time === -9999)
     {
       if ($end_time === -9999)
@@ -44,8 +55,7 @@ if ($data_end > 0)
           }
         } 
         else 
-        {
-          //echo "Error: " . $sql_latest_available . "<br>" . $conn->error;
+        {                 
         }
         if (!is_null($latest_point_time)) $end_time = $latest_point_time;
       }
@@ -80,7 +90,6 @@ if ($data_end > 0)
         $value_string = "";
         if (!is_null($value_row[1])) $value_string = strval($value_row[1]);
         $subsample_string = "";
-        //if (!is_null($value_row[2])) $subsample_string = strval($value_row[2]);
         $base64_string = "";
         if (!is_null($value_row[3])) $base64_string = strval($value_row[3]);
         $return_string .= $time_string . "," . $value_string . "," . $subsample_string . "," . "," ; // . $base64_string ;
@@ -90,22 +99,20 @@ if ($data_end > 0)
           $ifp = fopen($image_filename, 'wb'); 
           fwrite($ifp, base64_decode($base64_string) );
           fclose($ifp);
-          //unlink($image_dir . "/" . $channel_string . ".jpg"); 
           copy($image_filename, $image_dir . "/" . $channel_string . ".jpg");
         }
       }
     } 
     else 
     {
-      //echo "Error: " . $sql_get_available_values . "<br>" . $conn->error;
     }
+
     $return_string .= ";";
 
     $channel_start = $channel_end+1;
 
     $file_pattern = $image_dir . "/" . $channel_string . "_*";
     $files = glob($file_pattern);
-    //$files = scandir($file_pattern);
     $num_files = count($files);
     foreach($files as $file)
     {
