@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `t_accumulated_data` (
 
 -- Dumpar struktur för tabell wagger_db.t_acquired_data
 DROP TABLE IF EXISTS `t_acquired_data`;
-CREATE TABLE `t_acquired_data` (
+CREATE TABLE IF NOT EXISTS `t_acquired_data` (
   `UNIQUE_INDEX` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `CHANNEL_INDEX` smallint(5) unsigned NOT NULL,
   `ACQUIRED_TIME` int(11) unsigned NOT NULL,
