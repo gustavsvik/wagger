@@ -38,6 +38,7 @@ App.data_time_string = App.WAIT_MESSAGE;
 App.data_timestamp = 0 ;
 App.frames_active = 0 ;
 App.view_timestamp = 0 ;
+App.time_adjustment = 0 ;
 App.font_size = App.STANDARD_FONTSIZE;
 App.fg_color = App.STANDARD_FOREGROUND_COLOR ;
 App.bg_color = App.STANDARD_BACKGROUND_COLOR ;
@@ -188,7 +189,7 @@ function draw()
 	
   App.frames_active++;
 
-  App.view_timestamp = parseInt((new Date().valueOf()) / 1000);
+  App.view_timestamp = parseInt((new Date().valueOf()) / 1000) + App.time_adjustment;
 
   if (App.frames_active < App.display_timeout * App.FRAME_RATE)
   {
@@ -245,6 +246,12 @@ function draw()
   fill(color(App.fg_color));
   textSize(App.font_size);
 
+  
+  //if ( (frameCount - App.last_request >= App.REQUEST_INTERVAL * App.FRAME_RATE) && App.frames_active < App.display_timeout * App.FRAME_RATE && App.display_is_static === false)
+  //{
+  //  httpGet(App.CLIENT_URL + "get_server_time.php", "json", {}, handle_server_time); 
+  //}
+      
   if ( (frameCount - App.last_request >= App.REQUEST_INTERVAL * App.FRAME_RATE) && App.frames_active < App.display_timeout * App.FRAME_RATE && App.display_is_static === false)
   {
     if (App.chan_index_string !== "")
@@ -313,7 +320,7 @@ function draw()
   else if (App.display_is_static === false) // display is not static
   {
     let _view_lag = App.view_timestamp - App.data_timestamp;
-    if ( _view_lag > App.time_bins * App.time_bin_size )
+    if ( _view_lag > App.time_bins * App.time_bin_size || !navigator.onLine)
     {
       if (App.frames_active % 2 === 0) fill(255,0,0,127); else fill(255,255,255,127);
       textSize(App.WARNING_FONTSIZE);
@@ -335,6 +342,11 @@ function draw()
   
 }
 
+//function handle_server_time(data)
+//{
+//  App.view_timestamp = parseInt(data);
+//}
+
 function handle_control_request_data(data)
 {
 }
@@ -352,8 +364,10 @@ function handle_image_request_data(data)
  */
 function handle_get_data(data)
 { 
-  let _latest_time_array = [];
+  let _server_time = parseInt(data.servertime);
+  App.time_adjustment = _server_time - App.view_timestamp ;
 
+  let _latest_time_array = [];
   let _json_string = data.returnstring;
   let _json_array = _json_string.split(";");
   let _no_of_channels = (_json_array.length - 1) / 2;
