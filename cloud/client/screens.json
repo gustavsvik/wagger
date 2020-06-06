@@ -89,7 +89,7 @@
     ]
   },
   {
-    "title": "Supervision screen (live)",
+    "title": "Valmet DNA view (live)",
     "show": true,
     "screens":
     [
@@ -100,7 +100,7 @@
         "channels": [],
         "img_channels":
         [
-          { "index": 600, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1280, "h": 720}, "disp": {"h": 480, "pos": {"x": 0, "y": 0}} }
+          { "index": 600, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1243, "h": 856}, "disp": {"h": 600, "pos": {"x": 0, "y": 0}} }
         ],
         "ctrl_channels": []
       }
