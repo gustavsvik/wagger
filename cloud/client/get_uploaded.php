@@ -131,7 +131,7 @@ if ($data_end > 0)
 
 
 header("Content-type: application/json");
-$json_array = array('returnstring' => $return_string);
+$json_array = array('returnstring' => $return_string, 'servertime' => time());
 echo json_encode($json_array);
 
 
