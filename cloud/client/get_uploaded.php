@@ -5,7 +5,7 @@ include("../db_ini.php");
 include("../utils.php");
 include("header.php");
 
-$receive_timestamp = microtime($get_as_float = TRUE) * 1000000 ;
+$receive_timestamp = intval( microtime($get_as_float = TRUE) * 1000000 ) ;
 
 $image_dir = 'images';
 
@@ -131,7 +131,7 @@ if ($data_end > 0)
 
 }
 
-$transmit_timestamp = microtime($get_as_float = TRUE) * 1000000 ;
+$transmit_timestamp = intval( microtime($get_as_float = TRUE) * 1000000 ) ;
 
 header("Content-type: application/json");
 $json_array = array('returnstring' => $return_string, 'receivetime' => $receive_timestamp, 'transmittime' => $transmit_timestamp);
