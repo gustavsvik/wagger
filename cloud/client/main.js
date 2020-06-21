@@ -39,6 +39,7 @@ App.data_timestamp = 0 ;
 App.frames_active = 0 ;
 App.view_timestamp = 0 ;
 App.time_adjustment = 0 ;
+App.pre_get_data_microsecs = 0 ;
 App.font_size = App.STANDARD_FONTSIZE;
 App.fg_color = App.STANDARD_FOREGROUND_COLOR ;
 App.bg_color = App.STANDARD_BACKGROUND_COLOR ;
@@ -269,6 +270,7 @@ function draw()
 
   if ( (frameCount - App.last_get >= App.REQUEST_INTERVAL * App.FRAME_RATE) && App.frames_active < App.display_timeout * App.FRAME_RATE && App.display_is_static === false)
   {
+    App.pre_get_data_microsecs = parseInt((new Date().valueOf()) / 1) ;
     if (App.ctrl_chan_index_string !== "")
     {
       let _ctrl_get_params = {"channels": App.ctrl_chan_index_string, "start_time": App.start_time, "end_time": App.end_time, "duration": -9999, "unit": App.time_bin_size, "lowest_status": 1};
@@ -365,8 +367,7 @@ function handle_image_request_data(data)
 function handle_get_data(data)
 { 
   let _server_time = parseInt(data.servertime);
-  App.time_adjustment = _server_time - App.view_timestamp ;
-
+  App.time_adjustment = _server_time - parseInt(App.pre_get_data_microsecs / 1000) ; //- App.view_timestamp ;
   let _latest_time_array = [];
   let _json_string = data.returnstring;
   let _json_array = _json_string.split(";");
