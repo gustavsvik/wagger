@@ -207,9 +207,9 @@ function draw()
     App.img = loadImage(App.img_url);
 
     let _screen = null;
-    if (Display.data[App.display_index] != null) _screen = Display.data[App.display_index].screens[0];
+    if (Display.data[App.display_index] !== null) _screen = Display.data[App.display_index].screens[0];
     
-    if (_screen != null)
+    if (_screen !== null)
     {
       let _time = _screen.time;
       if (_time !== null) // All displays except the title page
