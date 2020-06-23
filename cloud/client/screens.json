@@ -49,6 +49,48 @@
     ]
   },
   {
+    "title": "Water treatment plant (plan)",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": 
+        [
+          { "file": "4.jpg", "dim": {"w": 1179, "h": 805}, "disp": {"h": 720, "pos": {"x": 0, "y": 0}} }
+        ],
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 20}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}} },
+        "channels":
+        [
+          { "index": 97, "show": true, "label": "Makeup water conductivity", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e6, "unit": "\u03BCS", "disp": {"len": 6, "size": 18, "pos": {"x": 150, "y": 470}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 200}} }
+        ],
+        "img_channels": [],
+        "ctrl_channels": []
+      }
+    ]
+  },
+  {
+    "title": "Condensing turbine (view)",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": 
+        [
+          { "file": "1.png", "dim": {"w": 1067, "h": 692}, "disp": {"h": 600, "pos": {"x": 0, "y": 0}} }
+        ],
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 20}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}} },
+        "channels":
+        [
+          { "index": 98, "show": true, "label": "Cooling water temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 6, "size": 16, "pos": {"x": 210, "y": 380}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
+        ],
+        "img_channels": [],
+        "ctrl_channels": []
+      }
+    ]
+  },
+  {
     "title": "Weather station (view)",
     "show": true,
     "screens":
@@ -71,7 +113,7 @@
     ]
   },
   {
-    "title": "Flexible video (live)",
+    "title": "Flexible video 1 (live)",
     "show": true,
     "screens":
     [
@@ -83,6 +125,24 @@
         "img_channels":
         [
           { "index": 160, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1280, "h": 720}, "disp": {"h": 480, "pos": {"x": 0, "y": 0}} }
+        ],
+        "ctrl_channels": []
+      }
+    ]
+  },
+  {
+    "title": "Flexible video 2 (live)",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": [],
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 20}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}} },
+        "channels": [],
+        "img_channels":
+        [
+          { "index": 180, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1280, "h": 720}, "disp": {"h": 480, "pos": {"x": 0, "y": 0}} }
         ],
         "ctrl_channels": []
       }
@@ -107,24 +167,6 @@
     ]
   },
   {
-    "title": "Thermal camera (live)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 20}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}} },
-        "channels": [],
-        "img_channels":
-        [
-          { "index": 180, "show": true, "label": "", "ext": "jpg", "dim": {"w": 960, "h": 720}, "disp": {"h": 480, "pos": {"x": 0, "y": 0}} }
-        ],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
     "title": "Algae lab detail (live)",
     "show": true,
     "screens":
@@ -138,48 +180,6 @@
         [
           { "index": 161, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1280, "h": 720}, "disp": {"h": 480, "pos": {"x": 0, "y": 0}} }
         ],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Condensing turbine (view)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": 
-        [
-          { "file": "1.png", "dim": {"w": 1067, "h": 692}, "disp": {"h": 600, "pos": {"x": 0, "y": 0}} }
-        ],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 20}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}} },
-        "channels":
-        [
-          { "index": 98, "show": true, "label": "Cooling water temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 6, "size": 14, "pos": {"x": 210, "y": 580}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
-        ],
-        "img_channels": [],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Water treatment plant (plan)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": 
-        [
-          { "file": "4.jpg", "dim": {"w": 1179, "h": 805}, "disp": {"h": 720, "pos": {"x": 0, "y": 0}} }
-        ],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 20}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}} },
-        "channels":
-        [
-          { "index": 97, "show": true, "label": "Makeup water conductivity", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e6, "unit": "\u03BCS", "disp": {"len": 6, "size": 14, "pos": {"x": 160, "y": 480}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 255}} }
-        ],
-        "img_channels": [],
         "ctrl_channels": []
       }
     ]
