@@ -34,15 +34,19 @@ App.start_time = -9999;
 App.end_time = -9999;
 App.time_bins = 10; 
 App.time_bin_size = 1;
-App.data_time_string = App.WAIT_MESSAGE; 
+App.data_time_string = ""; 
 App.data_timestamp = 0 ;
+App.server_time_string = App.WAIT_MESSAGE ;
+App.server_timestamp = 0 ;
 App.frames_active = 0 ;
-App.view_timestamp = 0 ;
-App.time_adjustment = 0 ;
-App.t0 = 0 ;
-App.t1 = 0 ;
-App.t2 = 0 ;
-App.t3 = 0 ;
+App.ntp = {}
+App.ntp.t1 = 0 ;
+App.ntp.t2 = 0 ;
+App.ntp.t3 = 0 ;
+App.ntp.t4 = 0 ;
+App.ntp.adjustment = 0 ;
+App.ntp.timestamp = 0 ;
+App.ntp.time_string = 0 ;
 App.font_size = App.STANDARD_FONTSIZE;
 App.fg_color = App.STANDARD_FOREGROUND_COLOR ;
 App.bg_color = App.STANDARD_BACKGROUND_COLOR ;
@@ -193,7 +197,7 @@ function draw()
 	
   App.frames_active++;
 
-  App.view_timestamp = parseInt((new Date().valueOf()) / 1000) + App.time_adjustment;
+  App.ntp.timestamp = parseInt((new Date().valueOf()) / 1000) + App.ntp.adjustment;
 
   if (App.frames_active < App.display_timeout * App.FRAME_RATE)
   {
@@ -273,7 +277,7 @@ function draw()
 
   if ( (frameCount - App.last_get >= App.REQUEST_INTERVAL * App.FRAME_RATE) && App.frames_active < App.display_timeout * App.FRAME_RATE && App.display_is_static === false)
   {
-    App.t0 = parseInt((new Date().valueOf()) * 1000) ;
+    App.ntp.t1 = parseInt((new Date().valueOf()) * 1000) ;
     if (App.ctrl_chan_index_string !== "")
     {
       let _ctrl_get_params = {"channels": App.ctrl_chan_index_string, "start_time": App.start_time, "end_time": App.end_time, "duration": -9999, "unit": App.time_bin_size, "lowest_status": 1};
@@ -324,7 +328,7 @@ function draw()
   }
   else if (App.display_is_static === false) // display is not static
   {
-    let _view_lag = App.view_timestamp - App.data_timestamp;
+    let _view_lag = App.ntp.timestamp - App.data_timestamp;
     if ( _view_lag > App.time_bins * App.time_bin_size || !navigator.onLine)
     {
       if (App.frames_active % 2 === 0) fill(255,0,0,127); else fill(255,255,255,127);
@@ -369,10 +373,10 @@ function handle_image_request_data(data)
  */
 function handle_get_data(data)
 { 
-  App.t3 = parseInt( (new Date().valueOf()) * 1000 ) ;
-  App.t1 = parseInt( data.receivetime / 1 );
-  App.t2 = parseInt( data.transmittime / 1 );
-  App.time_adjustment = parseInt( ( ( App.t1 - App.t0 ) + ( App.t2 - App.t3 ) ) / 2 / 1000000 ) ; //- App.view_timestamp ;
+  App.ntp.t4 = parseInt( (new Date().valueOf()) * 1000 ) ;
+  App.ntp.t2 = parseInt( data.receivetime / 1 );
+  App.ntp.t3 = parseInt( data.transmittime / 1 );
+  App.ntp.adjustment = parseInt( ( ( App.ntp.t2 - App.ntp.t1 ) + ( App.ntp.t3 - App.ntp.t4 ) ) / 2 / 1000000 ) ; //- App.view_timestamp ;
   let _latest_time_array = [];
   let _json_string = data.returnstring;
   let _json_array = _json_string.split(";");
@@ -409,63 +413,78 @@ function handle_get_data(data)
 
 function populate_display_variables(timestamp_matrix, value_matrix)
 {
-  let _latest_timestamp = nthMaxOfArray(timestamp_matrix[0], 0);
-  if ( isValidGT(_latest_timestamp, 0) )
+  let _server_timestamp = App.ntp.timestamp ; 
+  if ( isValidGT(_server_timestamp, 0) )
   {
-    App.data_timestamp = _latest_timestamp;
-    let _latest_time = new Date( _latest_timestamp * 1000 );
+    App.server_timestamp = _server_timestamp;
+    let _latest_time = new Date( _server_timestamp * 1000 );
     let _latest_time_string = "";
     if ( isValidDate(_latest_time) )
     {
       _latest_time_string = _latest_time.toISOString();
-      App.data_time_string = (_latest_time_string.substring(0,10)).concat( " ", _latest_time_string.substring(11,19), " ", App.TIME_ZONE );
+      App.ntp.time_string = (_latest_time_string.substring(0,10)).concat( " ", _latest_time_string.substring(11,19), " ", App.TIME_ZONE );
+      App.server_time_string = App.ntp.time_string ;
     }
-    else App.data_time_string = App.WAIT_MESSAGE;
+    else App.server_time_string = App.WAIT_MESSAGE;
 
     let _screen = Display.data[App.display_index].screens[0];
     let _time = _screen.time;
     if (_time !== null)
     {
-      _time.str_val = App.data_time_string;
-      _time.val = App.data_timestamp;
+      _time.str_val = App.server_time_string;
+      _time.val = App.server_timestamp;
     }
-    for (let _img_channel_index = 0; _img_channel_index < _screen.img_channels.length; _img_channel_index++)
+    
+    let _latest_data_timestamp = nthMaxOfArray(timestamp_matrix[0], 0);
+    if ( isValidGT(_latest_data_timestamp, 0) )
     {
-      let _img_channel = _screen.img_channels[_img_channel_index];
-      let _img_url = App.FILES_URL + _img_channel.index.toString() + "_" + _time.val.toString() + "." + _img_channel.ext;
-      App.img_url = _img_url;
-      App.img = loadImage(_img_url);
-      let _img_disp_scale = _img_channel.dim.h / _img_channel.disp.h ;
-      let _img_height = _img_channel.dim.h / _img_disp_scale; 
-      let _img_width = _img_channel.dim.w / _img_disp_scale;
-      image(App.img, _img_channel.disp.pos.x, _img_channel.disp.pos.y, _img_width, _img_height);
-      //(App.test_img).setAttribute("src", _img_url);
-      
-    }
-    for (let _channel_index = 0; _channel_index < _screen.channels.length; _channel_index++)
-    {
-      let _channel = _screen.channels[_channel_index];
-      let _found_values_index = findWithAttr(value_matrix, 0, _channel.index);
-      if (_found_values_index > -1) 
+      App.data_timestamp = _latest_data_timestamp;
+      let _latest_time = new Date( _latest_data_timestamp * 1000 );
+      let _latest_time_string = "";
+      if ( isValidDate(_latest_time) )
       {
-        let _channel_values = (value_matrix[_found_values_index])[1];
-        let _latest_value = _channel_values[_channel_values.length - 1];
-        _channel.val = _latest_value * _channel.scale;
-        if ( isValidNumber(_channel.val) ) _channel.str_val = (_channel.val).toString().substring(0,_channel.disp.len) + " " + _channel.unit;
-        else _channel.str_val = App.WAIT_MESSAGE;
+        _latest_time_string = _latest_time.toISOString();
+        App.data_time_string = (_latest_time_string.substring(0,10)).concat( " ", _latest_time_string.substring(11,19), " ", App.TIME_ZONE );
       }
-    }
-    for (let _ctrl_index = 0; _ctrl_index < _screen.ctrl_channels.length; _ctrl_index++)
-    {
-      let _ctrl = _screen.ctrl_channels[_ctrl_index];
-      let _found_values_index = findWithAttr(value_matrix, 0, _ctrl.index);
-      if (_found_values_index > -1) 
+      else App.data_time_string = App.WAIT_MESSAGE;
+    
+      for (let _img_channel_index = 0; _img_channel_index < _screen.img_channels.length; _img_channel_index++)
       {
-        let _ctrl_values = (value_matrix[_found_values_index])[1];
-        let _latest_value = _ctrl_values[_ctrl_values.length - 1];
-        _ctrl.val = _latest_value * _ctrl.scale;
-        if ( isValidNumber(_ctrl.val) ) _ctrl.str_val = (_ctrl.val).toString().substring(0,_ctrl.disp.len) + " " + _ctrl.unit;
-        else _ctrl.str_val = App.WAIT_MESSAGE;
+        let _img_channel = _screen.img_channels[_img_channel_index];
+        let _img_url = App.FILES_URL + _img_channel.index.toString() + "_" + _latest_data_timestamp.toString() + "." + _img_channel.ext;
+        App.img_url = _img_url;
+        App.img = loadImage(_img_url);
+        let _img_disp_scale = _img_channel.dim.h / _img_channel.disp.h ;
+        let _img_height = _img_channel.dim.h / _img_disp_scale; 
+        let _img_width = _img_channel.dim.w / _img_disp_scale;
+        image(App.img, _img_channel.disp.pos.x, _img_channel.disp.pos.y, _img_width, _img_height);
+        //(App.test_img).setAttribute("src", _img_url);
+      }
+      for (let _channel_index = 0; _channel_index < _screen.channels.length; _channel_index++)
+      {
+        let _channel = _screen.channels[_channel_index];
+        let _found_values_index = findWithAttr(value_matrix, 0, _channel.index);
+        if (_found_values_index > -1) 
+        {
+          let _channel_values = (value_matrix[_found_values_index])[1];
+          let _latest_value = _channel_values[_channel_values.length - 1];
+          _channel.val = _latest_value * _channel.scale;
+          if ( isValidNumber(_channel.val) ) _channel.str_val = (_channel.val).toString().substring(0,_channel.disp.len) + " " + _channel.unit;
+          else _channel.str_val = App.WAIT_MESSAGE;
+        }
+      }
+      for (let _ctrl_index = 0; _ctrl_index < _screen.ctrl_channels.length; _ctrl_index++)
+      {
+        let _ctrl = _screen.ctrl_channels[_ctrl_index];
+        let _found_values_index = findWithAttr(value_matrix, 0, _ctrl.index);
+        if (_found_values_index > -1) 
+        {
+          let _ctrl_values = (value_matrix[_found_values_index])[1];
+          let _latest_value = _ctrl_values[_ctrl_values.length - 1];
+          _ctrl.val = _latest_value * _ctrl.scale;
+          if ( isValidNumber(_ctrl.val) ) _ctrl.str_val = (_ctrl.val).toString().substring(0,_ctrl.disp.len) + " " + _ctrl.unit;
+          else _ctrl.str_val = App.WAIT_MESSAGE;
+        }
       }
     }
   }
@@ -474,7 +493,7 @@ function populate_display_variables(timestamp_matrix, value_matrix)
 
 function reset_display_variables()
 {
-  App.data_time_string = App.WAIT_MESSAGE;
+  App.server_time_string = App.WAIT_MESSAGE;
 
   let _screen = Display.data[App.display_index].screens[0];
   let _time = _screen.time;
