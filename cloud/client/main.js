@@ -1,17 +1,20 @@
 "use strict";
 
+
 let App = {};
 
-App.CANVAS = [];
+App.CANVAS = {};
 App.CANVAS_POS_X = 250 ;
 App.CANVAS_POS_Y = 10 ;
 App.STD_SCALE_HEIGHT = 480;
 App.WARNING_FONTSIZE = 36;
 App.STANDARD_FONTSIZE = 12;
+App.MAX_DISPLAY_DIGITS = 10;
 App.STANDARD_FOREGROUND_COLOR = [255,255,255,255];
 App.STANDARD_BACKGROUND_COLOR = [0,0,255,255];
 App.FRAME_RATE = 5 ;
 App.REQUEST_INTERVAL = 2 ;
+App.NTP_SYNC_INTERVAL = 60 ;
 App.TIME_ZONE = "UTC";
 App.BROWSER_URL = window.location.hostname;
 App.CLIENT_URL = "http://" + App.BROWSER_URL  + "/client/";
@@ -20,6 +23,7 @@ App.FILES_URL = App.CLIENT_URL + App.FILES_DIR;
 App.WAIT_MESSAGE = "Retrieving data...";
 App.last_get = 5;
 App.last_request = 0; 
+App.last_time_sync = 0; 
 App.display_index = 0;
 App.display_timeout = 900 ;
 App.display_is_static = false;
@@ -47,9 +51,6 @@ App.ntp.t4 = 0 ;
 App.ntp.adjustment = 0 ;
 App.ntp.timestamp = 0 ;
 App.ntp.time_string = 0 ;
-App.font_size = App.STANDARD_FONTSIZE;
-App.fg_color = App.STANDARD_FOREGROUND_COLOR ;
-App.bg_color = App.STANDARD_BACKGROUND_COLOR ;
 App.canvas_shift_x = 0 ;
 App.canvas_shift_y = 0 ;
 App.moved_slider = null ;
@@ -60,120 +61,14 @@ let Display = {};
 Display.data = [];
 
 
-function arrayElementsIn(arr)
-{
-  if (!Array.isArray(arr) || !arr.length) return false;
-  return true;
-}
-
-function isValidGT(num_or_str_1, num_or_str_2)
-{
-  if ( isValidNumber(num_or_str_1) && isValidNumber(num_or_str_2) ) return parseFloat(num_or_str_1) > parseFloat(num_or_str_2);
-  return false;
-}
-
-function isValidNumber(num_or_str)
-{
-  let _num = parseFloat(num_or_str);
-  return !isNaN(num_or_str) && !isNaN(_num) && isFinite(_num);
-}
-
-function isValidDate(d)
-{
-  let _date_valid = false;
-  if (Object.prototype.toString.call(d) === "[object Date]") 
-  {
-    if (isNaN(d.getTime())) {} 
-    else { _date_valid = true; }
-  }
-  else {}
-  return _date_valid;
-}
-
-function maxOfArray(a)
-{
-  return Math.max(...a.map(e => Array.isArray(e) ? maxOfArray(e) : e));
-}
-
-function nthMaxOfArray(a, down_from_max)
-{
-  let _a_max = maxOfArray(a);
-  if (a.length - down_from_max < 1) down_from_max += a.length - down_from_max - 1;
-  if ( down_from_max < 0 ) down_from_max = 0;
-  for (let _i = 0; _i < down_from_max; _i += 1) 
-  {
-    let _index = a.indexOf(_a_max);
-    if (_index > -1) a.splice(_index, 1);
-    _a_max = maxOfArray(a);
-  }
-  return _a_max;
-}
-
-function findWithAttr(arr, attr, val) 
-{
-  for(let _i = 0; _i < arr.length; _i += 1) if (arr[_i][attr] === val) { return _i; }
-  return -1;
-}
-
-function getTagChannelIndex(htmlElement)
-{
-  let _id = htmlElement.id;
-  let  _fields = _id.split("_");
-  let _tag_string = _fields[0];
-  let _index_string = _fields[1];
-  return [_tag_string, _index_string];
-}
-
-function getChannelElement(element_ids)
-{
-  let _tag_string = element_ids[0];
-  let _index_string = element_ids[1];
-  let channel_element = document.getElementById(_tag_string + "_" + _index_string);
-  return channel_element;
-}
-
-function removeAllElements(container)
-{  
-  let _all_buttons = container.getElementsByTagName("BUTTON");
-  for (let _i = 0, _len = _all_buttons.length; _i != _len; ++_i) _all_buttons[0].parentNode.removeChild(_all_buttons[0]);
-  
-  let _divs = container.getElementsByTagName("DIV");
-  for (let _i = 0, _len = _divs.length; _i != _len; ++_i) _divs[0].parentNode.removeChild(_divs[0]);
- 
-  let _sliders = container.getElementsByTagName("INPUT");
-  for (let _i = 0, _len = _sliders.length; _i != _len; ++_i) _sliders[0].parentNode.removeChild(_sliders[0]);
-
-  let _sends = container.getElementsByTagName("OUTPUT");
-  for (let _i = 0, _len = _sends.length; _i != _len; ++_i) _sends[0].parentNode.removeChild(_sends[0]);
-}
-
-function htmlSpaces(num)
-{
-  let _spaces_string = "";
-  for (let _i = 0; _i < num; _i++)
-  {
-    _spaces_string += "&nbsp;"
-  }
-  return _spaces_string;
-}
-
-function getTimeLagText(view_lag)
-{
-  let _lag_text = "";
-  if ( view_lag > 365*24*60*60 ) _lag_text = parseInt(view_lag/(365*24*60*60)).toString() + " y";
-  else if ( view_lag > 24*60*60 ) _lag_text = parseInt(view_lag/(24*60*60)).toString() + " d";
-  else if ( view_lag > 60*60 ) _lag_text = parseInt(view_lag/(60*60)).toString() + " h";
-  else if ( view_lag > 60 ) _lag_text = parseInt(view_lag/60).toString() + " m";
-  else _lag_text = parseInt(view_lag/1).toString() + " s";
-  return _lag_text;
-}
-
-
 
 function setup() 
 {
   frameRate(App.FRAME_RATE);
 
+  App.ntp.t1 = parseInt((new Date().valueOf()) * 1000) ;
+  httpGet(App.CLIENT_URL + "server_time.php", "json", {}, handle_server_time); 
+    
   let _screen_layout_file = document.getElementById("screenLayoutFile").value;
   let _screen_layout_params = {"screen_layout_file": _screen_layout_file};
   httpGet(App.CLIENT_URL + "get_screen_data.php", "json", _screen_layout_params, handle_display_data);
@@ -190,6 +85,7 @@ function setup()
 
 function draw() 
 {
+
   if (App.img_chan_index_string === "") clear();
   image(App.img, App.canvas_shift_x, App.canvas_shift_y, App.img_width, App.img_height);
   
@@ -197,13 +93,11 @@ function draw()
 	
   App.frames_active++;
 
-  App.ntp.timestamp = parseInt((new Date().valueOf()) / 1000) + App.ntp.adjustment;
-
   if (App.frames_active < App.display_timeout * App.FRAME_RATE)
   {
     if (App.DISPLAY_SELECT != null) App.DISPLAY_SELECT.style.visibility = "visible"; 
-    fill(color(App.fg_color));
-    textSize(App.font_size);
+    fill(color(App.STANDARD_FOREGROUND_COLOR));
+    textSize(App.STANDARD_FONTSIZE);
     App.img = loadImage(App.img_url);
 
     let _screen = null;
@@ -211,19 +105,17 @@ function draw()
     
     if (_screen !== null)
     {
-      let _time = _screen.time;
-      if (_time !== null) // All displays except the title page
-      {
-        let _time_disp = _time.disp;
-        textSize(_time_disp.size);
-        fill(color(_time_disp.col.r, _time_disp.col.g, _time_disp.col.b, _time_disp.col.a));
-        text(_time.str_val, _time_disp.pos.x, _time_disp.pos.y);
-      }
-    
       let _hovered_tag = "";
       let _hovered_index = "";
       if ( App.hovered_clicked_label !== null ) [_hovered_tag, _hovered_index] = getTagChannelIndex(App.hovered_clicked_label);
-    
+
+      let _time = _screen.time;
+      if (_time !== null) // All displays except the title page
+      {
+        let _time_label = getChannelElement( [ "timelabel", null ] );
+        _time_label.innerHTML = _time.str_val + _time.padding;
+        if ( _hovered_tag === "timebkg" ) _time_label.innerHTML = _time.str_val + _time.info + (App.ntp.adjustment / 1000000).toString().substring(0,7) + " s";
+      }      
       for (let _i = 0; _i < _screen.channels.length; _i++)
       {
         let _channel = _screen.channels[_i];
@@ -251,14 +143,16 @@ function draw()
     }
   }
   
-  fill(color(App.fg_color));
-  textSize(App.font_size);
+  fill(color(App.STANDARD_FOREGROUND_COLOR));
+  textSize(App.STANDARD_FONTSIZE);
 
-  
-  //if ( (frameCount - App.last_request >= App.REQUEST_INTERVAL * App.FRAME_RATE) && App.frames_active < App.display_timeout * App.FRAME_RATE && App.display_is_static === false)
-  //{
-  //  httpGet(App.CLIENT_URL + "get_server_time.php", "json", {}, handle_server_time); 
-  //}
+
+  if ( (frameCount - App.last_time_sync >= App.NTP_SYNC_INTERVAL * App.FRAME_RATE) && App.frames_active < App.display_timeout * App.FRAME_RATE && App.display_is_static === false )
+  {
+    App.ntp.t1 = parseInt((new Date().valueOf()) * 1000) ;
+    httpGet(App.CLIENT_URL + "server_time.php", "json", {}, handle_server_time); 
+    App.last_time_sync = frameCount;
+  }
       
   if ( (frameCount - App.last_request >= App.REQUEST_INTERVAL * App.FRAME_RATE) && App.frames_active < App.display_timeout * App.FRAME_RATE && App.display_is_static === false)
   {
@@ -277,7 +171,6 @@ function draw()
 
   if ( (frameCount - App.last_get >= App.REQUEST_INTERVAL * App.FRAME_RATE) && App.frames_active < App.display_timeout * App.FRAME_RATE && App.display_is_static === false)
   {
-    App.ntp.t1 = parseInt((new Date().valueOf()) * 1000) ;
     if (App.ctrl_chan_index_string !== "")
     {
       let _ctrl_get_params = {"channels": App.ctrl_chan_index_string, "start_time": App.start_time, "end_time": App.end_time, "duration": -9999, "unit": App.time_bin_size, "lowest_status": 1};
@@ -317,6 +210,10 @@ function draw()
     //radioVal = newRadioVal;
   }
 
+  
+  App.ntp.timestamp = parseInt((new Date().valueOf()) / 1000) + App.ntp.adjustment / 1000000;
+
+  
   if (App.frames_active >= App.display_timeout * App.FRAME_RATE)
   {
     removeAllElements(App.CONTAINER);
@@ -344,17 +241,21 @@ function draw()
         if (!navigator.onLine) _status_text = "no internet connection!";
         text("Out of date (" + _lag_text + ")" + ", " + _status_text, Math.max(App.img_width/2 - App.WARNING_FONTSIZE*7.8, 0), App.img_height/2 + App.WARNING_FONTSIZE/2);
       }
-      fill(App.fg_color);
-	  textSize(App.font_size);
+      fill(App.STANDARD_FOREGROUND_COLOR);
+	  textSize(App.STANDARD_FONTSIZE);
     }
   }
-  
+
 }
 
-//function handle_server_time(data)
-//{
-//  App.view_timestamp = parseInt(data);
-//}
+function handle_server_time(data)
+{
+  App.ntp.t2 = parseInt( data.receivetime / 1 );
+  App.ntp.t3 = parseInt( data.transmittime / 1 );
+  App.ntp.t4 = parseInt( (new Date().valueOf()) * 1000 ) ;
+  App.ntp.adjustment = parseInt( ( ( App.ntp.t2 - App.ntp.t1 ) + ( App.ntp.t3 - App.ntp.t4 ) ) / 2 ) ; //- App.view_timestamp ;
+}
+
 
 function handle_control_request_data(data)
 {
@@ -373,10 +274,6 @@ function handle_image_request_data(data)
  */
 function handle_get_data(data)
 { 
-  App.ntp.t4 = parseInt( (new Date().valueOf()) * 1000 ) ;
-  App.ntp.t2 = parseInt( data.receivetime / 1 );
-  App.ntp.t3 = parseInt( data.transmittime / 1 );
-  App.ntp.adjustment = parseInt( ( ( App.ntp.t2 - App.ntp.t1 ) + ( App.ntp.t3 - App.ntp.t4 ) ) / 2 / 1000000 ) ; //- App.view_timestamp ;
   let _latest_time_array = [];
   let _json_string = data.returnstring;
   let _json_array = _json_string.split(";");
@@ -551,6 +448,7 @@ function circle_button(x, y, d)
   ellipse(x, y, d, d);
 }
 
+
 /**
  * Retrieve screen content and design info after call of PHP script referencing JSON file on cloud server.
  */
@@ -587,7 +485,18 @@ function label_listener()
   _element.style.visibility = "visible";
   let [_tag, _index] = getTagChannelIndex(_element);
 
-
+  if (_tag === "timebkg")
+  {
+    let _time_label = getChannelElement (["timelabel", null]);
+    if (_time_label !== null)
+    {
+      _time_label.style.visibility = "visible";
+      let _time = (Display.data[App.display_index]).screens[0].time;
+      let _str_val = _time.str_val + _time.info;
+      _time_label.innerHTML = _str_val + (App.ntp.adjustment / 1000000).toString().substring(0,7) + " s";
+    }
+  }
+  
   let _setval = getChannelElement (["setval", _index]);
   if (_setval !== null)
   {
@@ -597,7 +506,7 @@ function label_listener()
     let _ctrl_channel = _ctrl_channels[_ctrl_index];
     let _value_unit_string = "";
     if ( _ctrl_channel.str_val !== "" ) _value_unit_string = _ctrl_channel.str_val;
-    else _value_unit_string = (_ctrl_channel.val  *_ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
+    else _value_unit_string = (_ctrl_channel.val * _ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
     let _str_val = _value_unit_string + _ctrl_channel.info;         
     _setval.innerHTML = _str_val;
     let _slider = getChannelElement (["slider", _index]);
@@ -619,7 +528,7 @@ function label_listener()
     let _channel = _channels[_chan_index];
     let _value_unit_string = "";
     if ( _channel.str_val !== "" ) _value_unit_string = _channel.str_val;
-    else _value_unit_string = (_channel.val  *_channel.scale).toString().substring(0,_channel.disp.len) + " " + _channel.unit;
+    else _value_unit_string = (_channel.val * _channel.scale).toString().substring(0,_channel.disp.len) + " " + _channel.unit;
     let _str_val = _value_unit_string + _channel.info;
     _label.innerHTML = _str_val;
   }
@@ -632,6 +541,18 @@ function outside_label_listener()
   App.hovered_clicked_label = null ;
   _element.style.visibility = "hidden";
   let [_tag, _index] = getTagChannelIndex(_element);
+  
+  if (_tag === "timebkg")
+  {
+    let _time_label = getChannelElement (["timelabel", null]);
+    if (_time_label !== null)
+    {
+      let _time = (Display.data[App.display_index]).screens[0].time;
+      let _str_val = _time.str_val ;
+      _time_label.innerHTML = _str_val + htmlSpaces(0) + "<br>" + htmlSpaces(10) ; 
+    }
+  }
+
   let _send = getChannelElement (["send", _index]);
   if (_send !== null) _send.style.visibility = "hidden";
   let _slider = getChannelElement (["slider", _index]);
@@ -645,19 +566,18 @@ function outside_label_listener()
     let _value_unit_string = "";
     if ( _ctrl_channel.str_val !== "" ) _value_unit_string = _ctrl_channel.str_val;
     else _value_unit_string = (_ctrl_channel.val  *_ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
-    _setval.innerHTML = _value_unit_string + htmlSpaces(0) + "<br>" + htmlSpaces(10) ; //+ "<br>" + htmlSpaces(10);
+    _setval.innerHTML = _value_unit_string + htmlSpaces(0) + "<br>" + htmlSpaces(10) ; 
   }
   let _label = getChannelElement (["label", _index]);
   if (_label !== null)
   {
-
     let _channels = (Display.data[App.display_index]).screens[0].channels;
     let _chan_index = findWithAttr(_channels, "index", parseInt(_index) );
     let _channel = _channels[_chan_index];
     let _value_unit_string = "";
     if ( _channel.str_val !== "" ) _value_unit_string = _channel.str_val;
     else _value_unit_string = (_channel.val  *_channel.scale).toString().substring(0,_channel.disp.len) + " " + _channel.unit;
-    _label.innerHTML = _value_unit_string + htmlSpaces(0) + "<br>" + htmlSpaces(10) ; //+ "<br>" + htmlSpaces(10);
+    _label.innerHTML = _value_unit_string + htmlSpaces(0) + "<br>" + htmlSpaces(10) ; 
   }
 }
 
@@ -751,34 +671,52 @@ function display_select_listener()
 
     let _time_disp = _time.disp;
     let _time_color = _time_disp.col;
+    let _time_bgcol = _time_disp.bgcol;
 
-    let _time_label = document.createElement("DIV");
-    App.CONTAINER.appendChild(_time_label);
-    _time_label.innerHTML = "";
-    _time_label.style.position = "absolute";
-    _time_label.style.left = (_time_disp.pos.x).toString() + "px";
-    _time_label.style.top = (_time_disp.pos.y).toString() + "px";
-    _time_label.title = ""; 
-    _time_label.style.color = "rgba(" + (_time_color.r).toString() + "," + (_time_color.g).toString() + "," + (_time_color.b).toString() + "," + (_time_color.a/255).toString() + ")";
-    _time_label.style.backgroundColor = "transparent";
-    _time_label.style.border = "transparent";
-    _time_label.style.outline = "none";
-    _time_label.style.textAlign = "left";
-    _time_label.id = "time";
+    let _timebkg = document.createElement("DIV");
+    App.CONTAINER.appendChild(_timebkg);
+    let _time_active_label = document.createElement("BUTTON");
+    _timebkg.appendChild(_time_active_label);
+    
+    _time_active_label.innerHTML = "";
+    let _time_active_label_text = document.createTextNode("");
+    _time_active_label.appendChild(_time_active_label_text);
+
+    _timebkg.style.width = (_time_disp.size * 13.9).toString() + "px";
+    _timebkg.style.height = (_time_disp.size * 4.1 + 4).toString() + "px";
+    _timebkg.style.position = "absolute";
+    _timebkg.style.left = (_time_disp.pos.x + App.CANVAS_POS_X - _time_disp.size/2 + 1).toString() + "px";
+    _timebkg.style.top = (_time_disp.pos.y + App.CANVAS_POS_Y - _time_disp.size + 1).toString() + "px"; 
+    _timebkg.style.visibility = "hidden";
+    _timebkg.title = ""; 
+    _timebkg.style.fontSize = (_time_disp.size).toString() + "px";
+    _timebkg.style.color = "rgba(" + (_time_color.r).toString() + "," + (_time_color.g).toString() + "," + (_time_color.b).toString() + "," + (_time_color.a/255).toString() + ")";
+    _timebkg.style.backgroundColor = "rgba(" + (_time_bgcol.r).toString() + "," + (_time_bgcol.g).toString() + "," + (_time_bgcol.b).toString() + "," + (_time_bgcol.a/255).toString() + ")";
+
+    _time_active_label.style.position = "absolute";
+    _time_active_label.style.left = (_time_disp.size * 0.33).toString() + "px";
+    _time_active_label.style.top = (_time_disp.size * 0.34).toString() + "px";
+    _time_active_label.style.visibility = "visible";
+    _time_active_label.title = ""; 
+    _time_active_label.style.fontSize = (_time_disp.size).toString() + "px";
+    _time_active_label.style.color = "rgba(" + (_time_color.r).toString() + "," + (_time_color.g).toString() + "," + (_time_color.b).toString() + "," + (_time_color.a/255).toString() + ")";
+    _time_active_label.style.backgroundColor = "transparent";
+    _time_active_label.style.border = "transparent";
+    _time_active_label.style.outline = "none";
+    _time_active_label.style.textAlign = "left";
+    
+    _timebkg.id = "timebkg" ;
+    _time_active_label.id = "timelabel" ;
+    _timebkg.addEventListener("mouseover", label_listener);
+    _timebkg.addEventListener("mouseleave", outside_label_listener);
+
+    _time.info = htmlSpaces(0) + "<br>" + "Last server response (NTP)" + "<br>" + "Client time offset: " ;    
+    _time.padding = htmlSpaces(5) + "<br>" + htmlSpaces(10);    
   }
 
   let _no_of_channels = (_screen.channels).length;
   App.chan_index_string = "";
-  if (_no_of_channels > 0)
-  {      
-    let _div = document.createElement("DIV");
-    App.CONTAINER.appendChild(_div);
-    _div.innerHTML = "Ch &ensp; Value";
-    _div.style.position = "absolute";
-    _div.style.left = "15px";
-    _div.style.top = "40px";
-    _div.style.visibility = "hidden";
-  }
+
   for (let _i = 0; _i < _no_of_channels; _i++)
   {  
     let _channel = _screen.channels[_i];
@@ -796,8 +734,8 @@ function display_select_listener()
     _chanbkg.appendChild(_active_label);
     
     _active_label.innerHTML = "";
-    let _textForButton = document.createTextNode("");
-    _active_label.appendChild(_textForButton);
+    let _active_label_text = document.createTextNode("");
+    _active_label.appendChild(_active_label_text);
 
     _chanbkg.style.width = (_disp.size * 13.9).toString() + "px";
     _chanbkg.style.height = (_disp.size * 4.1 + 4).toString() + "px";
@@ -843,14 +781,6 @@ function display_select_listener()
     App.img_width = _img_channel.dim.w / _img_disp_scale;
     App.canvas_shift_x = _img_channel.disp.pos.x;
     App.canvas_shift_y = _img_channel.disp.pos.y;
-    //let _test_img = document.createElement("IMG");
-    //_test_img.style.position = "absolute";
-    //_test_img.height = "150px";
-    //_test_img.width = "300px";
-    //_test_img.style.left = "100px";
-    //_test_img.style.top = "100px";
-    //_test_img.id = "imgchan_" + _img_chan_index_string;
-    //App.test_img = _test_img;
   }
   
   let _no_of_ctrl_channels = (_screen.ctrl_channels).length;
