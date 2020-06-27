@@ -5,7 +5,6 @@ include("../db_ini.php");
 include("../utils.php");
 include("header.php");
 
-$receive_timestamp = intval( microtime($get_as_float = TRUE) * 1000000 ) ;
 
 $image_dir = 'images';
 
@@ -92,16 +91,25 @@ if ($data_end > 0)
         $value_string = "";
         if (!is_null($value_row[1])) $value_string = strval($value_row[1]);
         $subsample_string = "";
+        if (!is_null($value_row[1])) $value_string = strval($value_row[1]);
         $base64_string = "";
         if (!is_null($value_row[3])) $base64_string = strval($value_row[3]);
         $return_string .= $time_string . "," . $value_string . "," . $subsample_string . "," . "," ; // . $base64_string ;
         if (strlen($base64_string) > 0)
         {
-          $image_filename = $image_dir . "/" . $channel_string . "_" . strval($value_row[0]) . ".jpg";
+          $image_filename = $image_dir . "/" . $channel_string . "_" . $time_string . ".jpg";
           $ifp = fopen($image_filename, 'wb'); 
           fwrite($ifp, base64_decode($base64_string) );
           fclose($ifp);
           copy($image_filename, $image_dir . "/" . $channel_string . ".jpg");
+        }
+        if ($value_string !== "-9999")
+        {
+          $text_filename = $image_dir . "/" . $channel_string . "_" . $time_string . ".txt";
+          $ifp = fopen($text_filename, 'wb'); 
+          fwrite($ifp, $return_string );
+          fclose($ifp);
+          copy($text_filename, $image_dir . "/" . $channel_string . ".txt");
         }
       }
     } 
@@ -131,10 +139,9 @@ if ($data_end > 0)
 
 }
 
-$transmit_timestamp = intval( microtime($get_as_float = TRUE) * 1000000 ) ;
 
 header("Content-type: application/json");
-$json_array = array('returnstring' => $return_string, 'receivetime' => $receive_timestamp, 'transmittime' => $transmit_timestamp);
+$json_array = array('returnstring' => $return_string) ; //, 'receivetime' => $receive_timestamp, 'transmittime' => $transmit_timestamp);
 echo json_encode($json_array);
 
 
