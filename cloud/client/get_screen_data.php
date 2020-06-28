@@ -12,6 +12,3 @@ $str = file_get_contents(__DIR__ . '/' . $screen_layout_file);
 header('Content-type: application/json');
 
 echo $str;
-
-
-?>
