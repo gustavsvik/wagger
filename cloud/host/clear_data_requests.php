@@ -54,6 +54,3 @@ $return_string = $channels_list;
 header("Content-type: application/json");
 $json_array = array('returnstring' => $return_string);
 echo json_encode($json_array);
-
-
-?>
