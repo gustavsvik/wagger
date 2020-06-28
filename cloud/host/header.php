@@ -12,6 +12,3 @@ $return_string = strval(getPost('returnstring', ';,,,;'));
 $duration = intval(getPost('duration', 10));
 $unit = intval(getPost('unit', 1));
 $lowest_status = intval(getPost('lowest_status', -1));
-
-
-?>
