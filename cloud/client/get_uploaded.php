@@ -143,6 +143,3 @@ if ($data_end > 0)
 header("Content-type: application/json");
 $json_array = array('returnstring' => $return_string) ; //, 'receivetime' => $receive_timestamp, 'transmittime' => $transmit_timestamp);
 echo json_encode($json_array);
-
-
-?>
