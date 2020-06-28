@@ -69,6 +69,3 @@ while ($channel_start < $data_end)
 
 $conn->commit();
 $conn->close();
-
-
-?>
