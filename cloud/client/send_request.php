@@ -123,6 +123,3 @@ if ($data_end > 0)
   $conn->close();
 
 }
-
-
-?>
