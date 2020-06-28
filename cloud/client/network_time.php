@@ -3,10 +3,9 @@
 
   function network_time_get()
   {
-
     // Adapted from https://www.johnromanodorazio.com/ntptest.php#source-code-container
-
-    /* Query an NTP time server on port 123 (SNTP protocol) : */
+    // Query an NTP time server on port 123 (SNTP protocol)
+    
     $bit_max = 4294967296;
     $epoch_convert = 2208988800;
     $vn = 3;
@@ -146,6 +145,3 @@
     return $ntp_time ;
 
   }
-
-
-?>
