@@ -14,6 +14,3 @@ $transmit_timestamp = intval(network_time_get() * 1000000) ;
 $json_array = array('receivetime' => $receive_timestamp, 'transmittime' => $transmit_timestamp);
 
 echo json_encode($json_array);
-
-
-?>
