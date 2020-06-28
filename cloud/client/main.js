@@ -101,7 +101,7 @@ function draw()
     App.img = loadImage(App.img_url);
 
     let _screen = null;
-    if (Display.data[App.display_index] !== null) _screen = Display.data[App.display_index].screens[0];
+    if (Display.data[App.display_index] !== undefined) _screen = Display.data[App.display_index].screens[0];
     
     if (_screen !== null)
     {
@@ -114,7 +114,7 @@ function draw()
       {
         let _time_label = getChannelElement( [ "timelabel", null ] );
         _time_label.innerHTML = _time.str_val + _time.padding;
-        if ( _hovered_tag === "timebkg" ) _time_label.innerHTML = _time.str_val + _time.info + (App.ntp.adjustment / 1000000).toString().substring(0,7) + " s";
+        if ( _hovered_tag === "timebkg" ) _time_label.innerHTML = _time.str_val + _time.info + ( - App.ntp.adjustment / 1000000 ).toString().substring(0,7) + " s";
       }      
       for (let _i = 0; _i < _screen.channels.length; _i++)
       {
@@ -122,7 +122,7 @@ function draw()
         let _index_str = (_channel.index).toString();
         let _label = getChannelElement( [ "label", _index_str ] );
         _label.innerHTML = _channel.str_val + _channel.padding;
-        if ( _hovered_index === _index_str ) _label.innerHTML = _channel.str_val + _channel.info;
+        if ( _hovered_index === _index_str ) _label.innerHTML = (_channel.val).toString() + " " + _channel.unit + _channel.info; // _channel.str_val + _channel.info; .substring(0,12)
       }
       for (let _img_channel_index = 0; _img_channel_index < _screen.img_channels.length; _img_channel_index++)
       {
@@ -493,7 +493,7 @@ function label_listener()
       _time_label.style.visibility = "visible";
       let _time = (Display.data[App.display_index]).screens[0].time;
       let _str_val = _time.str_val + _time.info;
-      _time_label.innerHTML = _str_val + (App.ntp.adjustment / 1000000).toString().substring(0,7) + " s";
+      _time_label.innerHTML = _str_val + ( - App.ntp.adjustment / 1000000 ).toString().substring(0,7) + " s";
     }
   }
   
@@ -527,8 +527,9 @@ function label_listener()
     let _chan_index = findWithAttr(_channels, "index", parseInt(_index) );
     let _channel = _channels[_chan_index];
     let _value_unit_string = "";
-    if ( _channel.str_val !== "" ) _value_unit_string = _channel.str_val;
-    else _value_unit_string = (_channel.val * _channel.scale).toString().substring(0,_channel.disp.len) + " " + _channel.unit;
+    //if ( _channel.str_val !== "" ) _value_unit_string = _channel.str_val;
+    //else 
+    _value_unit_string = (_channel.val).toString() + " " + _channel.unit;  // .substring(0,12)
     let _str_val = _value_unit_string + _channel.info;
     _label.innerHTML = _str_val;
   }
@@ -765,7 +766,7 @@ function display_select_listener()
     _chanbkg.addEventListener("mouseover", label_listener);
     _chanbkg.addEventListener("mouseleave", outside_label_listener);
     
-    _channel.info = htmlSpaces(0) + "<br>" + "Measurement channel " + _chan_index_string + "<br>" + (_channel.label).toString() ;    
+    _channel.info = htmlSpaces(0) + "<br>" + (_channel.label).toString() + "<br>" + "Measurement channel " + _chan_index_string ;    
     _channel.padding = htmlSpaces(5) + "<br>" + htmlSpaces(10);
   }
   
@@ -882,7 +883,7 @@ function display_select_listener()
     else _value_unit_string = (_ctrl_channel.val * _ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
     
     _ctrl_channel.str_val = _value_unit_string;
-    _ctrl_channel.info = htmlSpaces(0) + "<br>" + htmlSpaces(10) + "<br>" + "Control channel " + _ctrl_chan_index_string + "<br>" + (_ctrl_channel.label).toString() ;        
+    _ctrl_channel.info = htmlSpaces(0) + "<br>" + htmlSpaces(10) + "<br>" + (_ctrl_channel.label).toString() + "<br>" + "Control channel " + _ctrl_chan_index_string ;        
     _ctrl_channel.padding = htmlSpaces(0) + "<br>" + htmlSpaces(10) + "<br>" + htmlSpaces(10) ;        
 
     _setval.innerHTML = _value_unit_string + _ctrl_channel.padding; //+ "<br>" + htmlSpaces(10);
