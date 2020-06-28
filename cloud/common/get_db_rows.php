@@ -43,6 +43,3 @@ $conn->close();
 header("Content-type: application/json");
 $json_array = array("returnstring" => $rows);
 echo json_encode($json_array);
-
-
-?>
