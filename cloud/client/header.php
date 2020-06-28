@@ -25,6 +25,3 @@ $lowest_status = intval(getPost('lowest_status', -1));
 
 $channel_start = 0;
 $data_end = strlen($channels);
-
-
-?>
