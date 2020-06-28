@@ -5,6 +5,3 @@ $username = "user";
 $password = "pwd";
 $dbname = "db";
 $acquired_data_table_name = "table";
-
-
-?>
