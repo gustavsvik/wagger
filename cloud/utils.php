@@ -68,6 +68,3 @@ function getListByIDs($request_string)
   
   return $channels_list;
 }
-
-
-?>
