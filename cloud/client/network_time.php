@@ -11,7 +11,7 @@
     $epoch_convert = 2208988800;
     $vn = 3;
 
-    $servers = array('ntp.se') ;     // ('0.uk.pool.ntp.org','1.uk.pool.ntp.org','2.uk.pool.ntp.org','3.uk.pool.ntp.org');
+    $servers = array('ntp1.sptime.se','ntp2.sptime.se','ntp3.sptime.se','ntp4.sptime.se') ;     // ('0.uk.pool.ntp.org','1.uk.pool.ntp.org','2.uk.pool.ntp.org','3.uk.pool.ntp.org');
     $server_count = count($servers);
 
     //see rfc5905, page 20
