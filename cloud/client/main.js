@@ -1,64 +1,9 @@
 "use strict";
 
 
-let App = {};
+let App = new AppData();
 
-App.CANVAS = {};
-App.CANVAS_POS_X = 250 ;
-App.CANVAS_POS_Y = 10 ;
-App.STD_SCALE_HEIGHT = 480;
-App.WARNING_FONTSIZE = 36;
-App.STANDARD_FONTSIZE = 12;
-App.MAX_DISPLAY_DIGITS = 10;
-App.STANDARD_FOREGROUND_COLOR = [255,255,255,255];
-App.STANDARD_BACKGROUND_COLOR = [0,0,255,255];
-App.FRAME_RATE = 5 ;
-App.REQUEST_INTERVAL = 2 ;
-App.NTP_SYNC_INTERVAL = 60 ;
-App.TIME_ZONE = "UTC";
-App.BROWSER_URL = window.location.hostname;
-App.CLIENT_URL = "http://" + App.BROWSER_URL  + "/client/";
-App.FILES_DIR = "images/";
-App.FILES_URL = App.CLIENT_URL + App.FILES_DIR;
-App.WAIT_MESSAGE = "Retrieving data...";
-App.last_get = 5;
-App.last_request = 0; 
-App.last_time_sync = 0; 
-App.display_index = 0;
-App.display_timeout = 900 ;
-App.display_is_static = false;
-App.chan_index_string = "";
-App.img_chan_index_string = "";
-App.ctrl_chan_index_string = "";
-App.img_url = "";
-App.img = {};
-App.img_height = App.STD_SCALE_HEIGHT;
-App.img_width = 4/3 * App.img_height; 
-App.start_time = -9999;
-App.end_time = -9999;
-App.time_bins = 10; 
-App.time_bin_size = 1;
-App.data_time_string = ""; 
-App.data_timestamp = 0 ;
-App.server_time_string = App.WAIT_MESSAGE ;
-App.server_timestamp = 0 ;
-App.frames_active = 0 ;
-App.ntp = {}
-App.ntp.t1 = 0 ;
-App.ntp.t2 = 0 ;
-App.ntp.t3 = 0 ;
-App.ntp.t4 = 0 ;
-App.ntp.adjustment = 0 ;
-App.ntp.timestamp = 0 ;
-App.ntp.time_string = 0 ;
-App.canvas_shift_x = 0 ;
-App.canvas_shift_y = 0 ;
-App.moved_slider = null ;
-App.pressed_send = null ;
-App.hovered_clicked_label = null ;
-
-let Display = {};
-Display.data = [];
+let Display = new DisplayData();
 
 
 
@@ -122,7 +67,7 @@ function draw()
         let _index_str = (_channel.index).toString();
         let _label = getChannelElement( [ "label", _index_str ] );
         _label.innerHTML = _channel.str_val + _channel.padding;
-        if ( _hovered_index === _index_str ) _label.innerHTML = (_channel.val).toString() + " " + _channel.unit + _channel.info; // _channel.str_val + _channel.info; .substring(0,12)
+        if ( _hovered_index === _index_str ) _label.innerHTML = (_channel.val).toString().substring(0, App.MAX_DISPLAY_DIGITS) + " " + _channel.unit + _channel.info; // _channel.str_val + _channel.info; .substring(0,12)
       }
       for (let _img_channel_index = 0; _img_channel_index < _screen.img_channels.length; _img_channel_index++)
       {
@@ -529,7 +474,7 @@ function label_listener()
     let _value_unit_string = "";
     //if ( _channel.str_val !== "" ) _value_unit_string = _channel.str_val;
     //else 
-    _value_unit_string = (_channel.val).toString() + " " + _channel.unit;  // .substring(0,12)
+    _value_unit_string = (_channel.val).toString().substring(0, App.MAX_DISPLAY_DIGITS) + " " + _channel.unit;  // .substring(0,12)
     let _str_val = _value_unit_string + _channel.info;
     _label.innerHTML = _str_val;
   }
