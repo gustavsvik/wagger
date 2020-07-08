@@ -113,7 +113,7 @@
     ]
   },
   {
-    "title": "Flexible video 1 (live)",
+    "title": "Flexible webcam 1 (live)",
     "show": true,
     "screens":
     [
@@ -131,7 +131,7 @@
     ]
   },
   {
-    "title": "Flexible video 2 (live)",
+    "title": "Flexible webcam 2 (live)",
     "show": true,
     "screens":
     [
@@ -222,6 +222,25 @@
           { "index": 162, "show": true, "label": "Radon activity concentration", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 4, "size": 30, "pos": {"x": 290, "y": 430}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 255}} }
         ],
         "img_channels": [],
+        "ctrl_channels": []
+      }
+    ]
+  },
+  {
+    "title": "Dual image test",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": [],
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 15}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+        "channels": [],
+        "img_channels":
+        [
+          { "index": 160, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1280, "h": 720}, "disp": {"h": 480, "pos": {"x": 0, "y": 0}} },
+          { "index": 180, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1280, "h": 720}, "disp": {"h": 480, "pos": {"x": 0, "y": 720}} }
+        ],
         "ctrl_channels": []
       }
     ]
