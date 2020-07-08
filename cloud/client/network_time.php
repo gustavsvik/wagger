@@ -101,36 +101,36 @@
     $unpack0 = unpack("N12", $response);
 
     //present as a decimal number
-    $remote_originate_seconds = sprintf('%u', $unpack0[7])-$epoch_convert;
+    //$remote_originate_seconds = sprintf('%u', $unpack0[7])-$epoch_convert;
     $remote_received_seconds = sprintf('%u', $unpack0[9])-$epoch_convert;
     $remote_transmitted_seconds = sprintf('%u', $unpack0[11])-$epoch_convert;
 
-    $remote_originate_fraction = sprintf('%u', $unpack0[8]) / $bit_max;
+    //$remote_originate_fraction = sprintf('%u', $unpack0[8]) / $bit_max;
     $remote_received_fraction = sprintf('%u', $unpack0[10]) / $bit_max;
     $remote_transmitted_fraction = sprintf('%u', $unpack0[12]) / $bit_max;
 
-    $remote_originate = $remote_originate_seconds + $remote_originate_fraction;
+    //$remote_originate = $remote_originate_seconds + $remote_originate_fraction;
     $remote_received = $remote_received_seconds + $remote_received_fraction;
     $remote_transmitted = $remote_transmitted_seconds + $remote_transmitted_fraction;
 
     //unpack to ascii characters for the header response
-    $unpack1 = unpack("C12", $response);
+    //$unpack1 = unpack("C12", $response);
 
     //the header response in binary (base 2)
-    $header_response =  base_convert($unpack1[1], 10, 2);
+    //$header_response =  base_convert($unpack1[1], 10, 2);
 
     //pad with zeros to 1 byte (8 bits)
-    $header_response = sprintf('%08d',$header_response);
+    //$header_response = sprintf('%08d',$header_response);
 
     //Mode (the last 3 bits of the first byte), converting to decimal for humans;
-    $mode_response = bindec(substr($header_response, -3));
+    //$mode_response = bindec(substr($header_response, -3));
 
     //VN
-    $vn_response = bindec(substr($header_response, -6, 3));
+    //$vn_response = bindec(substr($header_response, -6, 3));
 
     //the header stratum response in binary (base 2)
-    $stratum_response =  base_convert($unpack1[2], 10, 2);
-    $stratum_response = bindec($stratum_response);
+    //$stratum_response =  base_convert($unpack1[2], 10, 2);
+    //$stratum_response = bindec($stratum_response);
 
     //calculations assume a symmetrical delay, fixed point would give more accuracy
     $delay = (($local_received - $local_sent) / 2)  - ($remote_transmitted - $remote_received);
