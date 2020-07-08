@@ -4,7 +4,7 @@
   function network_time_get()
   {
 
-    // Adapted from https://www.johnromanodorazio.com/ntptest.php#source-code-container
+    // Adapted from https://www.johnromanodorazio.com/ntptest.php
 
     /* Query an NTP time server on port 123 (SNTP protocol) : */
     $bit_max = 4294967296;
