@@ -21,7 +21,44 @@
         "ctrl_channels": []
       }
     ]
+  },
+  {
+    "title": "Flexible webcam 2 (live)",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": [],
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 15}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+        "channels": [],
+        "img_channels":
+        [
+          { "index": 180, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1280, "h": 720}, "disp": {"h": 480, "pos": {"x": 0, "y": 0}} }
+        ],
+        "ctrl_channels": []
+      }
+    ]
+  },
+  {
+    "title": "Valmet DNA view (live)",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": [],
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 20, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+        "channels": [],
+        "img_channels":
+        [
+          { "index": 600, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1243, "h": 856}, "disp": {"h": 600, "pos": {"x": 0, "y": 0}} }
+        ],
+        "ctrl_channels": []
+      }
+    ]
   }
+
 ]
 
 }
