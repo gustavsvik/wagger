@@ -29,6 +29,7 @@ class AppData
     this.last_time_sync = 0; 
     this.display_index = 0;
     this.display_timeout = 900 ;
+    this.display_rotate_interval = 0 ;
     this.display_is_static = false;
     this.chan_index_string = "";
     this.img_chan_index_string = "";
