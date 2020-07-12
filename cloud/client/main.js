@@ -41,6 +41,19 @@ function draw()
   if (App.frames_active < App.display_timeout * App.FRAME_RATE)
   {
     if (App.DISPLAY_SELECT != null) App.DISPLAY_SELECT.style.visibility = "visible"; 
+
+    if (App.display_rotate_interval > 0)
+    {
+      if (App.frames_active % (App.display_rotate_interval * App.FRAME_RATE) === 0)
+      {
+        App.display_index++ ;
+        if (App.display_index >= (Display.data).length) App.display_index = 0 ;
+        App.DISPLAY_SELECT.value = (App.display_index).toString() ;
+        let _event = new Event('change') ;
+        App.DISPLAY_SELECT.dispatchEvent(_event) ;
+      }
+    }
+    
     fill(color(App.STANDARD_FOREGROUND_COLOR));
     textSize(App.STANDARD_FONTSIZE);
     App.img = loadImage(App.img_url);
@@ -155,7 +168,7 @@ function draw()
     //radioVal = newRadioVal;
   }
 
-  
+
   App.ntp.timestamp = parseInt((new Date().valueOf()) / 1000) + App.ntp.adjustment / 1000000;
 
   
@@ -184,7 +197,7 @@ function draw()
         let _lag_text = getTimeLagText(_view_lag);
         let _status_text = "requesting new...";
         if (!navigator.onLine) _status_text = "no internet connection!";
-        text("Out of date (" + _lag_text + ")" + ", " + _status_text, Math.max(App.img_width/2 - App.WARNING_FONTSIZE*7.8, 0), App.img_height/2 + App.WARNING_FONTSIZE/2);
+        text("Out of date (" + _lag_text + ")" + ", " + _status_text, Math.max(App.img_width/2 - App.WARNING_FONTSIZE*7.5, 0), App.img_height/2 + App.WARNING_FONTSIZE/2);
       }
       fill(App.STANDARD_FOREGROUND_COLOR);
 	  textSize(App.STANDARD_FONTSIZE);
@@ -402,6 +415,7 @@ function handle_display_data(data)
   Display.data = data.displays; 
   
   App.display_timeout = data.disp_timeout; 
+  App.display_rotate_interval = data.disp_rotate_interval; 
 
   document.title = "LabRemote"; // New title :)
   App.CONTAINER = document.getElementById("myContainer");
@@ -628,7 +642,7 @@ function display_select_listener()
     let _time_active_label_text = document.createTextNode("");
     _time_active_label.appendChild(_time_active_label_text);
 
-    _timebkg.style.width = (_time_disp.size * 13.9).toString() + "px";
+    _timebkg.style.width = (_time_disp.size * 14.1).toString() + "px";
     _timebkg.style.height = (_time_disp.size * 4.1 + 4).toString() + "px";
     _timebkg.style.position = "absolute";
     _timebkg.style.left = (_time_disp.pos.x + App.CANVAS_POS_X - _time_disp.size/2 + 1).toString() + "px";
