@@ -16,7 +16,7 @@
         "label": "View",
         "imgs": 
         [
-          { "file": "11.png", "dim": {"w": 1853, "h": 943}, "disp": {"h": 480, "pos": {"x": 0, "y": 0}} }
+          { "file": "11.png", "dim": {"w": 1853, "h": 943}, "disp": {"h": 520, "pos": {"x": 0, "y": 0}} }
         ],
         "time": null,
         "channels": [],
@@ -34,12 +34,12 @@
         "label": "View",
         "imgs": 
         [
-          { "file": "4.jpg", "dim": {"w": 1179, "h": 805}, "disp": {"h": 480, "pos": {"x": 75, "y": 0}} }
+          { "file": "4.jpg", "dim": {"w": 1179, "h": 805}, "disp": {"h": 520, "pos": {"x": 75, "y": 0}} }
         ],
         "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 15}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 200} } },
         "channels":
         [
-          { "index": 97, "show": true, "label": "Makeup water conductivity", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e6, "unit": "\u03BCS", "disp": {"len": 5, "size": 14, "pos": {"x": 175, "y": 310}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 200}} }
+          { "index": 97, "show": true, "label": "Makeup water conductivity", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e6, "unit": "\u03BCS", "disp": {"len": 5, "size": 14, "pos": {"x": 175, "y": 340}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 200}} }
         ],
         "img_channels": [],
         "ctrl_channels": []
@@ -55,7 +55,7 @@
         "label": "View",
         "imgs": 
         [
-          { "file": "9.png", "dim": {"w": 1119, "h": 793}, "disp": {"h": 480, "pos": {"x": 90, "y": 0}} }
+          { "file": "9.png", "dim": {"w": 1119, "h": 793}, "disp": {"h": 520, "pos": {"x": 90, "y": 0}} }
         ],
         "time": null,
         "channels": [],
@@ -73,7 +73,7 @@
         "label": "View",
         "imgs": 
         [
-          { "file": "12.jpg", "dim": {"w": 2560, "h": 1920}, "disp": {"h": 480, "pos": {"x": 105, "y": 0}} }
+          { "file": "12.jpg", "dim": {"w": 2560, "h": 1920}, "disp": {"h": 520, "pos": {"x": 105, "y": 0}} }
         ],
         "time": null,
         "channels": [],
@@ -91,7 +91,7 @@
         "label": "View",
         "imgs": 
         [
-          { "file": "1.png", "dim": {"w": 1067, "h": 692}, "disp": {"h": 480, "pos": {"x": 55, "y": 0}} }
+          { "file": "1.png", "dim": {"w": 1067, "h": 692}, "disp": {"h": 520, "pos": {"x": 55, "y": 0}} }
         ],
         "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 65, "y": 15}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
         "channels":
@@ -112,7 +112,7 @@
         "label": "View",
         "imgs": 
         [
-          { "file": "13.jpg", "dim": {"w": 2560, "h": 1920}, "disp": {"h": 480, "pos": {"x": 105, "y": 0}} }
+          { "file": "13.jpg", "dim": {"w": 2560, "h": 1920}, "disp": {"h": 520, "pos": {"x": 105, "y": 0}} }
         ],
         "time": null,
         "channels": [],
@@ -130,7 +130,7 @@
         "label": "View",
         "imgs": 
         [
-          { "file": "14.jpg", "dim": {"w": 1400, "h": 935}, "disp": {"h": 480, "pos": {"x": 65, "y": 0}} }
+          { "file": "14.jpg", "dim": {"w": 1400, "h": 935}, "disp": {"h": 520, "pos": {"x": 65, "y": 0}} }
         ],
         "time": null,
         "channels": [],
@@ -148,7 +148,7 @@
         "label": "View",
         "imgs": 
         [
-          { "file": "15.jpg", "dim": {"w": 1400, "h": 930}, "disp": {"h": 480, "pos": {"x": 65, "y": 0}} }
+          { "file": "15.jpg", "dim": {"w": 1400, "h": 930}, "disp": {"h": 520, "pos": {"x": 65, "y": 0}} }
         ],
         "time": null,
         "channels": [],
@@ -169,7 +169,7 @@
         "channels": [],
         "img_channels":
         [
-          { "index": 160, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1280, "h": 720}, "disp": {"h": 480, "pos": {"x": 0, "y": 0}} }
+          { "index": 160, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1280, "h": 720}, "disp": {"h": 520, "pos": {"x": 0, "y": 0}} }
         ],
         "ctrl_channels": []
       }
@@ -184,7 +184,7 @@
         "label": "View",
         "imgs": 
         [
-          { "file": "16.jpg", "dim": {"w": 1400, "h": 939}, "disp": {"h": 480, "pos": {"x": 70, "y": 0}} }
+          { "file": "16.jpg", "dim": {"w": 1400, "h": 939}, "disp": {"h": 520, "pos": {"x": 70, "y": 0}} }
         ],
         "time": null,
         "channels": [],
@@ -205,7 +205,7 @@
         "channels": [],
         "img_channels":
         [
-          { "index": 180, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1280, "h": 720}, "disp": {"h": 480, "pos": {"x": 0, "y": 0}} }
+          { "index": 180, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1280, "h": 720}, "disp": {"h": 520, "pos": {"x": 0, "y": 0}} }
         ],
         "ctrl_channels": []
       }
@@ -220,7 +220,7 @@
         "label": "View",
         "imgs": 
         [
-          { "file": "17.jpg", "dim": {"w": 1400, "h": 896}, "disp": {"h": 480, "pos": {"x": 50, "y": 0}} }
+          { "file": "17.jpg", "dim": {"w": 1400, "h": 896}, "disp": {"h": 520, "pos": {"x": 50, "y": 0}} }
         ],
         "time": null,
         "channels": [],
@@ -241,7 +241,7 @@
         "channels": [],
         "img_channels":
         [
-          { "index": 600, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1243, "h": 856}, "disp": {"h": 480, "pos": {"x": 80, "y": 0}} }
+          { "index": 600, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1243, "h": 856}, "disp": {"h": 520, "pos": {"x": 80, "y": 0}} }
         ],
         "ctrl_channels": []
       }
@@ -256,7 +256,7 @@
         "label": "View",
         "imgs": 
         [
-          { "file": "10.jpg", "dim": {"w": 960, "h": 576}, "disp": {"h": 480, "pos": {"x": 25, "y": 0}} }
+          { "file": "10.jpg", "dim": {"w": 960, "h": 576}, "disp": {"h": 520, "pos": {"x": 25, "y": 0}} }
         ],
         "time": null,
         "channels": [],
@@ -274,7 +274,7 @@
         "label": "View",
         "imgs": 
         [
-          { "file": "18.png", "dim": {"w": 1499, "h": 765}, "disp": {"h": 480, "pos": {"x": 0, "y": 0}} }
+          { "file": "18.png", "dim": {"w": 1499, "h": 765}, "disp": {"h": 520, "pos": {"x": 0, "y": 0}} }
         ],
         "time": null,
         "channels": [],
