@@ -647,11 +647,14 @@ function display_select_listener()
 
   App.DISPLAY_INFO_TEXT = document.createElement("DIV");
   App.CONTAINER.appendChild(App.DISPLAY_INFO_TEXT);
+  App.DISPLAY_INFO_TEXT.style.width = (parseInt(App.img_width)).toString() + "px";
+  App.DISPLAY_INFO_TEXT.style.height = (parseInt(App.WARNING_FONTSIZE)).toString() + "px";
   App.DISPLAY_INFO_TEXT.style.position = "absolute";
-  App.DISPLAY_INFO_TEXT.style.left = (parseInt(Math.max(App.img_width/2 - App.WARNING_FONTSIZE*5.5, 0) + App.CANVAS_POS_X)).toString() + "px";
-  App.DISPLAY_INFO_TEXT.style.top = (parseInt(App.img_height/2 - App.WARNING_FONTSIZE/2 + App.CANVAS_POS_Y)).toString() + "px";
+  App.DISPLAY_INFO_TEXT.style.left = (parseInt(App.CANVAS_POS_X + App.canvas_shift_x + Math.max(App.img_width/2 - App.WARNING_FONTSIZE*7.0, 0))).toString() + "px";
+  App.DISPLAY_INFO_TEXT.style.top = (parseInt(App.CANVAS_POS_Y + App.canvas_shift_y + App.img_height/2 - App.WARNING_FONTSIZE/2)).toString() + "px";
   App.DISPLAY_INFO_TEXT.style.fontSize = (parseInt(App.WARNING_FONTSIZE)).toString() + "px";
   App.DISPLAY_INFO_TEXT.style.fontFamily = App.all_font_families;
+  App.DISPLAY_INFO_TEXT.textAlign = "left";
   App.DISPLAY_INFO_TEXT.id = "infotext";
 
   let _time = _screen.time;
