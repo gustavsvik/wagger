@@ -34,7 +34,7 @@ function setup()
 function draw() 
 {
   
-  textSize(App.STANDARD_FONTSIZE);
+  //textSize(App.STANDARD_FONTSIZE);
 	
   App.frames_active++;
 
@@ -53,11 +53,11 @@ function draw()
         App.DISPLAY_SELECT.dispatchEvent(_event) ;
       }
     }
-    
-    fill(color(App.STANDARD_FOREGROUND_COLOR));
-    textSize(App.STANDARD_FONTSIZE);
+
+    //fill(color(App.STANDARD_FOREGROUND_COLOR));
+    //textSize(App.STANDARD_FONTSIZE);
     App.img = loadImage(App.img_url, handle_image_loaded);
-    App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
+    //App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
 
     let _screen = null;
     if (typeof Display.data[App.display_index] !== 'undefined') _screen = Display.data[App.display_index].screens[0];
@@ -102,8 +102,8 @@ function draw()
     }
   }
   
-  fill(color(App.STANDARD_FOREGROUND_COLOR));
-  textSize(App.STANDARD_FONTSIZE);
+  //fill(color(App.STANDARD_FOREGROUND_COLOR));
+  //textSize(App.STANDARD_FONTSIZE);
 
 
   if ( (frameCount - App.last_time_sync >= App.NTP_SYNC_INTERVAL * App.FRAME_RATE) && App.frames_active < App.display_timeout * App.FRAME_RATE && App.display_is_static === false )
@@ -172,38 +172,57 @@ function draw()
 
   App.ntp.timestamp = parseInt((new Date().valueOf()) / 1000) + App.ntp.adjustment / 1000000;
 
-  if (typeof App.DISPLAY_SELECT.style !== 'undefined')
+
+  if (typeof App.DISPLAY_SELECT.style !== 'undefined' && !App.display_timed_out)
   {
     if (App.frames_active >= App.display_timeout * App.FRAME_RATE)
     {
+      App.display_timed_out = true;
+      background(255);
       removeAllElements(App.CONTAINER);
       App.img = loadImage(App.FILES_URL + "000.jpg", handle_image_loaded);
-      App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
+      //App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
       App.img_width = 1280/(720/App.STD_SCALE_HEIGHT);
       App.img_height = 720/(720/App.STD_SCALE_HEIGHT);
-      text("Timeout due to inactivity - please reload page to continue data transfer!", 220, 250);
+      App.DISPLAY_INFO_TEXT = document.createElement("DIV");
+      App.CONTAINER.appendChild(App.DISPLAY_INFO_TEXT);
+      App.DISPLAY_INFO_TEXT.innerHTML = "Timeout due to inactivity - please reload page to continue data transfer!";
+      setAttributes( App.DISPLAY_INFO_TEXT.style, 
+      { 
+        width: (parseInt(App.img_width)).toString() + "px", 
+        height: (parseInt(App.WARNING_FONTSIZE)).toString() + "px", 
+        position: "absolute", 
+        left: (parseInt(App.CANVAS_POS_X + App.canvas_shift_x + Math.max(App.img_width/2 - App.WARNING_FONTSIZE*7.0, 0))).toString() + "px", 
+        top: (parseInt(App.CANVAS_POS_Y + App.canvas_shift_y + App.img_height/2 - App.WARNING_FONTSIZE/2)).toString() + "px", 
+        fontSize: (16).toString() + "px", 
+        fontFamily: App.all_font_families, 
+        color: getRGBALiteral(App.STANDARD_FOREGROUND_COLOR),
+        textAlign: "left", 
+        visibility: "visible" 
+      } ) ;
+
       reset_display_variables();
     }
     else if (App.display_is_static === false) // display is not static
     {
+      App.DISPLAY_INFO_TEXT.innerHTML = "";
       App.DISPLAY_INFO_TEXT.style.visibility = "hidden"; 
+
       let _view_lag = App.ntp.timestamp - App.data_timestamp;
       if ( _view_lag > App.time_bins * App.time_bin_size || !navigator.onLine)
       {
-        if (App.frames_active % 2 === 0) App.DISPLAY_INFO_TEXT.style.color = "rgba(255,0,0,127)"; else App.DISPLAY_INFO_TEXT.style.color = "rgba(255,255,255,127)"
-        let _info_text = getChannelElement(["infotext", null]);
+        if (App.frames_active % 2 === 0) App.DISPLAY_INFO_TEXT.style.color = getRGBALiteral([255,0,0,127]); else App.DISPLAY_INFO_TEXT.style.color = getRGBALiteral([255,255,255,127]) ;
 
         if (!isValidNumber(_view_lag) || _view_lag > 10*365*24*60*60) 
         {
-          _info_text.innerHTML = "";
         }
         else
         {
           let _lag_text = getTimeLagText(_view_lag);
           let _status_text = "requesting new...";
           if (!navigator.onLine) _status_text = "no internet connection!";
-          _info_text.innerHTML = "Out of date (" + _lag_text + ")" + ", " + _status_text;
-          _info_text.style.visibility = "visible"; 
+          App.DISPLAY_INFO_TEXT.innerHTML = "Out of date (" + _lag_text + ")" + ", " + _status_text;
+          App.DISPLAY_INFO_TEXT.style.visibility = "visible"; 
         }
       }
     }
@@ -216,7 +235,7 @@ function handle_image_loaded()
 { 
   let _img = {};
   _img[0] = App.img;
-  _img[1] = App.test_img;
+  //_img[1] = App.test_img;
   for (let _i = 0; _i <= 0; _i++)
   {
     image(_img[_i], App.canvas_shift_x, App.canvas_shift_y, App.img_width*(1-0.5*_i), App.img_height*(1-0.5*_i) );
@@ -327,7 +346,7 @@ function populate_display_variables(timestamp_matrix, value_matrix)
         let _img_url = App.FILES_URL + _img_channel.index.toString() + "_" + _latest_data_timestamp.toString() + "." + _img_channel.ext;
         App.img_url = _img_url;
         App.img = loadImage(_img_url, handle_image_loaded);
-        App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
+        //App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
 
         let _img_disp_scale = _img_channel.dim.h / _img_channel.disp.h ;
         let _img_height = _img_channel.dim.h / _img_disp_scale; 
@@ -369,6 +388,7 @@ function populate_display_variables(timestamp_matrix, value_matrix)
 function reset_display_variables()
 {
   App.server_time_string = App.WAIT_MESSAGE;
+  App.data_timestamp = App.ntp.timestamp; // Prevent false lag indication prior to data acquisition from channels on newly selected display
 
   let _screen = Display.data[App.display_index].screens[0];
   let _time = _screen.time;
@@ -448,10 +468,13 @@ function handle_display_data(data)
     App.DISPLAY_SELECT.options[App.DISPLAY_SELECT.options.length] = new Option(Display.data[_current_display].title, _current_display);
   }
   App.DISPLAY_SELECT.addEventListener("change", display_select_listener);
-  App.DISPLAY_SELECT.style.position = "absolute";
-  App.DISPLAY_SELECT.style.left = "10px";
-  App.DISPLAY_SELECT.style.top = "10px";
-  App.DISPLAY_SELECT.style.visibility = "hidden"; 
+  setAttributes( App.DISPLAY_SELECT.style, 
+  {
+    position: "absolute",
+    left: "10px",
+    top: "10px",
+    visibility: "hidden"
+  } ) ;
 
   display_select_listener();
 }
@@ -608,10 +631,10 @@ function slider_listener()
 
 
 function display_select_listener()
-{ 
+{
   background(255);
   App.frames_active = 0;
-  clear();
+  //clear();
   
   App.channel_strings_array = [];
 
@@ -636,26 +659,31 @@ function display_select_listener()
       App.canvas_shift_y = _img.disp.pos.y;
     }
     App.img = loadImage(App.img_url, handle_image_loaded);
-    App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
+    //App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
   }
   else
   {
     App.img_url = App.FILES_URL + "00.jpg";
     App.img = loadImage(App.img_url, handle_image_loaded);
-    App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
+    //App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
   }
 
   App.DISPLAY_INFO_TEXT = document.createElement("DIV");
   App.CONTAINER.appendChild(App.DISPLAY_INFO_TEXT);
-  App.DISPLAY_INFO_TEXT.style.width = (parseInt(App.img_width)).toString() + "px";
-  App.DISPLAY_INFO_TEXT.style.height = (parseInt(App.WARNING_FONTSIZE)).toString() + "px";
-  App.DISPLAY_INFO_TEXT.style.position = "absolute";
-  App.DISPLAY_INFO_TEXT.style.left = (parseInt(App.CANVAS_POS_X + App.canvas_shift_x + Math.max(App.img_width/2 - App.WARNING_FONTSIZE*7.0, 0))).toString() + "px";
-  App.DISPLAY_INFO_TEXT.style.top = (parseInt(App.CANVAS_POS_Y + App.canvas_shift_y + App.img_height/2 - App.WARNING_FONTSIZE/2)).toString() + "px";
-  App.DISPLAY_INFO_TEXT.style.fontSize = (parseInt(App.WARNING_FONTSIZE)).toString() + "px";
-  App.DISPLAY_INFO_TEXT.style.fontFamily = App.all_font_families;
-  App.DISPLAY_INFO_TEXT.textAlign = "left";
+  setAttributes( App.DISPLAY_INFO_TEXT.style, 
+  {
+    width: (parseInt(App.img_width)).toString() + "px",
+    height: (parseInt(App.WARNING_FONTSIZE)).toString() + "px",
+    position: "absolute",
+    left: (parseInt(App.CANVAS_POS_X + App.canvas_shift_x + Math.max(App.img_width/2 - App.WARNING_FONTSIZE*7.0, 0))).toString() + "px",
+    top: (parseInt(App.CANVAS_POS_Y + App.canvas_shift_y + App.img_height/2 - App.WARNING_FONTSIZE/2)).toString() + "px",
+    fontSize: (parseInt(App.WARNING_FONTSIZE)).toString() + "px",
+    fontFamily: App.all_font_families,
+    textAlign: "left",
+    visibility: "hidden"
+  } ) ;
   App.DISPLAY_INFO_TEXT.id = "infotext";
+
 
   let _time = _screen.time;
   if (_time !== null) // Any display but the title page
@@ -675,32 +703,38 @@ function display_select_listener()
     _time_active_label.innerHTML = "";
     let _time_active_label_text = document.createTextNode("");
     _time_active_label.appendChild(_time_active_label_text);
-
-    _timebkg.style.width = (_time_disp.size * 14.1).toString() + "px";
-    _timebkg.style.height = (_time_disp.size * 4.1 + 4).toString() + "px";
-    _timebkg.style.position = "absolute";
-    _timebkg.style.left = (_time_disp.pos.x + App.CANVAS_POS_X - _time_disp.size/2 + 1).toString() + "px";
-    _timebkg.style.top = (_time_disp.pos.y + App.CANVAS_POS_Y - _time_disp.size + 1).toString() + "px"; 
-    _timebkg.style.visibility = "hidden";
-    _timebkg.title = ""; 
-    _timebkg.style.fontSize = (_time_disp.size).toString() + "px";
-    _timebkg.style.fontFamily = App.all_font_families;
-    _timebkg.style.color = "rgba(" + (_time_color.r).toString() + "," + (_time_color.g).toString() + "," + (_time_color.b).toString() + "," + (_time_color.a/255).toString() + ")";
-    _timebkg.style.backgroundColor = "rgba(" + (_time_bgcol.r).toString() + "," + (_time_bgcol.g).toString() + "," + (_time_bgcol.b).toString() + "," + (_time_bgcol.a/255).toString() + ")";
-
-    _time_active_label.style.position = "absolute";
-    _time_active_label.style.left = (_time_disp.size * 0.33).toString() + "px";
-    _time_active_label.style.top = (_time_disp.size * 0.34).toString() + "px";
-    _time_active_label.style.visibility = "visible";
-    _time_active_label.title = ""; 
-    _time_active_label.style.fontSize = (_time_disp.size).toString() + "px";
-    _time_active_label.style.fontFamily = App.all_font_families;
-    _time_active_label.style.color = "rgba(" + (_time_color.r).toString() + "," + (_time_color.g).toString() + "," + (_time_color.b).toString() + "," + (_time_color.a/255).toString() + ")";
-    _time_active_label.style.backgroundColor = "transparent";
-    _time_active_label.style.border = "transparent";
-    _time_active_label.style.outline = "none";
-    _time_active_label.style.textAlign = "left";
     
+    _timebkg.title = ""; 
+    setAttributes( _timebkg.style, 
+    {
+      width: (_time_disp.size * 14.1).toString() + "px",
+      height: (_time_disp.size * 4.1 + 4).toString() + "px",
+      position: "absolute",
+      left: (_time_disp.pos.x + App.CANVAS_POS_X - _time_disp.size/2 + 1).toString() + "px",
+      top: (_time_disp.pos.y + App.CANVAS_POS_Y - _time_disp.size + 1).toString() + "px",
+      visibility: "hidden",
+      fontSize: (_time_disp.size).toString() + "px",
+      fontFamily: App.all_font_families,
+      color: getRGBALiteral([_time_color.r,_time_color.g,_time_color.b,_time_color.a]),
+      backgroundColor: getRGBALiteral([_time_bgcol.r,_time_bgcol.g,_time_bgcol.b,_time_bgcol.a])
+    } ) ;
+
+    _time_active_label.title = ""; 
+    setAttributes( _time_active_label.style, 
+    {
+      position: "absolute",
+      left: (_time_disp.size * 0.33).toString() + "px",
+      top: (_time_disp.size * 0.34).toString() + "px",
+      visibility: "visible",
+      fontSize: (_time_disp.size).toString() + "px",
+      fontFamily: App.all_font_families,
+      color: getRGBALiteral([_time_color.r,_time_color.g,_time_color.b,_time_color.a]),
+      backgroundColor: "transparent",
+      border: "transparent",
+      outline: "none",
+      textAlign: "left"
+    } ) ;
+
     _timebkg.id = "timebkg" ;
     _time_active_label.id = "timelabel" ;
     _timebkg.addEventListener("mouseover", label_listener);
@@ -733,31 +767,37 @@ function display_select_listener()
     let _active_label_text = document.createTextNode("");
     _active_label.appendChild(_active_label_text);
 
-    _chanbkg.style.width = (_disp.size * 13.9).toString() + "px";
-    _chanbkg.style.height = (_disp.size * 4.1 + 4).toString() + "px";
-    _chanbkg.style.position = "absolute";
-    _chanbkg.style.left = (_disp.pos.x + App.CANVAS_POS_X - _disp.size/2 + 1).toString() + "px";
-    _chanbkg.style.top = (_disp.pos.y + App.CANVAS_POS_Y - _disp.size + 1).toString() + "px"; 
-    _chanbkg.style.visibility = "hidden";
     _chanbkg.title = ""; 
-    _chanbkg.style.fontSize = (_disp.size).toString() + "px";
-    _chanbkg.style.fontFamily = App.all_font_families;
-    _chanbkg.style.color = "rgba(" + (_color.r).toString() + "," + (_color.g).toString() + "," + (_color.b).toString() + "," + (_color.a/255).toString() + ")";
-    _chanbkg.style.backgroundColor = "rgba(" + (_bgcol.r).toString() + "," + (_bgcol.g).toString() + "," + (_bgcol.b).toString() + "," + (_bgcol.a/255).toString() + ")";
+    setAttributes( _chanbkg.style, 
+    {
+      width: (_disp.size * 13.9).toString() + "px",
+      height: (_disp.size * 4.1 + 4).toString() + "px",
+      position: "absolute",
+      left: (_disp.pos.x + App.CANVAS_POS_X - _disp.size/2 + 1).toString() + "px",
+      top: (_disp.pos.y + App.CANVAS_POS_Y - _disp.size + 1).toString() + "px",
+      visibility: "hidden",
+      fontSize: (_disp.size).toString() + "px",
+      fontFamily: App.all_font_families,
+      color: getRGBALiteral([_color.r,_color.g,_color.b,_color.a]),
+      backgroundColor: getRGBALiteral([_bgcol.r,_bgcol.g,_bgcol.b,_bgcol.a])
+    } ) ;
 
-    _active_label.style.position = "absolute";
-    _active_label.style.left = (_disp.size * 0.33).toString() + "px";
-    _active_label.style.top = (_disp.size * 0.34).toString() + "px";
-    _active_label.style.visibility = "visible";
     _active_label.title = ""; 
-    _active_label.style.fontSize = (_disp.size).toString() + "px";
-    _active_label.style.fontFamily = App.all_font_families;
-    _active_label.style.color = "rgba(" + (_color.r).toString() + "," + (_color.g).toString() + "," + (_color.b).toString() + "," + (_color.a/255).toString() + ")";
-    _active_label.style.backgroundColor = "transparent";
-    _active_label.style.border = "transparent";
-    _active_label.style.outline = "none";
-    _active_label.style.textAlign = "left";
-    
+    setAttributes( _active_label.style, 
+    {
+      position: "absolute",
+      left: (_disp.size * 0.33).toString() + "px",
+      top: (_disp.size * 0.34).toString() + "px",
+      visibility: "visible",
+      fontSize: (_disp.size).toString() + "px",
+      fontFamily: App.all_font_families,
+      color: getRGBALiteral([_color.r,_color.g,_color.b,_color.a]),
+      backgroundColor: "transparent",
+      border: "transparent",
+      outline: "none",
+      textAlign: "left"
+    } ) ;
+
     _chanbkg.id = "chanbkg_" + _chan_index_string;
     _active_label.id = "label_" + _chan_index_string;
     _chanbkg.addEventListener("mouseover", label_listener);
@@ -814,54 +854,66 @@ function display_select_listener()
     let _textForButton = document.createTextNode("");
     _setval.appendChild(_textForButton);
 
-    _ctrlbkg.style.width = (_ctrl_disp.size * 10.8).toString() + "px";
-    _ctrlbkg.style.height = (_ctrl_disp.size * 8.2).toString() + "px";
-    _ctrlbkg.style.position = "absolute";
-    _ctrlbkg.style.left = (_ctrl_disp.pos.x + App.CANVAS_POS_X - _ctrl_disp.size/2 + 7).toString() + "px";
-    _ctrlbkg.style.top = (_ctrl_disp.pos.y + App.CANVAS_POS_Y - _ctrl_disp.size + 14).toString() + "px"; 
-    _ctrlbkg.style.visibility = "hidden";
     _ctrlbkg.title = ""; 
-    _ctrlbkg.style.fontSize = (_ctrl_disp.size).toString() + "px";
-    _ctrlbkg.style.fontFamily = App.all_font_families;
-    _ctrlbkg.style.color = "rgba(" + (_ctrl_color.r).toString() + "," + (_ctrl_color.g).toString() + "," + (_ctrl_color.b).toString() + "," + (_ctrl_color.a/255).toString() + ")";
-    _ctrlbkg.style.backgroundColor = "rgba(" + (_ctrl_bgcol.r).toString() + "," + (_ctrl_bgcol.g).toString() + "," + (_ctrl_bgcol.b).toString() + "," + (_ctrl_bgcol.a/255).toString() + ")";
+    setAttributes( _ctrlbkg.style, 
+    {
+      width: (_ctrl_disp.size * 10.8).toString() + "px",
+      height: (_ctrl_disp.size * 8.2).toString() + "px",
+      position: "absolute",
+      left: (_ctrl_disp.pos.x + App.CANVAS_POS_X - _ctrl_disp.size/2 + 7).toString() + "px",
+      top: (_ctrl_disp.pos.y + App.CANVAS_POS_Y - _ctrl_disp.size + 14).toString() + "px", 
+      visibility: "hidden",
+      fontSize: (_ctrl_disp.size).toString() + "px",
+      fontFamily: App.all_font_families,
+      color: getRGBALiteral([_ctrl_color.r,_ctrl_color.g,_ctrl_color.b,_ctrl_color.a]) , 
+      backgroundColor: getRGBALiteral([_ctrl_bgcol.r,_ctrl_bgcol.g,_ctrl_bgcol.b,_ctrl_bgcol.a])
+    } ) ;
 
-    _slider.style.width = (_ctrl_disp.size * 9.0).toString() + "px";
-    _slider.style.height = (_ctrl_disp.size * 1.8).toString() + "px";
-    _slider.style.position = "absolute";
-    _slider.style.left = (_ctrl_disp.size * 0.7).toString() + "px";
-    _slider.style.top = (_ctrl_disp.size * 0.6).toString() + "px";
-    _slider.style.visibility = "hidden";
     _slider.title = "";
-    _slider.style.fontSize = (_ctrl_disp.size).toString() + "px";
-    _slider.style.fontFamily = App.all_font_families;
-    
-    _setval.style.position = "absolute";
-    _setval.style.left = (_ctrl_disp.size * 0.38).toString() + "px";
-    _setval.style.top = (_ctrl_disp.size * 3.0).toString() + "px";
-    _setval.style.visibility = "visible";
-    _setval.title = ""; 
-    _setval.style.fontSize = (_ctrl_disp.size).toString() + "px";
-    _setval.style.fontFamily = App.all_font_families;
-    _setval.style.color = "rgba(" + (_ctrl_color.r).toString() + "," + (_ctrl_color.g).toString() + "," + (_ctrl_color.b).toString() + "," + (_ctrl_color.a/255).toString() + ")";
-    _setval.style.backgroundColor = "transparent";    
-    _setval.style.border = "transparent";
-    _setval.style.outline = "none";
-    _setval.style.textAlign = "left";
+    setAttributes( _slider.style, 
+    {
+      width: (_ctrl_disp.size * 9.0).toString() + "px",
+      height: (_ctrl_disp.size * 1.8).toString() + "px",
+      position: "absolute",
+      left: (_ctrl_disp.size * 0.7).toString() + "px",
+      top: (_ctrl_disp.size * 0.6).toString() + "px",
+      visibility: "hidden",
+      fontSize: (_ctrl_disp.size).toString() + "px",
+      fontFamily: App.all_font_families
+    } ) ;
 
-    _send.style.width = (_ctrl_disp.size * 2.7).toString() + "px";
-    _send.style.height = (_ctrl_disp.size * 1.6).toString() + "px";
-    _send.style.position = "absolute";
-    _send.style.left = (_ctrl_disp.size * 7.3).toString() + "px";
-    _send.style.top = (_ctrl_disp.size * 3.1).toString() + "px";
-    _send.style.visibility = "hidden";
-    _send.title = ""; 
-    _send.style.fontSize = (_ctrl_disp.size).toString() + "px";
-    _send.style.fontFamily = App.all_font_families;
+    _setval.title = ""; 
+    setAttributes( _slider.style, 
+    {
+      position: "absolute";
+      left: (_ctrl_disp.size * 0.38).toString() + "px",
+      top: (_ctrl_disp.size * 3.0).toString() + "px",
+      visibility: "visible",
+      fontSize: (_ctrl_disp.size).toString() + "px",
+      fontFamily: App.all_font_families,
+      color: getRGBALiteral([_ctrl_color.r,_ctrl_color.g,_ctrl_color.b,_ctrl_color.a]) , 
+      backgroundColor: "transparent",    
+      border: "transparent",
+      outline: "none",
+      textAlign: "left"
+    } ) ;
+
+    _send.title = "";
     _send.disabled = true;
-    _send.style.borderRadius = "10%";
-    _send.style.opacity = "0.5";
-    _send.style.textAlign = "center";
+    setAttributes( _send.style, 
+    {
+      width: (_ctrl_disp.size * 2.7).toString() + "px",
+      height: (_ctrl_disp.size * 1.6).toString() + "px",
+      position: "absolute",
+      left: (_ctrl_disp.size * 7.3).toString() + "px",
+      top: (_ctrl_disp.size * 3.1).toString() + "px",
+      visibility: "hidden",
+      fontSize: (_ctrl_disp.size).toString() + "px",
+      fontFamily: App.all_font_families,
+      borderRadius: "10%",
+      opacity: "0.5",
+      textAlign: "center"
+    } ) ;
 
     _ctrlbkg.id = "ctrlbkg_" + _ctrl_chan_index_string;
     _slider.id = "slider_" + _ctrl_chan_index_string;
@@ -899,3 +951,4 @@ function display_select_listener()
 
   reset_display_variables();
 }
+
