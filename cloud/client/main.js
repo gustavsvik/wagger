@@ -18,29 +18,34 @@ function setup()
   let _screen_layout_params = {"screen_layout_file": _screen_layout_file};
   httpGet(App.CLIENT_URL + "get_screen_data.php", "json", _screen_layout_params, handle_display_data);
   App.img_url = App.FILES_URL + "0.png";
-  App.img = loadImage(App.img_url);
+  App.img = loadImage(App.img_url, handle_image_loaded);
+  //App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
   App.img_width = 1280/(720/App.STD_SCALE_HEIGHT);
   App.img_height = 720/(720/App.STD_SCALE_HEIGHT);
 
   App.CANVAS = createCanvas(1500, 800);
   App.CANVAS.parent("myContainer");
   App.CANVAS.position(App.CANVAS_POS_X, App.CANVAS_POS_Y);
+  
+  App.all_font_families = addFonts(['carlito.woff'], "/fonts/") + ", " + App.STANDARD_FONT_FAMILIES ;
 }
 
 
 function draw() 
 {
-
-  if (App.img_chan_index_string === "") clear();
-  image(App.img, App.canvas_shift_x, App.canvas_shift_y, App.img_width, App.img_height);
+  //if (App.background_is_static)
+  //{
+  //  clear();
+  //  image(App.img, App.canvas_shift_x, App.canvas_shift_y, App.img_width, App.img_height);
+  //}
   
   textSize(App.STANDARD_FONTSIZE);
 	
   App.frames_active++;
 
-  if (App.frames_active < App.display_timeout * App.FRAME_RATE)
+  if (App.frames_active < App.display_timeout * App.FRAME_RATE && typeof App.DISPLAY_SELECT.style !== 'undefined')
   {
-    if (App.DISPLAY_SELECT != null) App.DISPLAY_SELECT.style.visibility = "visible"; 
+    App.DISPLAY_SELECT.style.visibility = "visible"; 
 
     if (App.display_rotate_interval > 0)
     {
@@ -56,10 +61,11 @@ function draw()
     
     fill(color(App.STANDARD_FOREGROUND_COLOR));
     textSize(App.STANDARD_FONTSIZE);
-    App.img = loadImage(App.img_url);
+    App.img = loadImage(App.img_url, handle_image_loaded);
+    App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
 
     let _screen = null;
-    if (Display.data[App.display_index] !== undefined) _screen = Display.data[App.display_index].screens[0];
+    if (typeof Display.data[App.display_index] !== 'undefined') _screen = Display.data[App.display_index].screens[0];
     
     if (_screen !== null)
     {
@@ -171,40 +177,65 @@ function draw()
 
   App.ntp.timestamp = parseInt((new Date().valueOf()) / 1000) + App.ntp.adjustment / 1000000;
 
-  
-  if (App.frames_active >= App.display_timeout * App.FRAME_RATE)
+  if (typeof App.DISPLAY_SELECT.style !== 'undefined')
   {
-    removeAllElements(App.CONTAINER);
-    App.img = loadImage(App.FILES_URL + "000.jpg");
-    App.img_width = 1280/(720/App.STD_SCALE_HEIGHT);
-    App.img_height = 720/(720/App.STD_SCALE_HEIGHT);
-    text("Timeout due to inactivity - please reload page to continue data transfer!", 220, 250);
-    reset_display_variables();
-  }
-  else if (App.display_is_static === false) // display is not static
-  {
-    let _view_lag = App.ntp.timestamp - App.data_timestamp;
-    if ( _view_lag > App.time_bins * App.time_bin_size || !navigator.onLine)
+    if (App.frames_active >= App.display_timeout * App.FRAME_RATE)
     {
-      if (App.frames_active % 2 === 0) fill(255,0,0,127); else fill(255,255,255,127);
-      textSize(App.WARNING_FONTSIZE);
-      if (!isValidNumber(_view_lag) || _view_lag > 10*365*24*60*60) 
+      removeAllElements(App.CONTAINER);
+      App.img = loadImage(App.FILES_URL + "000.jpg", handle_image_loaded);
+      App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
+      App.img_width = 1280/(720/App.STD_SCALE_HEIGHT);
+      App.img_height = 720/(720/App.STD_SCALE_HEIGHT);
+      text("Timeout due to inactivity - please reload page to continue data transfer!", 220, 250);
+      reset_display_variables();
+    }
+    else if (App.display_is_static === false) // display is not static
+    {
+      App.DISPLAY_INFO_TEXT.style.visibility = "hidden"; 
+      let _view_lag = App.ntp.timestamp - App.data_timestamp;
+      if ( _view_lag > App.time_bins * App.time_bin_size || !navigator.onLine)
       {
-        text("", Math.max(App.img_width/2 - App.WARNING_FONTSIZE*7.8, 0), App.img_height/2 + App.WARNING_FONTSIZE/2);
+        if (App.frames_active % 2 === 0) App.DISPLAY_INFO_TEXT.style.color = "rgba(255,0,0,127)"; else App.DISPLAY_INFO_TEXT.style.color = "rgba(255,255,255,127)"
+        //fill(255,0,0,127); else fill(255,255,255,127);
+        //textSize(App.WARNING_FONTSIZE);
+        let _info_text = getChannelElement(["infotext", null]);
+
+        if (!isValidNumber(_view_lag) || _view_lag > 10*365*24*60*60) 
+        {
+          _info_text.innerHTML = "";
+          //text("", Math.max(App.img_width/2 - App.WARNING_FONTSIZE*7.8, 0), App.img_height/2 + App.WARNING_FONTSIZE/2);
+        }
+        else
+        {
+          let _lag_text = getTimeLagText(_view_lag);
+          let _status_text = "requesting new...";
+          if (!navigator.onLine) _status_text = "no internet connection!";
+          _info_text.innerHTML = "Out of date (" + _lag_text + ")" + ", " + _status_text;
+          _info_text.style.visibility = "visible"; 
+          //text("Out of date (" + _lag_text + ")" + ", " + _status_text, Math.max(App.img_width/2 - App.WARNING_FONTSIZE*7.5, 0), App.img_height/2 + App.WARNING_FONTSIZE/2);
+        }
+        //fill(App.STANDARD_FOREGROUND_COLOR);
+	    //textSize(App.STANDARD_FONTSIZE);
       }
-      else
-      {
-        let _lag_text = getTimeLagText(_view_lag);
-        let _status_text = "requesting new...";
-        if (!navigator.onLine) _status_text = "no internet connection!";
-        text("Out of date (" + _lag_text + ")" + ", " + _status_text, Math.max(App.img_width/2 - App.WARNING_FONTSIZE*7.5, 0), App.img_height/2 + App.WARNING_FONTSIZE/2);
-      }
-      fill(App.STANDARD_FOREGROUND_COLOR);
-	  textSize(App.STANDARD_FONTSIZE);
     }
   }
 
 }
+
+
+function handle_image_loaded()
+{ 
+  let _img = {};
+  _img[0] = App.img;
+  _img[1] = App.test_img;
+  for (let _i = 0; _i <= 0; _i++)
+  {
+    image(_img[_i], App.canvas_shift_x, App.canvas_shift_y, App.img_width*(1-0.5*_i), App.img_height*(1-0.5*_i) );
+  }
+  //image(App.test_img, App.canvas_shift_x, App.canvas_shift_y, App.img_width/2, App.img_height/2);
+  //image(_test_img, App.canvas_shift_x, App.canvas_shift_y+480, App.img_width, App.img_height);
+}
+
 
 function handle_server_time(data)
 {
@@ -308,11 +339,13 @@ function populate_display_variables(timestamp_matrix, value_matrix)
         let _img_channel = _screen.img_channels[_img_channel_index];
         let _img_url = App.FILES_URL + _img_channel.index.toString() + "_" + _latest_data_timestamp.toString() + "." + _img_channel.ext;
         App.img_url = _img_url;
-        App.img = loadImage(_img_url);
+        App.img = loadImage(_img_url, handle_image_loaded);
+        App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
+
         let _img_disp_scale = _img_channel.dim.h / _img_channel.disp.h ;
         let _img_height = _img_channel.dim.h / _img_disp_scale; 
         let _img_width = _img_channel.dim.w / _img_disp_scale;
-        image(App.img, _img_channel.disp.pos.x, _img_channel.disp.pos.y, _img_width, _img_height);
+        //image(App.img, _img_channel.disp.pos.x, _img_channel.disp.pos.y, _img_width, _img_height);
         //(App.test_img).setAttribute("src", _img_url);
       }
       for (let _channel_index = 0; _channel_index < _screen.channels.length; _channel_index++)
@@ -419,10 +452,10 @@ function handle_display_data(data)
 
   document.title = "LabRemote"; // New title :)
   App.CONTAINER = document.getElementById("myContainer");
-  let _select = document.createElement("SELECT");
-  App.DISPLAY_SELECT = _select;
-  _select.id = "screen_select";
-  App.CONTAINER.appendChild(_select);
+
+  App.DISPLAY_SELECT = document.createElement("SELECT");
+  App.DISPLAY_SELECT.id = "screen_select";
+  App.CONTAINER.appendChild(App.DISPLAY_SELECT);
   for (let _current_display = 0; _current_display < (Display.data).length; _current_display++) 
   {
     App.DISPLAY_SELECT.options[App.DISPLAY_SELECT.options.length] = new Option(Display.data[_current_display].title, _current_display);
@@ -432,7 +465,7 @@ function handle_display_data(data)
   App.DISPLAY_SELECT.style.left = "10px";
   App.DISPLAY_SELECT.style.top = "10px";
   App.DISPLAY_SELECT.style.visibility = "hidden"; 
-  
+
   display_select_listener();
 }
 
@@ -615,13 +648,24 @@ function display_select_listener()
       App.canvas_shift_x = _img.disp.pos.x;
       App.canvas_shift_y = _img.disp.pos.y;
     }
-    App.img = loadImage(App.img_url);
+    App.img = loadImage(App.img_url, handle_image_loaded);
+    App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
   }
   else
   {
     App.img_url = App.FILES_URL + "00.jpg";
-    App.img = loadImage(App.img_url);
+    App.img = loadImage(App.img_url, handle_image_loaded);
+    App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
   }
+
+  App.DISPLAY_INFO_TEXT = document.createElement("DIV");
+  App.CONTAINER.appendChild(App.DISPLAY_INFO_TEXT);
+  App.DISPLAY_INFO_TEXT.style.position = "absolute";
+  App.DISPLAY_INFO_TEXT.style.left = (parseInt(Math.max(App.img_width/2 - App.WARNING_FONTSIZE*5.5, 0) + App.CANVAS_POS_X)).toString() + "px";
+  App.DISPLAY_INFO_TEXT.style.top = (parseInt(App.img_height/2 - App.WARNING_FONTSIZE/2 + App.CANVAS_POS_Y)).toString() + "px";
+  App.DISPLAY_INFO_TEXT.style.fontSize = (parseInt(App.WARNING_FONTSIZE)).toString() + "px";
+  App.DISPLAY_INFO_TEXT.style.fontFamily = App.all_font_families;
+  App.DISPLAY_INFO_TEXT.id = "infotext";
 
   let _time = _screen.time;
   if (_time !== null) // Any display but the title page
@@ -650,6 +694,7 @@ function display_select_listener()
     _timebkg.style.visibility = "hidden";
     _timebkg.title = ""; 
     _timebkg.style.fontSize = (_time_disp.size).toString() + "px";
+    _timebkg.style.fontFamily = App.all_font_families;
     _timebkg.style.color = "rgba(" + (_time_color.r).toString() + "," + (_time_color.g).toString() + "," + (_time_color.b).toString() + "," + (_time_color.a/255).toString() + ")";
     _timebkg.style.backgroundColor = "rgba(" + (_time_bgcol.r).toString() + "," + (_time_bgcol.g).toString() + "," + (_time_bgcol.b).toString() + "," + (_time_bgcol.a/255).toString() + ")";
 
@@ -659,6 +704,7 @@ function display_select_listener()
     _time_active_label.style.visibility = "visible";
     _time_active_label.title = ""; 
     _time_active_label.style.fontSize = (_time_disp.size).toString() + "px";
+    _time_active_label.style.fontFamily = App.all_font_families;
     _time_active_label.style.color = "rgba(" + (_time_color.r).toString() + "," + (_time_color.g).toString() + "," + (_time_color.b).toString() + "," + (_time_color.a/255).toString() + ")";
     _time_active_label.style.backgroundColor = "transparent";
     _time_active_label.style.border = "transparent";
@@ -705,6 +751,7 @@ function display_select_listener()
     _chanbkg.style.visibility = "hidden";
     _chanbkg.title = ""; 
     _chanbkg.style.fontSize = (_disp.size).toString() + "px";
+    _chanbkg.style.fontFamily = App.all_font_families;
     _chanbkg.style.color = "rgba(" + (_color.r).toString() + "," + (_color.g).toString() + "," + (_color.b).toString() + "," + (_color.a/255).toString() + ")";
     _chanbkg.style.backgroundColor = "rgba(" + (_bgcol.r).toString() + "," + (_bgcol.g).toString() + "," + (_bgcol.b).toString() + "," + (_bgcol.a/255).toString() + ")";
 
@@ -714,6 +761,7 @@ function display_select_listener()
     _active_label.style.visibility = "visible";
     _active_label.title = ""; 
     _active_label.style.fontSize = (_disp.size).toString() + "px";
+    _active_label.style.fontFamily = App.all_font_families;
     _active_label.style.color = "rgba(" + (_color.r).toString() + "," + (_color.g).toString() + "," + (_color.b).toString() + "," + (_color.a/255).toString() + ")";
     _active_label.style.backgroundColor = "transparent";
     _active_label.style.border = "transparent";
@@ -730,6 +778,9 @@ function display_select_listener()
   }
   
   let _no_of_img_channels = (_screen.img_channels).length;
+
+  //App.background_is_static = false ;
+
   App.img_chan_index_string = "";
   for (let _i = 0; _i < _no_of_img_channels; _i++)
   {
@@ -742,6 +793,8 @@ function display_select_listener()
     App.canvas_shift_x = _img_channel.disp.pos.x;
     App.canvas_shift_y = _img_channel.disp.pos.y;
   }
+  
+  //if (App.img_chan_index_string !== "") App.background_is_static = true ;
   
   let _no_of_ctrl_channels = (_screen.ctrl_channels).length;
   App.ctrl_chan_index_string = "";
@@ -779,6 +832,7 @@ function display_select_listener()
     _ctrlbkg.style.visibility = "hidden";
     _ctrlbkg.title = ""; 
     _ctrlbkg.style.fontSize = (_ctrl_disp.size).toString() + "px";
+    _ctrlbkg.style.fontFamily = App.all_font_families;
     _ctrlbkg.style.color = "rgba(" + (_ctrl_color.r).toString() + "," + (_ctrl_color.g).toString() + "," + (_ctrl_color.b).toString() + "," + (_ctrl_color.a/255).toString() + ")";
     _ctrlbkg.style.backgroundColor = "rgba(" + (_ctrl_bgcol.r).toString() + "," + (_ctrl_bgcol.g).toString() + "," + (_ctrl_bgcol.b).toString() + "," + (_ctrl_bgcol.a/255).toString() + ")";
 
@@ -790,6 +844,7 @@ function display_select_listener()
     _slider.style.visibility = "hidden";
     _slider.title = "";
     _slider.style.fontSize = (_ctrl_disp.size).toString() + "px";
+    _slider.style.fontFamily = App.all_font_families;
     
     _setval.style.position = "absolute";
     _setval.style.left = (_ctrl_disp.size * 0.38).toString() + "px";
@@ -797,6 +852,7 @@ function display_select_listener()
     _setval.style.visibility = "visible";
     _setval.title = ""; 
     _setval.style.fontSize = (_ctrl_disp.size).toString() + "px";
+    _setval.style.fontFamily = App.all_font_families;
     _setval.style.color = "rgba(" + (_ctrl_color.r).toString() + "," + (_ctrl_color.g).toString() + "," + (_ctrl_color.b).toString() + "," + (_ctrl_color.a/255).toString() + ")";
     _setval.style.backgroundColor = "transparent";    
     _setval.style.border = "transparent";
@@ -811,6 +867,7 @@ function display_select_listener()
     _send.style.visibility = "hidden";
     _send.title = ""; 
     _send.style.fontSize = (_ctrl_disp.size).toString() + "px";
+    _send.style.fontFamily = App.all_font_families;
     _send.disabled = true;
     _send.style.borderRadius = "10%";
     _send.style.opacity = "0.5";
