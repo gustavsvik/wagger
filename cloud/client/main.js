@@ -33,7 +33,9 @@ function setup()
 
 function draw() 
 {
-  	
+  
+  //textSize(App.STANDARD_FONTSIZE);
+	
   App.frames_active++;
 
   if (App.frames_active < App.display_timeout * App.FRAME_RATE && typeof App.DISPLAY_SELECT.style !== 'undefined')
@@ -52,6 +54,8 @@ function draw()
       }
     }
 
+    //fill(color(App.STANDARD_FOREGROUND_COLOR));
+    //textSize(App.STANDARD_FONTSIZE);
     App.img = loadImage(App.img_url, handle_image_loaded);
     //App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
 
@@ -97,6 +101,10 @@ function draw()
       }
     }
   }
+  
+  //fill(color(App.STANDARD_FOREGROUND_COLOR));
+  //textSize(App.STANDARD_FONTSIZE);
+
 
   if ( (frameCount - App.last_time_sync >= App.NTP_SYNC_INTERVAL * App.FRAME_RATE) && App.frames_active < App.display_timeout * App.FRAME_RATE && App.display_is_static === false )
   {
@@ -626,6 +634,7 @@ function display_select_listener()
 {
   background(255);
   App.frames_active = 0;
+  //clear();
   
   App.channel_strings_array = [];
 
