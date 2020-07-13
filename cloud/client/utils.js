@@ -14,7 +14,7 @@ class AppData
     this.DISPLAY_INFO_TEXT = "";
     this.STANDARD_FONT_FAMILIES = "'Arial', 'Verdana'";
     this.WARNING_FONTSIZE = 36;
-    this.STANDARD_FONTSIZE = 12;
+    this.STANDARD_FONTSIZE = 14;
     this.MAX_DISPLAY_DIGITS = 13;
     this.STANDARD_FOREGROUND_COLOR = [255,255,255,255];
     this.STANDARD_BACKGROUND_COLOR = [0,0,255,255];
@@ -34,8 +34,8 @@ class AppData
     this.display_timeout = 900 ;
     this.display_rotate_interval = 0 ;
     this.display_is_static = false;
+    this.display_timed_out = false;
     this.all_font_families = "";
-    //this.background_is_static = false;
     this.chan_index_string = "";
     this.img_chan_index_string = "";
     this.ctrl_chan_index_string = "";
@@ -79,6 +79,17 @@ class DisplayData
   }
 }
 
+
+function getRGBALiteral( rgba_array )
+{
+  return "rgba(" + rgba_array[0].toString() + "," + rgba_array[1].toString() + "," + rgba_array[2].toString() + "," + (rgba_array[3]/255).toString() + ")";
+}
+
+
+function setAttributes( elem, propertyObject )
+{
+  for (let property in propertyObject) elem[property] = propertyObject[property];
+}
 
 
 function addFonts(font_filenames, font_path)
