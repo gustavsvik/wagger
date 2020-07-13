@@ -33,11 +33,6 @@ function setup()
 
 function draw() 
 {
-  //if (App.background_is_static)
-  //{
-  //  clear();
-  //  image(App.img, App.canvas_shift_x, App.canvas_shift_y, App.img_width, App.img_height);
-  //}
   
   textSize(App.STANDARD_FONTSIZE);
 	
@@ -196,14 +191,11 @@ function draw()
       if ( _view_lag > App.time_bins * App.time_bin_size || !navigator.onLine)
       {
         if (App.frames_active % 2 === 0) App.DISPLAY_INFO_TEXT.style.color = "rgba(255,0,0,127)"; else App.DISPLAY_INFO_TEXT.style.color = "rgba(255,255,255,127)"
-        //fill(255,0,0,127); else fill(255,255,255,127);
-        //textSize(App.WARNING_FONTSIZE);
         let _info_text = getChannelElement(["infotext", null]);
 
         if (!isValidNumber(_view_lag) || _view_lag > 10*365*24*60*60) 
         {
           _info_text.innerHTML = "";
-          //text("", Math.max(App.img_width/2 - App.WARNING_FONTSIZE*7.8, 0), App.img_height/2 + App.WARNING_FONTSIZE/2);
         }
         else
         {
@@ -212,10 +204,7 @@ function draw()
           if (!navigator.onLine) _status_text = "no internet connection!";
           _info_text.innerHTML = "Out of date (" + _lag_text + ")" + ", " + _status_text;
           _info_text.style.visibility = "visible"; 
-          //text("Out of date (" + _lag_text + ")" + ", " + _status_text, Math.max(App.img_width/2 - App.WARNING_FONTSIZE*7.5, 0), App.img_height/2 + App.WARNING_FONTSIZE/2);
         }
-        //fill(App.STANDARD_FOREGROUND_COLOR);
-	    //textSize(App.STANDARD_FONTSIZE);
       }
     }
   }
@@ -232,8 +221,6 @@ function handle_image_loaded()
   {
     image(_img[_i], App.canvas_shift_x, App.canvas_shift_y, App.img_width*(1-0.5*_i), App.img_height*(1-0.5*_i) );
   }
-  //image(App.test_img, App.canvas_shift_x, App.canvas_shift_y, App.img_width/2, App.img_height/2);
-  //image(_test_img, App.canvas_shift_x, App.canvas_shift_y+480, App.img_width, App.img_height);
 }
 
 
