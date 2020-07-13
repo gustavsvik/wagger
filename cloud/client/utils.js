@@ -10,6 +10,9 @@ class AppData
     this.CANVAS_POS_X = 250 ;
     this.CANVAS_POS_Y = 10 ;
     this.STD_SCALE_HEIGHT = 480;
+    this.DISPLAY_SELECT = {};
+    this.DISPLAY_INFO_TEXT = "";
+    this.STANDARD_FONT_FAMILIES = "'Arial', 'Verdana'";
     this.WARNING_FONTSIZE = 36;
     this.STANDARD_FONTSIZE = 12;
     this.MAX_DISPLAY_DIGITS = 13;
@@ -31,11 +34,14 @@ class AppData
     this.display_timeout = 900 ;
     this.display_rotate_interval = 0 ;
     this.display_is_static = false;
+    this.all_font_families = "";
+    //this.background_is_static = false;
     this.chan_index_string = "";
     this.img_chan_index_string = "";
     this.ctrl_chan_index_string = "";
     this.img_url = "";
     this.img = {};
+    this.test_img = {};
     this.img_height = this.STD_SCALE_HEIGHT;
     this.img_width = 4/3 * this.img_height; 
     this.start_time = -9999;
@@ -73,6 +79,26 @@ class DisplayData
   }
 }
 
+
+
+function addFonts(font_filenames, font_path)
+{
+  let _font_families = "";
+  for (let _i = 0; _i < font_filenames.length; _i++)
+  {
+    let _filename = font_filenames[_i];
+    let _dot_parts = _filename.split('.');
+    let _filetype = _dot_parts[_dot_parts.length - 1];
+    if (_filetype === 'ttf') _filetype = 'truetype';
+    let _name = _dot_parts[0];
+    let _arg_string = "url(." + font_path + _filename + ") format('" + _filetype + "')";
+    let _font = new FontFace( _name, _arg_string ); //, {style: 'normal', unicodeRange: 'U+000-5FF', weight: '500'} );
+    _font.load().then(function() {document.fonts.add(_font); } ).catch(e => console.error(e.message)); 
+    _font_families += "'" + _name + "'";
+    if (_i < font_filenames.length - 1) _font_families += ", ";
+  }
+  return _font_families;
+}
 
 
 function arrayElementsIn(arr)
