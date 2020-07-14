@@ -1,6 +1,6 @@
 {
 
-"disp_timeout": 1000000000,
+"disp_timeout": 900,
 "disp_rotate_interval": 10,
 
 "displays": 
