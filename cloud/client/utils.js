@@ -32,7 +32,11 @@ class AppData
     this.last_time_sync = 0; 
     this.display_index = 0;
     this.display_timeout = 900 ;
-    this.display_rotate_interval = 0 ;
+    this.display_kiosk_interval = 0 ;
+    this.display_kiosk_adjust = {} ;
+    this.display_kiosk_adjust.x = 0 ;
+    this.display_kiosk_adjust.y = 0 ;
+    this.display_kiosk_height = 0 ;
     this.display_is_static = false;
     this.display_timed_out = false;
     this.all_font_families = "";
