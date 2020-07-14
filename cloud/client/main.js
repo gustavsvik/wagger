@@ -625,7 +625,7 @@ function slider_listener()
 function display_select_listener()
 {
   background(255);
-  App.frames_active = 0;
+  if (App.display_rotate_interval === 0) App.frames_active = 0;
   
   App.channel_strings_array = [];
 
