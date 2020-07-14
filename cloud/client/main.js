@@ -475,57 +475,60 @@ function handle_display_data(data)
 function label_listener()
 {
   let _element = this;
-  App.hovered_clicked_label = _element ;
-  _element.style.visibility = "visible";
-  let [_tag, _index] = getTagChannelIndex(_element);
-
-  if (_tag === "timebkg")
+  if (typeof _element !== 'undefined')
   {
-    let _time_label = getChannelElement (["timelabel", null]);
-    if (_time_label !== null)
+    App.hovered_clicked_label = _element ;
+    _element.style.visibility = "visible";
+    let [_tag, _index] = getTagChannelIndex(_element);
+
+    if (_tag === "timebkg")
     {
-      _time_label.style.visibility = "visible";
-      let _time = (Display.data[App.display_index]).screens[0].time;
-      let _str_val = _time.str_val + _time.info;
-      _time_label.innerHTML = _str_val + ( - App.ntp.adjustment / 1000000 ).toString().substring(0,7) + " s";
+      let _time_label = getChannelElement (["timelabel", null]);
+      if (_time_label !== null)
+      {
+        _time_label.style.visibility = "visible";
+        let _time = (Display.data[App.display_index]).screens[0].time;
+        let _str_val = _time.str_val + _time.info;
+        _time_label.innerHTML = _str_val + ( - App.ntp.adjustment / 1000000 ).toString().substring(0,7) + " s";
+      }
     }
-  }
   
-  let _setval = getChannelElement (["setval", _index]);
-  if (_setval !== null)
-  {
-    _setval.style.visibility = "visible";
-    let _ctrl_channels = (Display.data[App.display_index]).screens[0].ctrl_channels;
-    let _ctrl_index = findWithAttr(_ctrl_channels, "index", parseInt(_index) );
-    let _ctrl_channel = _ctrl_channels[_ctrl_index];
-    let _value_unit_string = "";
-    if ( _ctrl_channel.str_val !== "" ) _value_unit_string = _ctrl_channel.str_val;
-    else _value_unit_string = (_ctrl_channel.val * _ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
-    let _str_val = _value_unit_string + _ctrl_channel.info;         
-    _setval.innerHTML = _str_val;
-    let _slider = getChannelElement (["slider", _index]);
-    if (_slider !== null) 
+    let _setval = getChannelElement (["setval", _index]);
+    if (_setval !== null)
     {
-      _slider.style.visibility = "visible";
-      _slider.value = _ctrl_channel.val;
+      _setval.style.visibility = "visible";
+      let _ctrl_channels = (Display.data[App.display_index]).screens[0].ctrl_channels;
+      let _ctrl_index = findWithAttr(_ctrl_channels, "index", parseInt(_index) );
+      let _ctrl_channel = _ctrl_channels[_ctrl_index];
+      let _value_unit_string = "";
+      if ( _ctrl_channel.str_val !== "" ) _value_unit_string = _ctrl_channel.str_val;
+      else _value_unit_string = (_ctrl_channel.val * _ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
+      let _str_val = _value_unit_string + _ctrl_channel.info;         
+      _setval.innerHTML = _str_val;
+      let _slider = getChannelElement (["slider", _index]);
+      if (_slider !== null) 
+      {
+        _slider.style.visibility = "visible";
+        _slider.value = _ctrl_channel.val;
+      }
+      let _send = getChannelElement (["send", _index]);
+      if (_send !== null) _send.style.visibility = "visible";
     }
-    let _send = getChannelElement (["send", _index]);
-    if (_send !== null) _send.style.visibility = "visible";
-  }
 
-  let _label = getChannelElement (["label", _index]);
-  if (_label !== null)
-  {
-    _label.style.visibility = "visible"; 
-    let _channels = (Display.data[App.display_index]).screens[0].channels;
-    let _chan_index = findWithAttr(_channels, "index", parseInt(_index) );
-    let _channel = _channels[_chan_index];
-    let _value_unit_string = "";
-    //if ( _channel.str_val !== "" ) _value_unit_string = _channel.str_val;
-    //else 
-    _value_unit_string = (_channel.val).toString().substring(0, App.MAX_DISPLAY_DIGITS) + " " + _channel.unit;  // .substring(0,12)
-    let _str_val = _value_unit_string + _channel.info;
-    _label.innerHTML = _str_val;
+    let _label = getChannelElement (["label", _index]);
+    if (_label !== null)
+    {
+      _label.style.visibility = "visible"; 
+      let _channels = (Display.data[App.display_index]).screens[0].channels;
+      let _chan_index = findWithAttr(_channels, "index", parseInt(_index) );
+      let _channel = _channels[_chan_index];
+      let _value_unit_string = "";
+      //if ( _channel.str_val !== "" ) _value_unit_string = _channel.str_val;
+      //else 
+      _value_unit_string = (_channel.val).toString().substring(0, App.MAX_DISPLAY_DIGITS) + " " + _channel.unit;  // .substring(0,12)
+      let _str_val = _value_unit_string + _channel.info;
+      _label.innerHTML = _str_val;
+    }
   }
 }
 
@@ -533,46 +536,49 @@ function label_listener()
 function outside_label_listener()
 {
   let _element = this;
-  App.hovered_clicked_label = null ;
-  _element.style.visibility = "hidden";
-  let [_tag, _index] = getTagChannelIndex(_element);
+  if (typeof _element !== 'undefined')
+  {
+    App.hovered_clicked_label = null ;
+    _element.style.visibility = "hidden";
+    let [_tag, _index] = getTagChannelIndex(_element);
   
-  if (_tag === "timebkg")
-  {
-    let _time_label = getChannelElement (["timelabel", null]);
-    if (_time_label !== null)
+    if (_tag === "timebkg")
     {
-      let _time = (Display.data[App.display_index]).screens[0].time;
-      let _str_val = _time.str_val ;
-      _time_label.innerHTML = _str_val + htmlSpaces(0) + "<br>" + htmlSpaces(10) ; 
+      let _time_label = getChannelElement (["timelabel", null]);
+      if (_time_label !== null)
+      {
+        let _time = (Display.data[App.display_index]).screens[0].time;
+        let _str_val = _time.str_val ;
+        _time_label.innerHTML = _str_val + htmlSpaces(0) + "<br>" + htmlSpaces(10) ; 
+      }
     }
-  }
 
-  let _send = getChannelElement (["send", _index]);
-  if (_send !== null) _send.style.visibility = "hidden";
-  let _slider = getChannelElement (["slider", _index]);
-  if (_slider !== null) _slider.style.visibility = "hidden";
-  let _setval = getChannelElement (["setval", _index]);
-  if (_setval !== null)
-  {
-    let _ctrl_channels = (Display.data[App.display_index]).screens[0].ctrl_channels;
-    let _ctrl_index = findWithAttr(_ctrl_channels, "index", parseInt(_index) );
-    let _ctrl_channel = _ctrl_channels[_ctrl_index];
-    let _value_unit_string = "";
-    if ( _ctrl_channel.str_val !== "" ) _value_unit_string = _ctrl_channel.str_val;
-    else _value_unit_string = (_ctrl_channel.val  *_ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
-    _setval.innerHTML = _value_unit_string + htmlSpaces(0) + "<br>" + htmlSpaces(10) ; 
-  }
-  let _label = getChannelElement (["label", _index]);
-  if (_label !== null)
-  {
-    let _channels = (Display.data[App.display_index]).screens[0].channels;
-    let _chan_index = findWithAttr(_channels, "index", parseInt(_index) );
-    let _channel = _channels[_chan_index];
-    let _value_unit_string = "";
-    if ( _channel.str_val !== "" ) _value_unit_string = _channel.str_val;
-    else _value_unit_string = (_channel.val  *_channel.scale).toString().substring(0,_channel.disp.len) + " " + _channel.unit;
-    _label.innerHTML = _value_unit_string + htmlSpaces(0) + "<br>" + htmlSpaces(10) ; 
+    let _send = getChannelElement (["send", _index]);
+    if (_send !== null) _send.style.visibility = "hidden";
+    let _slider = getChannelElement (["slider", _index]);
+    if (_slider !== null) _slider.style.visibility = "hidden";
+    let _setval = getChannelElement (["setval", _index]);
+    if (_setval !== null)
+    {
+      let _ctrl_channels = (Display.data[App.display_index]).screens[0].ctrl_channels;
+      let _ctrl_index = findWithAttr(_ctrl_channels, "index", parseInt(_index) );
+      let _ctrl_channel = _ctrl_channels[_ctrl_index];
+      let _value_unit_string = "";
+      if ( _ctrl_channel.str_val !== "" ) _value_unit_string = _ctrl_channel.str_val;
+      else _value_unit_string = (_ctrl_channel.val  *_ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
+      _setval.innerHTML = _value_unit_string + htmlSpaces(0) + "<br>" + htmlSpaces(10) ; 
+    }
+    let _label = getChannelElement (["label", _index]);
+    if (_label !== null)
+    {
+      let _channels = (Display.data[App.display_index]).screens[0].channels;
+      let _chan_index = findWithAttr(_channels, "index", parseInt(_index) );
+      let _channel = _channels[_chan_index];
+      let _value_unit_string = "";
+      if ( _channel.str_val !== "" ) _value_unit_string = _channel.str_val;
+      else _value_unit_string = (_channel.val  *_channel.scale).toString().substring(0,_channel.disp.len) + " " + _channel.unit;
+      _label.innerHTML = _value_unit_string + htmlSpaces(0) + "<br>" + htmlSpaces(10) ; 
+    }
   }
 }
 
@@ -580,52 +586,65 @@ function outside_label_listener()
 function send_listener()
 {
   let _send = this;
-  _send.disabled = true;
-  _send.style.opacity = "0.5";
-  App.pressed_send = _send;
+  if (typeof _send !== 'undefined')
+  {
+    _send.disabled = true;
+    _send.style.opacity = "0.5";
+    App.pressed_send = _send;
+  }
 }
 
 
 function slider_listener()
 {
   let _slider = this;
-  let [_tag, _index_string] = getTagChannelIndex(_slider);
-  let _setval = getChannelElement (["setval", _index_string]);
-  let _send = getChannelElement (["send", _index_string]);
-  let _slider_index = parseInt(_index_string);
-  let _slider_value = parseFloat(_slider.value);
-  _send.disabled = false;
-  _send.style.opacity = "1.0";
-
-  let _ctrl_channel = [];
-  let _ctrl_channels = (Display.data[App.display_index]).screens[0].ctrl_channels;
-  for (let _ctrl_channel_counter = 0; _ctrl_channel_counter < _ctrl_channels.length; _ctrl_channel_counter++) 
+  if (typeof _slider !== 'undefined')
   {
-    if ( _ctrl_channels[_ctrl_channel_counter].index === _slider_index ) _ctrl_channel = _ctrl_channels[_ctrl_channel_counter];
-  }
-  let _value_unit_string = "";
-  if ( _ctrl_channel.min_str_val !== "" && _ctrl_channel.max_str_val !== "" && _ctrl_channel.str_val !== "" )
-  {
-    _value_unit_string = _ctrl_channel.min_str_val;
-    if (_slider_value > 0.5) _value_unit_string = _ctrl_channel.max_str_val;
-  }
-  else _value_unit_string = (_slider_value  *_ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
+    let [_tag, _index_string] = getTagChannelIndex(_slider);
+    let _setval = getChannelElement (["setval", _index_string]);
+    let _send = getChannelElement (["send", _index_string]);
+    let _slider_index = parseInt(_index_string);
+    let _slider_value = parseFloat(_slider.value);
+    _send.disabled = false;
+    _send.style.opacity = "1.0"  ;
 
-  _ctrl_channel.str_val = _value_unit_string;
-  _ctrl_channel.val = _slider_value;
+    let _ctrl_channel = [];
+    let _ctrl_channels = (Display.data[App.display_index]).screens[0].ctrl_channels;
+    for (let _ctrl_channel_counter = 0; _ctrl_channel_counter < _ctrl_channels.length; _ctrl_channel_counter++) 
+    {
+      if ( _ctrl_channels[_ctrl_channel_counter].index === _slider_index ) _ctrl_channel = _ctrl_channels[_ctrl_channel_counter];
+    }
+    let _value_unit_string = "";
+    if ( _ctrl_channel.min_str_val !== "" && _ctrl_channel.max_str_val !== "" && _ctrl_channel.str_val !== "" )
+    {
+      _value_unit_string = _ctrl_channel.min_str_val;
+      if (_slider_value > 0.5) _value_unit_string = _ctrl_channel.max_str_val;
+    }
+    else _value_unit_string = (_slider_value  *_ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
+
+    _ctrl_channel.str_val = _value_unit_string;
+    _ctrl_channel.val = _slider_value;
   
-  _value_unit_string += _ctrl_channel.info;
+    _value_unit_string += _ctrl_channel.info;
 
-  _setval.innerHTML = _value_unit_string;
+    _setval.innerHTML = _value_unit_string;
 
-  App.moved_slider = _slider;
+    App.moved_slider = _slider;
+  }
 }
 
 
 function display_select_listener()
 {
   background(255);
-  if (App.display_rotate_interval === 0) App.frames_active = 0;
+  if (App.display_rotate_interval === 0) 
+  {
+    App.frames_active = 0;
+  }
+  else
+  {
+    //outside_label_listener();
+  }
   
   App.channel_strings_array = [];
 
@@ -807,8 +826,8 @@ function display_select_listener()
   {
     let _img_channel = _screen.img_channels[_i];
     let _img_chan_index_string = (_img_channel.index).toString();
-    App.img_chan_index_string += _img_chan_index_string + ";";
     let _img_disp_scale = _img_channel.dim.h / _img_channel.disp.h ;
+    App.img_chan_index_string += _img_chan_index_string + ";";
     App.img_height = _img_channel.dim.h / _img_disp_scale; 
     App.img_width = _img_channel.dim.w / _img_disp_scale;
     App.canvas_shift_x = _img_channel.disp.pos.x;
@@ -914,26 +933,36 @@ function display_select_listener()
     _ctrlbkg.addEventListener("mouseover", label_listener);
     _ctrlbkg.addEventListener("mouseleave", outside_label_listener);
     
-    _slider.type = "range";
+    setAttributes( _slider, 
+    {
+      type: "range",
+      min: _ctrl_channel.min_val,
+      max: _ctrl_channel.max_val,
+      step: _ctrl_channel.val_step,
+      value: _ctrl_channel.val
+    } ) ;
     _slider.addEventListener("input", slider_listener);
-    _slider.min = _ctrl_channel.min_val;
-    _slider.max = _ctrl_channel.max_val;
-    _slider.step = _ctrl_channel.val_step;
-    _slider.value = _ctrl_channel.val;
+
     let _value_unit_string = "";
     if ( _ctrl_channel.min_str_val !== "" && _ctrl_channel.max_str_val !== "" && _ctrl_channel.str_val !== "" )
     {
-      _slider.min = 0;
-      _slider.max = 1;
-      _slider.step = 1;
-      _slider.value = 0;
+      setAttributes( _slider, 
+      {
+        min: 0,
+        max: 1,
+        step: 1,
+        value: 0
+      } ) ;
       _value_unit_string = _ctrl_channel.min_str_val;
     }
     else _value_unit_string = (_ctrl_channel.val * _ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
     
-    _ctrl_channel.str_val = _value_unit_string;
-    _ctrl_channel.info = htmlSpaces(0) + "<br>" + htmlSpaces(10) + "<br>" + (_ctrl_channel.label).toString() + "<br>" + "Control channel " + _ctrl_chan_index_string ;        
-    _ctrl_channel.padding = htmlSpaces(0) + "<br>" + htmlSpaces(10) + "<br>" + htmlSpaces(10) ;        
+    setAttributes( _ctrl_channel, 
+    {
+      str_val: _value_unit_string,
+      info: htmlSpaces(0) + "<br>" + htmlSpaces(10) + "<br>" + (_ctrl_channel.label).toString() + "<br>" + "Control channel " + _ctrl_chan_index_string, 
+      padding: htmlSpaces(0) + "<br>" + htmlSpaces(10) + "<br>" + htmlSpaces(10)
+    } ) ;      
 
     _setval.innerHTML = _value_unit_string + _ctrl_channel.padding; //+ "<br>" + htmlSpaces(10);
     _send.addEventListener("click", send_listener);
