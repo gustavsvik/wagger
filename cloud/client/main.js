@@ -26,7 +26,7 @@ function setup()
   App.CANVAS = createCanvas(1500, 800);
   App.CANVAS.parent("myContainer");
   App.CANVAS.position(App.CANVAS_POS_X, App.CANVAS_POS_Y);
-  
+    
   App.all_font_families = addFonts(['carlito.woff'], "/fonts/") + ", " + App.STANDARD_FONT_FAMILIES ;
 }
 
@@ -40,9 +40,9 @@ function draw()
   {
     App.DISPLAY_SELECT.style.visibility = "visible"; 
 
-    if (App.display_rotate_interval > 0)
+    if (App.display_kiosk_interval > 0)
     {
-      if (App.frames_active % (App.display_rotate_interval * App.FRAME_RATE) === 0)
+      if (App.frames_active % (App.display_kiosk_interval * App.FRAME_RATE) === 0)
       {
         App.display_index++ ;
         if (App.display_index >= (Display.data).length) App.display_index = 0 ;
@@ -339,8 +339,8 @@ function populate_display_variables(timestamp_matrix, value_matrix)
         App.img_url = _img_url;
         App.img = loadImage(_img_url, handle_image_loaded);
         //App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
-
         let _img_disp_scale = _img_channel.dim.h / _img_channel.disp.h ;
+        if (App.display_kiosk_height > 0) _img_disp_scale = _img_channel.dim.h / App.display_kiosk_height ;
         let _img_height = _img_channel.dim.h / _img_disp_scale; 
         let _img_width = _img_channel.dim.w / _img_disp_scale;
         //image(App.img, _img_channel.disp.pos.x, _img_channel.disp.pos.y, _img_width, _img_height);
@@ -446,8 +446,10 @@ function handle_display_data(data)
 {
   Display.data = data.displays; 
   
-  App.display_timeout = data.disp_timeout; 
-  App.display_rotate_interval = data.disp_rotate_interval; 
+  if (typeof data.disp_timeout !== 'undefined') App.display_timeout = data.disp_timeout; 
+  if (typeof data.disp_kiosk_interval !== 'undefined') App.display_kiosk_interval = data.disp_kiosk_interval; 
+  if (typeof data.disp_kiosk_adjust !== 'undefined') App.display_kiosk_adjust = data.disp_kiosk_adjust; 
+  if (typeof data.disp_kiosk_override_height !== 'undefined') App.display_kiosk_height = data.disp_kiosk_override_height; 
 
   document.title = "LabRemote"; // New title :)
   App.CONTAINER = document.getElementById("myContainer");
@@ -637,13 +639,15 @@ function slider_listener()
 function display_select_listener()
 {
   background(255);
-  if (App.display_rotate_interval === 0) 
+  if (App.display_kiosk_interval === 0) 
   {
     App.frames_active = 0;
   }
   else
   {
     //outside_label_listener();
+    let _adjust = App.display_kiosk_adjust ;
+    window.scrollTo(App.CANVAS_POS_X + _adjust.x, App.CANVAS_POS_Y + _adjust.y);
   }
   
   App.channel_strings_array = [];
@@ -662,9 +666,10 @@ function display_select_listener()
     {
       let _img = _screen.imgs[i];
       if (i === 0) App.img_url = App.FILES_URL + (_img.file).toString();
-      let img_disp_scale = _img.dim.h / _img.disp.h ;
-      App.img_height = _img.dim.h / img_disp_scale; 
-      App.img_width = _img.dim.w / img_disp_scale;
+      let _img_disp_scale = _img.dim.h / _img.disp.h ;
+      if (App.display_kiosk_height > 0) _img_disp_scale = _img.dim.h / App.display_kiosk_height ;
+      App.img_height = _img.dim.h / _img_disp_scale; 
+      App.img_width = _img.dim.w / _img_disp_scale;
       App.canvas_shift_x = _img.disp.pos.x;
       App.canvas_shift_y = _img.disp.pos.y;
     }
@@ -827,6 +832,7 @@ function display_select_listener()
     let _img_channel = _screen.img_channels[_i];
     let _img_chan_index_string = (_img_channel.index).toString();
     let _img_disp_scale = _img_channel.dim.h / _img_channel.disp.h ;
+    if (App.display_kiosk_height > 0) _img_disp_scale = _img_channel.dim.h / App.display_kiosk_height ;
     App.img_chan_index_string += _img_chan_index_string + ";";
     App.img_height = _img_channel.dim.h / _img_disp_scale; 
     App.img_width = _img_channel.dim.w / _img_disp_scale;
