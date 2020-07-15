@@ -9,7 +9,7 @@
 [
 
   {
-    "title": "Select display",
+    "title": "Lab building front view",
     "show": true,
     "screens":
     [
@@ -17,40 +17,12 @@
         "label": "View",
         "imgs": 
         [
-          { "file": "0.png", "dim": {"w": 1280, "h": 720}, "disp": {"h": 480, "pos": {"x": 0, "y": 0}} }
+          { "file": "11.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
         "time": null,
         "channels": [],
         "img_channels": [],
         "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Electrical loads (live)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 15}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
-        "channels": 
-        [
-          { "index": 98, "show": true, "label": "Measured temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 4, "size": 30, "pos": {"x": 300, "y": 300}, "col": {"r": 0, "g": 255, "b": 0, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 255, "a": 127}} }
-        ],
-        "img_channels":
-        [
-          { "index": 160, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1280, "h": 720}, "disp": {"h": 480, "pos": {"x": 0, "y": 0}} }
-        ],
-        "ctrl_channels": 
-        [
-          { "index": 174, "show": true, "label": "Start heater", "str_val": "Off", "val": 0.0, "min_str_val": "Off", "min_val": 0.0, "max_str_val": "On", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "", "disp": {"len": 5, "size": 14, "pos": {"x": 10, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 175, "show": true, "label": "Temperature setpoint", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": -5.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 5, "size": 14, "pos": {"x": 170, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 176, "show": true, "label": "Controller P value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "", "disp": {"len": 5, "size": 14, "pos": {"x": 320, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 177, "show": true, "label": "Controller I value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "", "disp": {"len": 5, "size": 14, "pos": {"x": 470, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 178, "show": true, "label": "Controller D value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "", "disp": {"len": 5, "size": 14, "pos": {"x": 620, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} }
-        ]
       }
     ]
   },
@@ -63,13 +35,49 @@
         "label": "View",
         "imgs": 
         [
-          { "file": "4.jpg", "dim": {"w": 1179, "h": 805}, "disp": {"h": 720, "pos": {"x": 0, "y": 0}} }
+          { "file": "4.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 15}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 200} } },
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 200} } },
         "channels":
         [
-          { "index": 97, "show": true, "label": "Makeup water conductivity", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e6, "unit": "\u03BCS", "disp": {"len": 5, "size": 18, "pos": {"x": 150, "y": 470}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 200}} }
+          { "index": 97, "show": true, "label": "Makeup water conductivity", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e6, "unit": "\u03BCS", "disp": {"len": 5, "size": 12, "pos": {"x": 95, "y": 315}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 200}} }
         ],
+        "img_channels": [],
+        "ctrl_channels": []
+      }
+    ]
+  },
+  {
+    "title": "Maritime College",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": 
+        [
+          { "file": "9.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+        ],
+        "time": null,
+        "channels": [],
+        "img_channels": [],
+        "ctrl_channels": []
+      }
+    ]
+  },
+  {
+    "title": "Algae cultivation project",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": 
+        [
+          { "file": "12.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+        ],
+        "time": null,
+        "channels": [],
         "img_channels": [],
         "ctrl_channels": []
       }
@@ -84,9 +92,9 @@
         "label": "View",
         "imgs": 
         [
-          { "file": "1.png", "dim": {"w": 1067, "h": 692}, "disp": {"h": 600, "pos": {"x": 0, "y": 0}} }
+          { "file": "1.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 15}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
         "channels":
         [
           { "index": 98, "show": true, "label": "Cooling water temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 4, "size": 16, "pos": {"x": 210, "y": 380}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
@@ -97,22 +105,54 @@
     ]
   },
   {
-    "title": "Weather station (view)",
+    "title": "Lesson in the heat pump lab",
     "show": true,
     "screens":
     [
       {
         "label": "View",
-        "imgs":
-        [	
-          { "file": "2.png", "dim": {"w": 1095, "h": 739}, "disp": {"h": 600, "pos": {"x": 0, "y": 0}} }
-        ],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 15}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
-        "channels":
+        "imgs": 
         [
-          { "index": 21, "show": true, "label": "Global insolation", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e-0, "unit": "W/m\u00B2", "disp": {"len": 5, "size": 20, "pos": { "x": 230, "y": 380 }, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} },
-          { "index": 23, "show": true, "label": "Ambient temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 2.0e-1, "unit": "\u00B0C", "disp": {"len": 4 , "size": 20, "pos": { "x": 330, "y": 480 }, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
+          { "file": "13.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
+        "time": null,
+        "channels": [],
+        "img_channels": [],
+        "ctrl_channels": []
+      }
+    ]
+  },
+  {
+    "title": "Solar energy measurements",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": 
+        [
+          { "file": "14.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+        ],
+        "time": null,
+        "channels": [],
+        "img_channels": [],
+        "ctrl_channels": []
+      }
+    ]
+  },
+  {
+    "title": "Heat pump installation",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": 
+        [
+          { "file": "15.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+        ],
+        "time": null,
+        "channels": [],
         "img_channels": [],
         "ctrl_channels": []
       }
@@ -126,12 +166,30 @@
       {
         "label": "View",
         "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 15}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
         "channels": [],
         "img_channels":
         [
-          { "index": 160, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1280, "h": 720}, "disp": {"h": 480, "pos": {"x": 0, "y": 0}} }
+          { "index": 160, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
+        "ctrl_channels": []
+      }
+    ]
+  },
+  {
+    "title": "Solar power test setup",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": 
+        [
+          { "file": "16.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+        ],
+        "time": null,
+        "channels": [],
+        "img_channels": [],
         "ctrl_channels": []
       }
     ]
@@ -144,12 +202,30 @@
       {
         "label": "View",
         "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 15}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
         "channels": [],
         "img_channels":
         [
-          { "index": 180, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1280, "h": 720}, "disp": {"h": 480, "pos": {"x": 0, "y": 0}} }
+          { "index": 180, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
+        "ctrl_channels": []
+      }
+    ]
+  },
+  {
+    "title": "Heat pump test setups",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": 
+        [
+          { "file": "17.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+        ],
+        "time": null,
+        "channels": [],
+        "img_channels": [],
         "ctrl_channels": []
       }
     ]
@@ -162,36 +238,18 @@
       {
         "label": "View",
         "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 20, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 20, "y": 7}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
         "channels": [],
         "img_channels":
         [
-          { "index": 600, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1243, "h": 856}, "disp": {"h": 600, "pos": {"x": 0, "y": 0}} }
+          { "index": 600, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
         "ctrl_channels": []
       }
     ]
   },
   {
-    "title": "Algae lab detail (live)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 3, "bin_size": 10, "disp": {"size": 14, "pos": {"x": 10, "y": 15}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
-        "channels": [],
-        "img_channels":
-        [
-          { "index": 161, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1280, "h": 720}, "disp": {"h": 480, "pos": {"x": 0, "y": 0}} }
-        ],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Indoor environment lab (plan)",
+    "title": "Lesson in main boiler hall",
     "show": true,
     "screens":
     [
@@ -199,20 +257,17 @@
         "label": "View",
         "imgs": 
         [
-          { "file": "7.png", "dim": {"w": 1179, "h": 805}, "disp": {"h": 720, "pos": {"x": 0, "y": 0}} }
+          { "file": "10.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 15}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
-        "channels":
-        [
-          { "index": 40, "show": true, "label": "Air temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 4, "size": 14, "pos": {"x": 290, "y": 430}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 255}} }
-        ],
+        "time": null,
+        "channels": [],
         "img_channels": [],
         "ctrl_channels": []
       }
     ]
   },
   {
-    "title": "Radon logger (data)",
+    "title": "Solar collector installation",
     "show": true,
     "screens":
     [
@@ -220,37 +275,16 @@
         "label": "View",
         "imgs": 
         [
-          { "file": "0000.png", "dim": {"w": 1280, "h": 720}, "disp": {"h": 480, "pos": {"x": 0, "y": 0}} }
+          { "file": "18.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 30, "pos": {"x": 10, "y": 15}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
-        "channels":
-        [
-          { "index": 162, "show": true, "label": "Radon activity concentration", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 4, "size": 30, "pos": {"x": 290, "y": 430}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 255}} }
-        ],
-        "img_channels": [],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Dual image test",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 15}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+        "time": null,
         "channels": [],
-        "img_channels":
-        [
-          { "index": 160, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1280, "h": 720}, "disp": {"h": 480, "pos": {"x": 0, "y": 0}} },
-          { "index": 180, "show": true, "label": "", "ext": "jpg", "dim": {"w": 1280, "h": 720}, "disp": {"h": 480, "pos": {"x": 0, "y": 720}} }
-        ],
+        "img_channels": [],
         "ctrl_channels": []
       }
     ]
   }
+
 
 ]
 
