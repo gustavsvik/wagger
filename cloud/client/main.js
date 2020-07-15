@@ -186,7 +186,7 @@ function draw()
         position: "absolute", 
         left: (parseInt(App.CANVAS_POS_X + App.canvas_shift_x + Math.max(App.img_width/2 - App.WARNING_FONTSIZE*7.0, 0))).toString() + "px", 
         top: (parseInt(App.CANVAS_POS_Y + App.canvas_shift_y + App.img_height/2 - App.WARNING_FONTSIZE/2)).toString() + "px", 
-        fontSize: (16).toString() + "px", 
+        fontSize: (parseInt((16) * App.display_img_scale)).toString() + "px", 
         fontFamily: App.all_font_families, 
         color: getRGBALiteral(App.STANDARD_FOREGROUND_COLOR),
         textAlign: "left", 
@@ -244,6 +244,7 @@ function handle_image_loaded()
         if (_img.dim === "source")
         {
           let _img_disp_scale = _height / _img.disp.h ;
+          App.display_img_scale = _img.disp.h / App.STD_SCALE_HEIGHT ;
           if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
           App.img_height = _height / _img_disp_scale; 
           App.img_width = _width / _img_disp_scale;
@@ -266,6 +267,7 @@ function handle_image_loaded()
         if (_img_channel.dim === "source")
         {
           let _img_disp_scale = _height / _img_channel.disp.h ;
+          App.display_img_scale = _img_channel.disp.h / App.STD_SCALE_HEIGHT ;
           if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
           App.img_height = _height / _img_disp_scale; 
           App.img_width = _width / _img_disp_scale;
@@ -280,6 +282,7 @@ function handle_image_loaded()
 
     setAttributes( App.DISPLAY_INFO_TEXT.style, 
     { 
+      fontSize: (parseInt(App.WARNING_FONTSIZE * App.display_img_scale)).toString() + "px",
       left: (parseInt(App.CANVAS_POS_X + App.canvas_shift_x + Math.max(App.img_width/2 - App.WARNING_FONTSIZE*7.0, 0))).toString() + "px", 
       top: (parseInt(App.CANVAS_POS_Y + App.canvas_shift_y + App.img_height/2 - App.WARNING_FONTSIZE/2)).toString() + "px", 
     } ) ;
@@ -293,8 +296,9 @@ function handle_image_loaded()
       { 
         setAttributes( _timebkg.style, 
         { 
-          left: (_time_disp.pos.x + App.CANVAS_POS_X + App.canvas_shift_x - _time_disp.size/2 + 1).toString() + "px",
-          top: (_time_disp.pos.y + App.CANVAS_POS_Y + App.canvas_shift_y - _time_disp.size + 1).toString() + "px"
+          fontSize: (parseInt(_time_disp.size * App.display_img_scale)).toString() + "px",
+          left: (_time_disp.pos.x * App.display_img_scale + App.CANVAS_POS_X + App.canvas_shift_x - _time_disp.size/2 + 1).toString() + "px",
+          top: (_time_disp.pos.y * App.display_img_scale + App.CANVAS_POS_Y + App.canvas_shift_y - _time_disp.size + 1).toString() + "px"
         } ) ;
       }
     }
@@ -311,8 +315,9 @@ function handle_image_loaded()
         { 
           setAttributes( _chanbkg.style, 
           { 
-            left: (parseInt(_disp.pos.x + App.CANVAS_POS_X + App.canvas_shift_x - _disp.size/2 + 1)).toString() + "px",
-            top: (parseInt(_disp.pos.y + App.CANVAS_POS_Y + App.canvas_shift_y - _disp.size + 1)).toString() + "px"
+            fontSize: (parseInt(_disp.size * App.display_img_scale)).toString() + "px",
+            left: (parseInt(_disp.pos.x * App.display_img_scale + App.CANVAS_POS_X + App.canvas_shift_x - _disp.size/2 + 1)).toString() + "px",
+            top: (parseInt(_disp.pos.y * App.display_img_scale + App.CANVAS_POS_Y + App.canvas_shift_y - _disp.size + 1)).toString() + "px"
           } ) ;
         }
       }
@@ -324,14 +329,15 @@ function handle_image_loaded()
       for (let _i = 0; _i < _no_of_ctrl_channels; _i++)
       {
         let _ctrl_channel = _screen.ctrl_channels[_i];
-        let _disp = _ctrl_channel.disp;
+        let _ctrl_disp = _ctrl_channel.disp;
         let _ctrlbkg = getChannelElement(["ctrlbkg", _ctrl_channel.index]);
         if (_ctrlbkg !== null)
         { 
           setAttributes( _ctrlbkg.style, 
           { 
-            left: (parseInt(_ctrl_disp.pos.x + App.CANVAS_POS_X + App.canvas_shift_x - _ctrl_disp.size/2 + 7)).toString() + "px",
-            top: (parseInt(_ctrl_disp.pos.y + App.CANVAS_POS_Y + App.canvas_shift_y - _ctrl_disp.size + 14)).toString() + "px"
+            fontSize: (parseInt(_ctrl_disp.size * App.display_img_scale)).toString() + "px",
+            left: (parseInt(_ctrl_disp.pos.x * App.display_img_scale + App.CANVAS_POS_X + App.canvas_shift_x - _ctrl_disp.size/2 + 7)).toString() + "px",
+            top: (parseInt(_ctrl_disp.pos.y * App.display_img_scale + App.CANVAS_POS_Y + App.canvas_shift_y - _ctrl_disp.size + 14)).toString() + "px"
           } ) ;
         }
       }
@@ -782,6 +788,7 @@ function display_select_listener()
         let _width = _img.dim.w ; 
         let _height = _img.dim.h ;
         let _img_disp_scale = _height / _img.disp.h ;
+        App.display_img_scale = _img.disp.h / App.STD_SCALE_HEIGHT ;
         if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
         App.img_height = _height / _img_disp_scale; 
         App.img_width = _width / _img_disp_scale;
@@ -804,7 +811,7 @@ function display_select_listener()
     position: "absolute",
     left: (parseInt(App.CANVAS_POS_X + App.canvas_shift_x + Math.max(App.img_width/2 - App.WARNING_FONTSIZE*7.0, 0))).toString() + "px",
     top: (parseInt(App.CANVAS_POS_Y + App.canvas_shift_y + App.img_height/2 - App.WARNING_FONTSIZE/2)).toString() + "px",
-    fontSize: (parseInt(App.WARNING_FONTSIZE)).toString() + "px",
+    fontSize: (parseInt(App.WARNING_FONTSIZE * App.display_img_scale)).toString() + "px",
     fontFamily: App.all_font_families,
     textAlign: "left",
     visibility: "hidden"
@@ -837,10 +844,10 @@ function display_select_listener()
       width: (_time_disp.size * 14.1).toString() + "px",
       height: (_time_disp.size * 4.1 + 4).toString() + "px",
       position: "absolute",
-      left: (_time_disp.pos.x + App.CANVAS_POS_X + App.canvas_shift_x - _time_disp.size/2 + 1).toString() + "px",
-      top: (_time_disp.pos.y + App.CANVAS_POS_Y + App.canvas_shift_y - _time_disp.size + 1).toString() + "px",
+      left: (_time_disp.pos.x * App.display_img_scale + App.CANVAS_POS_X + App.canvas_shift_x - _time_disp.size/2 + 1).toString() + "px",
+      top: (_time_disp.pos.y * App.display_img_scale + App.CANVAS_POS_Y + App.canvas_shift_y - _time_disp.size + 1).toString() + "px",
       visibility: "hidden",
-      fontSize: (_time_disp.size).toString() + "px",
+      fontSize: (parseInt(_time_disp.size * App.display_img_scale)).toString() + "px",
       fontFamily: App.all_font_families,
       color: getRGBALiteral([_time_color.r,_time_color.g,_time_color.b,_time_color.a]),
       backgroundColor: getRGBALiteral([_time_bgcol.r,_time_bgcol.g,_time_bgcol.b,_time_bgcol.a])
@@ -853,7 +860,7 @@ function display_select_listener()
       left: (_time_disp.size * 0.33).toString() + "px",
       top: (_time_disp.size * 0.34).toString() + "px",
       visibility: "visible",
-      fontSize: (_time_disp.size).toString() + "px",
+      fontSize: (parseInt(_time_disp.size * App.display_img_scale)).toString() + "px",
       fontFamily: App.all_font_families,
       color: getRGBALiteral([_time_color.r,_time_color.g,_time_color.b,_time_color.a]),
       backgroundColor: "transparent",
@@ -900,10 +907,10 @@ function display_select_listener()
       width: (_disp.size * 13.9).toString() + "px",
       height: (_disp.size * 4.1 + 4).toString() + "px",
       position: "absolute",
-      left: (_disp.pos.x + App.CANVAS_POS_X + App.canvas_shift_x - _disp.size/2 + 1).toString() + "px",
-      top: (_disp.pos.y + App.CANVAS_POS_Y + App.canvas_shift_y - _disp.size + 1).toString() + "px",
+      left: (_disp.pos.x * App.display_img_scale + App.CANVAS_POS_X + App.canvas_shift_x - _disp.size/2 + 1).toString() + "px",
+      top: (_disp.pos.y * App.display_img_scale + App.CANVAS_POS_Y + App.canvas_shift_y - _disp.size + 1).toString() + "px",
       visibility: "hidden",
-      fontSize: (_disp.size).toString() + "px",
+      fontSize: (parseInt(_disp.size * App.display_img_scale)).toString() + "px",
       fontFamily: App.all_font_families,
       color: getRGBALiteral([_color.r,_color.g,_color.b,_color.a]),
       backgroundColor: getRGBALiteral([_bgcol.r,_bgcol.g,_bgcol.b,_bgcol.a])
@@ -916,7 +923,7 @@ function display_select_listener()
       left: (_disp.size * 0.33).toString() + "px",
       top: (_disp.size * 0.34).toString() + "px",
       visibility: "visible",
-      fontSize: (_disp.size).toString() + "px",
+      fontSize: (parseInt(_disp.size * App.display_img_scale)).toString() + "px",
       fontFamily: App.all_font_families,
       color: getRGBALiteral([_color.r,_color.g,_color.b,_color.a]),
       backgroundColor: "transparent",
@@ -952,6 +959,7 @@ function display_select_listener()
       let _width = _img_channel.dim.w ; 
       let _height = _img_channel.dim.h ;
       let _img_disp_scale = _height / _img_channel.disp.h ;
+      App.display_img_scale = _img_channel.disp.h / App.STD_SCALE_HEIGHT ;
       if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
       App.img_height = _height / _img_disp_scale; 
       App.img_width = _width / _img_disp_scale;
@@ -963,13 +971,10 @@ function display_select_listener()
   for (let _i = 0; _i < _no_of_ctrl_channels; _i++)
   {
     let _ctrl_channel = _screen.ctrl_channels[_i];
-    
-    let _ctrl_disp = _ctrl_channel.disp;
-    let _ctrl_color = _ctrl_disp.col;
-    let _ctrl_bgcol = _ctrl_disp.bgcol;
-    
+        
     let _ctrl_chan_index_string = (_ctrl_channel.index).toString();
     App.ctrl_chan_index_string += _ctrl_chan_index_string + ";";
+
 
     let _ctrlbkg = document.createElement("DIV");
 
@@ -986,16 +991,29 @@ function display_select_listener()
     let _textForButton = document.createTextNode("");
     _setval.appendChild(_textForButton);
 
+    _ctrlbkg.id = "ctrlbkg_" + _ctrl_chan_index_string;
+    _slider.id = "slider_" + _ctrl_chan_index_string;
+    _setval.id = "setval_" + _ctrl_chan_index_string;
+    _send.id = "send_" + _ctrl_chan_index_string;
+
+    _ctrlbkg.addEventListener("mouseover", label_listener);
+    _ctrlbkg.addEventListener("mouseleave", outside_label_listener);
+
+    
+    let _ctrl_disp = _ctrl_channel.disp;
+    let _ctrl_color = _ctrl_disp.col;
+    let _ctrl_bgcol = _ctrl_disp.bgcol;
+
     _ctrlbkg.title = ""; 
     setAttributes( _ctrlbkg.style, 
     {
       width: (_ctrl_disp.size * 10.8).toString() + "px",
       height: (_ctrl_disp.size * 8.2).toString() + "px",
       position: "absolute",
-      left: (_ctrl_disp.pos.x + App.CANVAS_POS_X + App.canvas_shift_x - _ctrl_disp.size/2 + 7).toString() + "px",
-      top: (_ctrl_disp.pos.y + App.CANVAS_POS_Y + App.canvas_shift_y - _ctrl_disp.size + 14).toString() + "px", 
+      left: (_ctrl_disp.pos.x * App.display_img_scale + App.CANVAS_POS_X + App.canvas_shift_x - _ctrl_disp.size/2 + 7).toString() + "px",
+      top: (_ctrl_disp.pos.y * App.display_img_scale + App.CANVAS_POS_Y + App.canvas_shift_y - _ctrl_disp.size + 14).toString() + "px", 
       visibility: "hidden",
-      fontSize: (_ctrl_disp.size).toString() + "px",
+      fontSize: (parseInt(_ctrl_disp.size * App.display_img_scale)).toString() + "px",
       fontFamily: App.all_font_families,
       color: getRGBALiteral([_ctrl_color.r,_ctrl_color.g,_ctrl_color.b,_ctrl_color.a]) , 
       backgroundColor: getRGBALiteral([_ctrl_bgcol.r,_ctrl_bgcol.g,_ctrl_bgcol.b,_ctrl_bgcol.a])
@@ -1010,7 +1028,7 @@ function display_select_listener()
       left: (_ctrl_disp.size * 0.7).toString() + "px",
       top: (_ctrl_disp.size * 0.6).toString() + "px",
       visibility: "hidden",
-      fontSize: (_ctrl_disp.size).toString() + "px",
+      fontSize: (parseInt(_ctrl_disp.size * App.display_img_scale)).toString() + "px",
       fontFamily: App.all_font_families
     } ) ;
 
@@ -1021,7 +1039,7 @@ function display_select_listener()
       left: (_ctrl_disp.size * 0.38).toString() + "px",
       top: (_ctrl_disp.size * 3.0).toString() + "px",
       visibility: "visible",
-      fontSize: (_ctrl_disp.size).toString() + "px",
+      fontSize: (parseInt(_ctrl_disp.size * App.display_img_scale)).toString() + "px",
       fontFamily: App.all_font_families,
       color: getRGBALiteral([_ctrl_color.r,_ctrl_color.g,_ctrl_color.b,_ctrl_color.a]) , 
       backgroundColor: "transparent",    
@@ -1040,20 +1058,12 @@ function display_select_listener()
       left: (_ctrl_disp.size * 7.3).toString() + "px",
       top: (_ctrl_disp.size * 3.1).toString() + "px",
       visibility: "hidden",
-      fontSize: (_ctrl_disp.size).toString() + "px",
+      fontSize: (parseInt(_ctrl_disp.size * App.display_img_scale)).toString() + "px",
       fontFamily: App.all_font_families,
       borderRadius: "10%",
       opacity: "0.5",
       textAlign: "center"
     } ) ;
-
-    _ctrlbkg.id = "ctrlbkg_" + _ctrl_chan_index_string;
-    _slider.id = "slider_" + _ctrl_chan_index_string;
-    _setval.id = "setval_" + _ctrl_chan_index_string;
-    _send.id = "send_" + _ctrl_chan_index_string;
-
-    _ctrlbkg.addEventListener("mouseover", label_listener);
-    _ctrlbkg.addEventListener("mouseleave", outside_label_listener);
     
     setAttributes( _slider, 
     {
