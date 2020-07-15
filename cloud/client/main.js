@@ -282,8 +282,43 @@ function handle_image_loaded()
       left: (parseInt(App.CANVAS_POS_X + App.canvas_shift_x + Math.max(App.img_width/2 - App.WARNING_FONTSIZE*7.0, 0))).toString() + "px", 
       top: (parseInt(App.CANVAS_POS_Y + App.canvas_shift_y + App.img_height/2 - App.WARNING_FONTSIZE/2)).toString() + "px", 
     } ) ;
+    let _no_of_channels = (_screen.channels).length;
+    if (_no_of_channels > 0)
+    {
+      for (let _i = 0; _i < _no_of_channels; _i++)
+      {
+        let _channel = _screen.channels[_i];
+        let _disp = _channel.disp;
+        let _chanbkg = getChannelElement(["chanbkg", _channel.index]);
+        if (_chanbkg !== null)
+        { 
+          setAttributes( _chanbkg.style, 
+          { 
+            left: (parseInt(_disp.pos.x + App.CANVAS_POS_X + App.canvas_shift_x - _disp.size/2 + 1)).toString() + "px",
+            top: (parseInt(_disp.pos.y + App.CANVAS_POS_Y + App.canvas_shift_y - _disp.size + 1)).toString() + "px"
+          } ) ;
+        }
+      }
+    }
+    let _no_of_ctrl_channels = (_screen.ctrl_channels).length;
+    if (_no_of_ctrl_channels > 0)
+    {
+      for (let _i = 0; _i < _no_of_ctrl_channels; _i++)
+      {
+        let _ctrl_channel = _screen.ctrl_channels[_i];
+        let _disp = _ctrl_channel.disp;
+        let _ctrlbkg = getChannelElement(["ctrlbkg", _ctrl_channel.index]);
+        if (_ctrlbkg !== null)
+        { 
+          setAttributes( _ctrlbkg.style, 
+          { 
+            left: (parseInt(_ctrl_disp.pos.x + App.CANVAS_POS_X + App.canvas_shift_x - _ctrl_disp.size/2 + 7)).toString() + "px",
+            top: (parseInt(_ctrl_disp.pos.y + App.CANVAS_POS_Y + App.canvas_shift_y - _ctrl_disp.size + 14)).toString() + "px"
+          } ) ;
+        }
+      }
+    }
   }
-
   for (let _i = 0; _i <= 0; _i++)
   {
     image(_current_img[_i], App.canvas_shift_x, App.canvas_shift_y, App.img_width*(1-0.5*_i), App.img_height*(1-0.5*_i) );
@@ -783,8 +818,8 @@ function display_select_listener()
       width: (_time_disp.size * 14.1).toString() + "px",
       height: (_time_disp.size * 4.1 + 4).toString() + "px",
       position: "absolute",
-      left: (_time_disp.pos.x + App.CANVAS_POS_X - _time_disp.size/2 + 1).toString() + "px",
-      top: (_time_disp.pos.y + App.CANVAS_POS_Y - _time_disp.size + 1).toString() + "px",
+      left: (_time_disp.pos.x + App.CANVAS_POS_X + App.canvas_shift_x - _time_disp.size/2 + 1).toString() + "px",
+      top: (_time_disp.pos.y + App.CANVAS_POS_Y + App.canvas_shift_y - _time_disp.size + 1).toString() + "px",
       visibility: "hidden",
       fontSize: (_time_disp.size).toString() + "px",
       fontFamily: App.all_font_families,
@@ -846,8 +881,8 @@ function display_select_listener()
       width: (_disp.size * 13.9).toString() + "px",
       height: (_disp.size * 4.1 + 4).toString() + "px",
       position: "absolute",
-      left: (_disp.pos.x + App.CANVAS_POS_X - _disp.size/2 + 1).toString() + "px",
-      top: (_disp.pos.y + App.CANVAS_POS_Y - _disp.size + 1).toString() + "px",
+      left: (_disp.pos.x + App.CANVAS_POS_X + App.canvas_shift_x - _disp.size/2 + 1).toString() + "px",
+      top: (_disp.pos.y + App.CANVAS_POS_Y + App.canvas_shift_y - _disp.size + 1).toString() + "px",
       visibility: "hidden",
       fontSize: (_disp.size).toString() + "px",
       fontFamily: App.all_font_families,
@@ -938,8 +973,8 @@ function display_select_listener()
       width: (_ctrl_disp.size * 10.8).toString() + "px",
       height: (_ctrl_disp.size * 8.2).toString() + "px",
       position: "absolute",
-      left: (_ctrl_disp.pos.x + App.CANVAS_POS_X - _ctrl_disp.size/2 + 7).toString() + "px",
-      top: (_ctrl_disp.pos.y + App.CANVAS_POS_Y - _ctrl_disp.size + 14).toString() + "px", 
+      left: (_ctrl_disp.pos.x + App.CANVAS_POS_X + App.canvas_shift_x - _ctrl_disp.size/2 + 7).toString() + "px",
+      top: (_ctrl_disp.pos.y + App.CANVAS_POS_Y + App.canvas_shift_y - _ctrl_disp.size + 14).toString() + "px", 
       visibility: "hidden",
       fontSize: (_ctrl_disp.size).toString() + "px",
       fontFamily: App.all_font_families,
