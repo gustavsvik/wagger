@@ -232,41 +232,56 @@ function handle_image_loaded()
   let _display = Display.data[App.display_index];
   if (typeof _display !== 'undefined') 
   {
-  let _screen = _display.screens[0];
-  let _no_of_imgs = (_screen.imgs).length;
-  if (_no_of_imgs > 0)
-  {
-    for (let _i = 0; _i < _no_of_imgs; _i++)
+    let _screen = _display.screens[0];
+    let _no_of_imgs = (_screen.imgs).length;
+    if (_no_of_imgs > 0)
     {
-      let _img = _screen.imgs[_i];
-      if (_img.dim === "source")
+      for (let _i = 0; _i < _no_of_imgs; _i++)
       {
         let _width = _current_img[_i].width ; 
         let _height =  _current_img[_i].height ; 
-        let _img_disp_scale = _height / _img.disp.h ;
-        if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
-        App.img_height = _height / _img_disp_scale; 
-        App.img_width = _width / _img_disp_scale;
+        let _img = _screen.imgs[_i];
+        if (_img.dim === "source")
+        {
+          let _img_disp_scale = _height / _img.disp.h ;
+          if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
+          App.img_height = _height / _img_disp_scale; 
+          App.img_width = _width / _img_disp_scale;
+        }
+        if (_img.disp.pos === "center")
+        {
+          App.canvas_shift_x = Math.max( parseInt( ( App.display_viewport.w - App.img_width ) / 2 ), 0 ) ;
+          App.canvas_shift_y = Math.max( parseInt( ( App.display_viewport.h - App.img_height ) / 2 ), 0 ) ;
+        }
       }
     }
-  }
-  let _no_of_img_channels = (_screen.img_channels).length;
-  if (_no_of_img_channels > 0)
-  {
-    for (let _i = 0; _i < _no_of_img_channels; _i++)
+    let _no_of_img_channels = (_screen.img_channels).length;
+    if (_no_of_img_channels > 0)
     {
-      let _img_channel = _screen.img_channels[_i];
-      if (_img_channel.dim === "source")
+      for (let _i = 0; _i < _no_of_img_channels; _i++)
       {
         let _width = _current_img[_i].width ; 
         let _height =  _current_img[_i].height ; 
-        let _img_disp_scale = _height / _img_channel.disp.h ;
-        if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
-        App.img_height = _height / _img_disp_scale; 
-        App.img_width = _width / _img_disp_scale;
+        let _img_channel = _screen.img_channels[_i];
+        if (_img_channel.dim === "source")
+        {
+          let _img_disp_scale = _height / _img_channel.disp.h ;
+          if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
+          App.img_height = _height / _img_disp_scale; 
+          App.img_width = _width / _img_disp_scale;
+        }
+        if (_img_channel.disp.pos === "center")
+        {
+          App.canvas_shift_x = Math.max( parseInt( ( App.display_viewport.w - App.img_width ) / 2 ), 0 ) ;
+          App.canvas_shift_y = Math.max( parseInt( ( App.display_viewport.h - App.img_height ) / 2 ), 0 ) ;
+        }
       }
     }
-  }
+    setAttributes( App.DISPLAY_INFO_TEXT.style, 
+    { 
+      left: (parseInt(App.CANVAS_POS_X + App.canvas_shift_x + Math.max(App.img_width/2 - App.WARNING_FONTSIZE*7.0, 0))).toString() + "px", 
+      top: (parseInt(App.CANVAS_POS_Y + App.canvas_shift_y + App.img_height/2 - App.WARNING_FONTSIZE/2)).toString() + "px", 
+    } ) ;
   }
 
   for (let _i = 0; _i <= 0; _i++)
@@ -710,16 +725,21 @@ function display_select_listener()
       let _img = _screen.imgs[i];
       if (i === 0) App.img_url = App.FILES_URL + (_img.file).toString();
       App.img = loadImage(App.img_url, handle_image_loaded);
-      //App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
-      if (_img.dim !== "source")
+      if (_img.disp.pos !== "center")
       {
-        let _width = _img.dim.w ; //App.img.width;
-        let _height = _img.dim.h ; //App.img.height;
+        App.canvas_shift_x = _img.disp.pos.x;
+        App.canvas_shift_y = _img.disp.pos.y;
+      }
+      if (_img.dim !== "source")
+      {  
+        let _width = _img.dim.w ; 
+        let _height = _img.dim.h ;
         let _img_disp_scale = _height / _img.disp.h ;
         if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
         App.img_height = _height / _img_disp_scale; 
         App.img_width = _width / _img_disp_scale;
       }
+      /*
       else
       {
         App.img_height = App.display_viewport.h; 
@@ -735,6 +755,7 @@ function display_select_listener()
         App.canvas_shift_x = Math.max( parseInt( ( App.display_viewport.w - App.img_width ) / 2 ), 0 ) ;
         App.canvas_shift_y = Math.max( parseInt( ( App.display_viewport.h - App.img_height ) / 2 ), 0 ) ;
       }
+      */
     }
   }
   else
@@ -893,15 +914,21 @@ function display_select_listener()
     let _img_channel = _screen.img_channels[_i];
     let _img_chan_index_string = (_img_channel.index).toString();
     App.img_chan_index_string += _img_chan_index_string + ";";
-    if (_img_channel.dim !== "source")
+    if (_img_channel.disp.pos !== "center")
     {
+      App.canvas_shift_x = _img_channel.disp.pos.x;
+      App.canvas_shift_y = _img_channel.disp.pos.y;
+    }
+    if (_img_channel.dim !== "source")
+    {  
       let _width = _img_channel.dim.w ; 
-      let _height = _img_channel.dim.h ; 
+      let _height = _img_channel.dim.h ;
       let _img_disp_scale = _height / _img_channel.disp.h ;
       if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
       App.img_height = _height / _img_disp_scale; 
       App.img_width = _width / _img_disp_scale;
     }
+    /*
     else
     {
       App.img_height = App.display_viewport.h; 
@@ -917,6 +944,7 @@ function display_select_listener()
       App.canvas_shift_x = Math.max( parseInt( ( App.display_viewport.w - App.img_width ) / 2 ), 0 ) ;
       App.canvas_shift_y = Math.max( parseInt( ( App.display_viewport.h - App.img_height ) / 2 ), 0 ) ;
     }
+    */
   }
   
   //if (App.img_chan_index_string !== "") App.background_is_static = true ;
