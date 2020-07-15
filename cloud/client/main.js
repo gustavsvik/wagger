@@ -277,11 +277,28 @@ function handle_image_loaded()
         }
       }
     }
+
     setAttributes( App.DISPLAY_INFO_TEXT.style, 
     { 
       left: (parseInt(App.CANVAS_POS_X + App.canvas_shift_x + Math.max(App.img_width/2 - App.WARNING_FONTSIZE*7.0, 0))).toString() + "px", 
       top: (parseInt(App.CANVAS_POS_Y + App.canvas_shift_y + App.img_height/2 - App.WARNING_FONTSIZE/2)).toString() + "px", 
     } ) ;
+
+    let _time = _screen.time;
+    if (_time !== null) // Any display but the title page
+    {
+      let _time_disp = _time.disp;
+      let _timebkg = getChannelElement(["timebkg", null]);
+      if (_timebkg !== null)
+      { 
+        setAttributes( _timebkg.style, 
+        { 
+          left: (_time_disp.pos.x + App.CANVAS_POS_X + App.canvas_shift_x - _time_disp.size/2 + 1).toString() + "px",
+          top: (_time_disp.pos.y + App.CANVAS_POS_Y + App.canvas_shift_y - _time_disp.size + 1).toString() + "px"
+        } ) ;
+      }
+    }
+
     let _no_of_channels = (_screen.channels).length;
     if (_no_of_channels > 0)
     {
@@ -300,6 +317,7 @@ function handle_image_loaded()
         }
       }
     }
+
     let _no_of_ctrl_channels = (_screen.ctrl_channels).length;
     if (_no_of_ctrl_channels > 0)
     {
@@ -318,6 +336,7 @@ function handle_image_loaded()
         }
       }
     }
+    
   }
   for (let _i = 0; _i <= 0; _i++)
   {
