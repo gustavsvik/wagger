@@ -41,10 +41,10 @@
         [
           { "file": "4.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 10, "y": 15}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 200} } },
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 200} } },
         "channels":
         [
-          { "index": 97, "show": true, "label": "Makeup water conductivity", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e6, "unit": "\u03BCS", "disp": {"len": 5, "size": 12, "pos": {"x": 170, "y": 315}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 200}} }
+          { "index": 97, "show": true, "label": "Makeup water conductivity", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e6, "unit": "\u03BCS", "disp": {"len": 5, "size": 12, "pos": {"x": 95, "y": 315}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 200}} }
         ],
         "img_channels": [],
         "ctrl_channels": []
@@ -98,7 +98,7 @@
         [
           { "file": "1.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 65, "y": 15}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
         "channels":
         [
           { "index": 98, "show": true, "label": "Cooling water temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 4, "size": 16, "pos": {"x": 210, "y": 380}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
@@ -170,7 +170,7 @@
       {
         "label": "View",
         "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 15}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
         "channels": [],
         "img_channels":
         [
@@ -206,7 +206,7 @@
       {
         "label": "View",
         "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 15}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
         "channels": [],
         "img_channels":
         [
@@ -242,7 +242,7 @@
       {
         "label": "View",
         "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 100, "y": 7}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 20, "y": 7}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
         "channels": [],
         "img_channels":
         [
