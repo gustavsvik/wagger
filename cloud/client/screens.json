@@ -1,9 +1,13 @@
 {
 
 "disp_timeout": 900,
+"disp_viewport_size": {"w": 853, "h": 480},
+
+
 "displays": 
 
 [
+
   {
     "title": "Select display",
     "show": true,
@@ -247,6 +251,7 @@
       }
     ]
   }
+
 ]
 
 }
