@@ -34,7 +34,8 @@ class AppData
     this.display_timeout = 900 ;
     this.display_viewport = {} ;
     this.display_viewport.w = 853 ;
-    this.display_viewport.h = 480 ;    
+    this.display_viewport.h = 480 ; 
+    this.display_img_scale = 1.0 ;
     this.display_kiosk_interval = 0 ;
     this.display_kiosk_adjust = {} ;
     this.display_kiosk_adjust.x = 0 ;
@@ -98,7 +99,11 @@ function setAttributes( elem, propertyObject )
   for (let property in propertyObject) elem[property] = propertyObject[property];
 }
 
-
+function getStyleProperty( elem, prop )
+{
+  return parseFloat(window.getComputedStyle(elem, null).getPropertyValue(prop));
+}
+  
 function addFonts(font_filenames, font_path)
 {
   let _font_families = "";
