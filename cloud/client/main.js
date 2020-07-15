@@ -52,7 +52,7 @@ function draw()
       }
     }
 
-    App.img = loadImage(App.img_url, handle_image_loaded);
+    //App.img = loadImage(App.img_url, handle_image_loaded);
     //App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
 
     let _screen = null;
@@ -225,12 +225,53 @@ function draw()
 
 function handle_image_loaded()
 { 
-  let _img = {};
-  _img[0] = App.img;
-  //_img[1] = App.test_img;
+  let _current_img = {};
+  _current_img[0] = App.img;
+  //_current_img[1] = App.test_img;
+
+  let _display = Display.data[App.display_index];
+  if (typeof _display !== 'undefined') 
+  {
+  let _screen = _display.screens[0];
+  let _no_of_imgs = (_screen.imgs).length;
+  if (_no_of_imgs > 0)
+  {
+    for (let _i = 0; _i < _no_of_imgs; _i++)
+    {
+      let _img = _screen.imgs[_i];
+      if (_img.dim === "source")
+      {
+        let _width = _current_img[_i].width ; 
+        let _height =  _current_img[_i].height ; 
+        let _img_disp_scale = _height / _img.disp.h ;
+        if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
+        App.img_height = _height / _img_disp_scale; 
+        App.img_width = _width / _img_disp_scale;
+      }
+    }
+  }
+  let _no_of_img_channels = (_screen.img_channels).length;
+  if (_no_of_img_channels > 0)
+  {
+    for (let _i = 0; _i < _no_of_img_channels; _i++)
+    {
+      let _img_channel = _screen.img_channels[_i];
+      if (_img_channel.dim === "source")
+      {
+        let _width = _current_img[_i].width ; 
+        let _height =  _current_img[_i].height ; 
+        let _img_disp_scale = _height / _img_channel.disp.h ;
+        if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
+        App.img_height = _height / _img_disp_scale; 
+        App.img_width = _width / _img_disp_scale;
+      }
+    }
+  }
+  }
+
   for (let _i = 0; _i <= 0; _i++)
   {
-    image(_img[_i], App.canvas_shift_x, App.canvas_shift_y, App.img_width*(1-0.5*_i), App.img_height*(1-0.5*_i) );
+    image(_current_img[_i], App.canvas_shift_x, App.canvas_shift_y, App.img_width*(1-0.5*_i), App.img_height*(1-0.5*_i) );
   }
 }
 
@@ -339,10 +380,10 @@ function populate_display_variables(timestamp_matrix, value_matrix)
         App.img_url = _img_url;
         App.img = loadImage(_img_url, handle_image_loaded);
         //App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
-        let _img_disp_scale = _img_channel.dim.h / _img_channel.disp.h ;
-        if (App.display_kiosk_height > 0) _img_disp_scale = _img_channel.dim.h / App.display_kiosk_height ;
-        let _img_height = _img_channel.dim.h / _img_disp_scale; 
-        let _img_width = _img_channel.dim.w / _img_disp_scale;
+        //let _img_disp_scale = _img_channel.dim.h / _img_channel.disp.h ;
+        //if (App.display_kiosk_height > 0) _img_disp_scale = _img_channel.dim.h / App.display_kiosk_height ;
+        //let _img_height = _img_channel.dim.h / _img_disp_scale; 
+        //let _img_width = _img_channel.dim.w / _img_disp_scale;
         //image(App.img, _img_channel.disp.pos.x, _img_channel.disp.pos.y, _img_width, _img_height);
         //(App.test_img).setAttribute("src", _img_url);
       }
@@ -447,6 +488,8 @@ function handle_display_data(data)
   Display.data = data.displays; 
   
   if (typeof data.disp_timeout !== 'undefined') App.display_timeout = data.disp_timeout; 
+
+  if (typeof data.disp_viewport_size !== 'undefined') App.display_viewport = data.disp_viewport_size; 
   if (typeof data.disp_kiosk_interval !== 'undefined') App.display_kiosk_interval = data.disp_kiosk_interval; 
   if (typeof data.disp_kiosk_adjust !== 'undefined') App.display_kiosk_adjust = data.disp_kiosk_adjust; 
   if (typeof data.disp_kiosk_override_height !== 'undefined') App.display_kiosk_height = data.disp_kiosk_override_height; 
@@ -666,15 +709,33 @@ function display_select_listener()
     {
       let _img = _screen.imgs[i];
       if (i === 0) App.img_url = App.FILES_URL + (_img.file).toString();
-      let _img_disp_scale = _img.dim.h / _img.disp.h ;
-      if (App.display_kiosk_height > 0) _img_disp_scale = _img.dim.h / App.display_kiosk_height ;
-      App.img_height = _img.dim.h / _img_disp_scale; 
-      App.img_width = _img.dim.w / _img_disp_scale;
-      App.canvas_shift_x = _img.disp.pos.x;
-      App.canvas_shift_y = _img.disp.pos.y;
+      App.img = loadImage(App.img_url, handle_image_loaded);
+      //App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
+      if (_img.dim !== "source")
+      {
+        let _width = _img.dim.w ; //App.img.width;
+        let _height = _img.dim.h ; //App.img.height;
+        let _img_disp_scale = _height / _img.disp.h ;
+        if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
+        App.img_height = _height / _img_disp_scale; 
+        App.img_width = _width / _img_disp_scale;
+      }
+      else
+      {
+        App.img_height = App.display_viewport.h; 
+        App.img_width = App.display_viewport.w;
+      }
+      if (_img.disp.pos !== "center")
+      {
+        App.canvas_shift_x = _img.disp.pos.x;
+        App.canvas_shift_y = _img.disp.pos.y;
+      }
+      else
+      {
+        App.canvas_shift_x = Math.max( parseInt( ( App.display_viewport.w - App.img_width ) / 2 ), 0 ) ;
+        App.canvas_shift_y = Math.max( parseInt( ( App.display_viewport.h - App.img_height ) / 2 ), 0 ) ;
+      }
     }
-    App.img = loadImage(App.img_url, handle_image_loaded);
-    //App.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
   }
   else
   {
@@ -831,13 +892,31 @@ function display_select_listener()
   {
     let _img_channel = _screen.img_channels[_i];
     let _img_chan_index_string = (_img_channel.index).toString();
-    let _img_disp_scale = _img_channel.dim.h / _img_channel.disp.h ;
-    if (App.display_kiosk_height > 0) _img_disp_scale = _img_channel.dim.h / App.display_kiosk_height ;
     App.img_chan_index_string += _img_chan_index_string + ";";
-    App.img_height = _img_channel.dim.h / _img_disp_scale; 
-    App.img_width = _img_channel.dim.w / _img_disp_scale;
-    App.canvas_shift_x = _img_channel.disp.pos.x;
-    App.canvas_shift_y = _img_channel.disp.pos.y;
+    if (_img_channel.dim !== "source")
+    {
+      let _width = _img_channel.dim.w ; 
+      let _height = _img_channel.dim.h ; 
+      let _img_disp_scale = _height / _img_channel.disp.h ;
+      if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
+      App.img_height = _height / _img_disp_scale; 
+      App.img_width = _width / _img_disp_scale;
+    }
+    else
+    {
+      App.img_height = App.display_viewport.h; 
+      App.img_width = App.display_viewport.w;
+    }
+    if (_img_channel.disp.pos !== "center")
+    {
+      App.canvas_shift_x = _img_channel.disp.pos.x;
+      App.canvas_shift_y = _img_channel.disp.pos.y;
+    }
+    else
+    {
+      App.canvas_shift_x = Math.max( parseInt( ( App.display_viewport.w - App.img_width ) / 2 ), 0 ) ;
+      App.canvas_shift_y = Math.max( parseInt( ( App.display_viewport.h - App.img_height ) / 2 ), 0 ) ;
+    }
   }
   
   //if (App.img_chan_index_string !== "") App.background_is_static = true ;
@@ -899,7 +978,7 @@ function display_select_listener()
     } ) ;
 
     _setval.title = ""; 
-    setAttributes( _slider.style, 
+    setAttributes( _setval.style, 
     {
       position: "absolute",
       left: (_ctrl_disp.size * 0.38).toString() + "px",
