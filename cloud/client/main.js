@@ -243,9 +243,10 @@ function handle_image_loaded()
         let _img = _screen.imgs[_i];
         if (_img.dim === "source")
         {
+          if (App.display_kiosk_height > 0) _img.disp.h = App.display_kiosk_height ;
           let _img_disp_scale = _height / _img.disp.h ;
           App.display_img_scale = _img.disp.h / App.STD_SCALE_HEIGHT ;
-          if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
+          //if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
           App.img_height = _height / _img_disp_scale; 
           App.img_width = _width / _img_disp_scale;
         }
@@ -266,9 +267,10 @@ function handle_image_loaded()
         let _img_channel = _screen.img_channels[_i];
         if (_img_channel.dim === "source")
         {
+          if (App.display_kiosk_height > 0) _img_channel.disp.h = App.display_kiosk_height ;
           let _img_disp_scale = _height / _img_channel.disp.h ;
           App.display_img_scale = _img_channel.disp.h / App.STD_SCALE_HEIGHT ;
-          if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
+          //if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
           App.img_height = _height / _img_disp_scale; 
           App.img_width = _width / _img_disp_scale;
         }
@@ -787,9 +789,10 @@ function display_select_listener()
       {  
         let _width = _img.dim.w ; 
         let _height = _img.dim.h ;
+        if (App.display_kiosk_height > 0) _img.disp.h = App.display_kiosk_height ;
         let _img_disp_scale = _height / _img.disp.h ;
         App.display_img_scale = _img.disp.h / App.STD_SCALE_HEIGHT ;
-        if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
+        //if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
         App.img_height = _height / _img_disp_scale; 
         App.img_width = _width / _img_disp_scale;
       }
@@ -958,9 +961,10 @@ function display_select_listener()
     {  
       let _width = _img_channel.dim.w ; 
       let _height = _img_channel.dim.h ;
+      if (App.display_kiosk_height > 0) _img_channel.disp.h = App.display_kiosk_height ;
       let _img_disp_scale = _height / _img_channel.disp.h ;
       App.display_img_scale = _img_channel.disp.h / App.STD_SCALE_HEIGHT ;
-      if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
+      //if (App.display_kiosk_height > 0) _img_disp_scale = _height / App.display_kiosk_height ;
       App.img_height = _height / _img_disp_scale; 
       App.img_width = _width / _img_disp_scale;
     }
