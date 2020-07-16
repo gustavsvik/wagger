@@ -2,6 +2,7 @@
 
 "disp_timeout": 900,
 "disp_viewport_size": {"w": 853, "h": 480},
+"disp_override_font": {"filename": "arimo-regular.woff", "path": "/fonts/"},
 
 
 "displays": 
@@ -278,7 +279,7 @@
       {
         "label": "View",
         "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 20, "y": 7}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 20, "y": 8}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
         "channels": [],
         "img_channels":
         [
