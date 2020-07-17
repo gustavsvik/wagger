@@ -11,6 +11,8 @@ $image_dir = 'images';
 $select_all = FALSE;
 if ($duration === -9999) $select_all = TRUE;
 
+
+
 if ($data_end > 0)
 {
 
@@ -39,7 +41,10 @@ if ($data_end > 0)
     $channel_end = strpos($channels, ';', $channel_start);
     $channel_string = mb_substr($channels, $channel_start, $channel_end-$channel_start);
     $channel = intval($channel_string);
-    
+
+    $found_archived_records = FALSE ;
+    $archived_record_files = [] ;
+
     if ($start_time === -9999)
     {
       if ($end_time === -9999)
@@ -76,12 +81,19 @@ if ($data_end > 0)
 
     $return_string .= $channel_string . ";";
 
-    $sql_get_available_values = "SELECT DISTINCT AD.ACQUIRED_TIME,AD.ACQUIRED_VALUE,AD.ACQUIRED_SUBSAMPLES,AD.ACQUIRED_BASE64 FROM " . $acquired_data_table_name . " AD WHERE AD.CHANNEL_INDEX=" . $channel_string ;
+    $sql_get_all_available_values = "SELECT DISTINCT AD.ACQUIRED_TIME,AD.ACQUIRED_VALUE,AD.ACQUIRED_SUBSAMPLES,AD.ACQUIRED_BASE64 FROM " . $acquired_data_table_name . " AD WHERE AD.CHANNEL_INDEX=" . $channel_string ;
+    $sql_get_available_values = $sql_get_all_available_values ;
     if (!$select_all) $sql_get_available_values .= " AND AD.ACQUIRED_TIME IN " . $points_range_string ;
-    $sql_get_available_values .= " AND AD.STATUS>=" . strval($lowest_status);
+    $sql_get_available_values .= " AND AD.STATUS >= " . strval($lowest_status) . " AND AD.STATUS < " . strval($STATUS_ARCHIVED) ;
     
     $available_values = $conn->query($sql_get_available_values);
-
+    if ($available_values->num_rows <= 0) 
+    {
+      $sql_get_stored_archived_values = $sql_get_all_available_values . " AND AD.STATUS = " . strval($STATUS_ARCHIVED) ;
+      $available_values = $conn->query($sql_get_stored_archived_values);
+      if ($available_values->num_rows > 0) $found_archived_records = TRUE ;
+    }
+    
     if ($available_values->num_rows > 0) 
     {
       while ($value_row = $available_values->fetch_array(MYSQLI_NUM)) 
@@ -94,10 +106,11 @@ if ($data_end > 0)
         if (!is_null($value_row[1])) $value_string = strval($value_row[1]);
         $base64_string = "";
         if (!is_null($value_row[3])) $base64_string = strval($value_row[3]);
-        $return_string .= $time_string . "," . $value_string . "," . $subsample_string . "," . "," ; // . $base64_string ;
+        $return_string .= $time_string . "," . $value_string . "," . $subsample_string . "," . "," ; // . $base64_string . ",";
         if (strlen($base64_string) > 0)
         {
           $image_filename = $image_dir . "/" . $channel_string . "_" . $time_string . ".jpg";
+          if ($found_archived_records) $archived_record_files[] = $image_filename ;
           $ifp = fopen($image_filename, 'wb'); 
           fwrite($ifp, base64_decode($base64_string) );
           fclose($ifp);
@@ -106,6 +119,7 @@ if ($data_end > 0)
         if ($value_string !== "-9999")
         {
           $text_filename = $image_dir . "/" . $channel_string . "_" . $time_string . ".txt";
+          if ($found_archived_records) $archived_record_files[] = $text_filename ;
           $ifp = fopen($text_filename, 'wb'); 
           fwrite($ifp, $return_string );
           fclose($ifp);
@@ -127,7 +141,7 @@ if ($data_end > 0)
     foreach($files as $file)
     {
       $complete_filename = $file ;
-      if(is_file($complete_filename) && $num_files > 20) 
+      if ( is_file($complete_filename) && $num_files > 20 && !in_array($complete_filename, $archived_record_files) ) 
       {
         unlink($complete_filename);
         --$num_files;
