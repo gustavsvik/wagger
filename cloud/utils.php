@@ -1,6 +1,12 @@
 <?php
 
 
+$STATUS_REQUESTED = -1;
+$STATUS_FULFILLED = 0;
+$STATUS_STORED = 1;
+$STATUS_ARCHIVED = 2;
+
+
 function getPost($key, $default) 
 {
   if (isset($_POST[$key]))
