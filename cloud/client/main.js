@@ -137,19 +137,17 @@ function draw()
       Disp.removeAllElements(A.CONTAINER);
       A.img = loadImage(A.FILES_URL + "000.jpg", handle_image_loaded);
       //A.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
-      A.img_width = 1280/(720/A.STD_SCALE_HEIGHT);
-      A.img_height = 720/(720/A.STD_SCALE_HEIGHT);
-      A.DISPLAY_RELOAD_TEXT = document.createElement("DIV");
-      A.CONTAINER.appendChild(A.DISPLAY_RELOAD_TEXT);
-      A.DISPLAY_RELOAD_TEXT.innerHTML = "Timeout due to inactivity - please reload page to continue data transfer!";
-      Disp.setProperties( A.DISPLAY_RELOAD_TEXT.style, 
+      A.DISPLAY_TIMEOUT_TEXT = document.createElement("DIV");
+      A.CONTAINER.appendChild(A.DISPLAY_TIMEOUT_TEXT);
+      A.DISPLAY_TIMEOUT_TEXT.innerHTML = "Timeout due to inactivity - please reload page to continue data transfer!";
+      Disp.setProperties( A.DISPLAY_TIMEOUT_TEXT.style, 
       { 
         width: (parseInt(A.img_width)).toString() + "px", 
-        height: (parseInt(A.RELOAD_FONTSIZE)).toString() + "px", 
+        height: (parseInt(A.TIMEOUT_FONTSIZE)).toString() + "px", 
         position: "absolute", 
-        left: (parseInt(A.CANVAS_POS_X + A.canvas_shift_x + Math.max(A.img_width/2 - A.WARNING_FONTSIZE*11.5 + 120, 0))).toString() + "px", 
-        top: (parseInt(A.CANVAS_POS_Y + A.canvas_shift_y + A.img_height/2 - A.WARNING_FONTSIZE/2)).toString() + "px", 
-        fontSize: (parseInt(A.RELOAD_FONTSIZE)).toString() + "px", 
+        //left: (parseInt(A.CANVAS_POS_X + A.canvas_shift_x + Math.max(A.img_width/2 - A.TIMEOUT_FONTSIZE*23.2 + 135, 0))).toString() + "px", 
+        //top: (parseInt(A.CANVAS_POS_Y + A.canvas_shift_y + A.img_height/2 - A.TIMEOUT_FONTSIZE/2)).toString() + "px", 
+        //fontSize: (parseInt(A.TIMEOUT_FONTSIZE)).toString() + "px", 
         fontFamily: A.all_font_families, 
         color: Disp.rGBALiteralFromArray(A.STANDARD_FOREGROUND_COLOR),
         textAlign: "left", 
@@ -248,9 +246,19 @@ function handle_image_loaded()
     Disp.setProperties( A.DISPLAY_INFO_TEXT.style, 
     { 
       fontSize: (parseInt(A.WARNING_FONTSIZE * A.display_img_scale/A.display_img_scale)).toString() + "px",
-      left: (parseInt(A.CANVAS_POS_X + A.canvas_shift_x + Math.max(A.img_width/2 - A.WARNING_FONTSIZE*7.0, 0))).toString() + "px", 
+      left: (parseInt(A.CANVAS_POS_X + A.canvas_shift_x + Math.max(A.img_width/2 - A.WARNING_FONTSIZE*8.0, 0))).toString() + "px", 
       top: (parseInt(A.CANVAS_POS_Y + A.canvas_shift_y + A.img_height/2 - A.WARNING_FONTSIZE/2)).toString() + "px", 
     } ) ;
+
+    if (A.display_timed_out)
+    {
+      Disp.setProperties( A.DISPLAY_TIMEOUT_TEXT.style, 
+      {
+        left: (parseInt(A.CANVAS_POS_X + A.canvas_shift_x + Math.max(A.img_width/2 - A.TIMEOUT_FONTSIZE*26.0 + 130, 0))).toString() + "px", 
+        top: (parseInt(A.CANVAS_POS_Y + A.canvas_shift_y + A.img_height/2 - A.TIMEOUT_FONTSIZE/2)).toString() + "px", 
+        fontSize: (parseInt(A.TIMEOUT_FONTSIZE)).toString() + "px", 
+      } ) ;
+    }
 
     let _time = _screen.time;
     if (_time !== null) // Any display but the title page
@@ -720,360 +728,366 @@ function slider_listener()
 
 function display_select_listener()
 {
-  background(255);
-  A.saved_frames = 0;
-  if (A.display_kiosk_interval === 0) 
+
+  if (!A.display_timed_out)
   {
-    A.frames_active = 0;
-  }
-  else
-  {
-    //outside_label_listener();
-    let _adjust = A.display_kiosk_adjust ;
-    window.scrollTo(A.CANVAS_POS_X + _adjust.x, A.CANVAS_POS_Y + _adjust.y);
-  }
-  
-  A.channel_strings_array = [];
 
-  Disp.removeAllElements(A.CONTAINER);
-
-  A.display_index = parseInt(A.DISPLAY_SELECT.options[A.DISPLAY_SELECT.selectedIndex].value);
-
-  let _display = D.data[A.display_index];
-  let _screen = _display.screens[0];
-
-  let no_of_imgs = (_screen.imgs).length;
-  if (no_of_imgs > 0)
-  {
-    for (let i = 0; i < no_of_imgs; i++)
+    background(255);
+    A.saved_frames = 0;
+    if (A.display_kiosk_interval === 0) 
     {
-      let _img = _screen.imgs[i];
-      if (i === 0) A.img_url = A.FILES_URL + (_img.file).toString();
-      A.img = loadImage(A.img_url, handle_image_loaded);
-      if (_img.disp.pos !== "center")
+      A.frames_active = 0;
+    }
+    else
+    {
+      //outside_label_listener();
+      let _adjust = A.display_kiosk_adjust ;
+      window.scrollTo(A.CANVAS_POS_X + _adjust.x, A.CANVAS_POS_Y + _adjust.y);
+    }
+    
+    A.channel_strings_array = [];
+
+    Disp.removeAllElements(A.CONTAINER);
+
+    A.display_index = parseInt(A.DISPLAY_SELECT.options[A.DISPLAY_SELECT.selectedIndex].value);
+
+    let _display = D.data[A.display_index];
+    let _screen = _display.screens[0];
+
+    let no_of_imgs = (_screen.imgs).length;
+    if (no_of_imgs > 0)
+    {
+      for (let i = 0; i < no_of_imgs; i++)
       {
-        A.canvas_shift_x = _img.disp.pos.x;
-        A.canvas_shift_y = _img.disp.pos.y;
+        let _img = _screen.imgs[i];
+        if (i === 0) A.img_url = A.FILES_URL + (_img.file).toString();
+        A.img = loadImage(A.img_url, handle_image_loaded);
+        if (_img.disp.pos !== "center")
+        {
+          A.canvas_shift_x = _img.disp.pos.x;
+          A.canvas_shift_y = _img.disp.pos.y;
+        }
+        if (_img.dim !== "source")
+        {  
+          let _width = _img.dim.w ; 
+          let _height = _img.dim.h ;
+          if (A.display_kiosk_height > 0) _img.disp.h = A.display_kiosk_height ;
+          let _img_disp_scale = _height / _img.disp.h ;
+          A.display_img_scale = _img.disp.h / A.STD_SCALE_HEIGHT ;
+          //if (A.display_kiosk_height > 0) _img_disp_scale = _height / A.display_kiosk_height ;
+          A.img_height = _height / _img_disp_scale; 
+          A.img_width = _width / _img_disp_scale;
+        }
       }
-      if (_img.dim !== "source")
+    }
+    else
+    {
+      A.img_url = A.FILES_URL + "00.jpg";
+      A.img = loadImage(A.img_url, handle_image_loaded);
+      //A.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
+    }
+
+    A.DISPLAY_INFO_TEXT = document.createElement("DIV");
+    A.CONTAINER.appendChild(A.DISPLAY_INFO_TEXT);
+    Disp.setProperties( A.DISPLAY_INFO_TEXT.style, 
+    {
+      width: (parseInt(A.img_width)).toString() + "px",
+      height: (parseInt(A.WARNING_FONTSIZE)).toString() + "px",
+      position: "absolute",
+      left: (parseInt(A.CANVAS_POS_X + A.canvas_shift_x + Math.max(A.img_width/2 - A.WARNING_FONTSIZE*7.0, 0))).toString() + "px",
+      top: (parseInt(A.CANVAS_POS_Y + A.canvas_shift_y + A.img_height/2 - A.WARNING_FONTSIZE/2)).toString() + "px",
+      fontSize: (parseInt(A.WARNING_FONTSIZE * A.display_img_scale/A.display_img_scale)).toString() + "px",
+      fontFamily: A.all_font_families,
+      textAlign: "left",
+      visibility: "hidden"
+    } ) ;
+    A.DISPLAY_INFO_TEXT.id = "infotext";
+
+
+    let _time = _screen.time;
+    if (_time !== null) // Any display but the title page
+    {
+      A.time_bins = _time.bins;
+      A.time_bin_size = _time.bin_size;
+
+      let _time_disp = _time.disp;
+      let _time_color = _time_disp.col;
+      let _time_bgcol = _time_disp.bgcol;
+
+      let _timebkg = document.createElement("DIV");
+      A.CONTAINER.appendChild(_timebkg);
+      let _time_active_label = document.createElement("BUTTON");
+      _timebkg.appendChild(_time_active_label);
+      
+      _time_active_label.innerHTML = "";
+      let _time_active_label_text = document.createTextNode("");
+      _time_active_label.appendChild(_time_active_label_text);
+      
+      _timebkg.title = ""; 
+      Disp.setProperties( _timebkg.style, 
+      {
+        width: (_time_disp.size * 14.1).toString() + "px",
+        height: (_time_disp.size * 4.1 + 4).toString() + "px",
+        position: "absolute",
+        left: (_time_disp.pos.x * A.display_img_scale + A.CANVAS_POS_X + A.canvas_shift_x - _time_disp.size/2 + 1).toString() + "px",
+        top: (_time_disp.pos.y * A.display_img_scale + A.CANVAS_POS_Y + A.canvas_shift_y - _time_disp.size + 1).toString() + "px",
+        visibility: "hidden",
+        fontSize: (parseInt(_time_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
+        fontFamily: A.all_font_families,
+        color: Disp.rGBALiteralFromArray([_time_color.r,_time_color.g,_time_color.b,_time_color.a]),
+        backgroundColor: Disp.rGBALiteralFromArray([_time_bgcol.r,_time_bgcol.g,_time_bgcol.b,_time_bgcol.a])
+      } ) ;
+
+      _time_active_label.title = ""; 
+      Disp.setProperties( _time_active_label.style, 
+      {
+        position: "absolute",
+        left: (_time_disp.size * 0.33).toString() + "px",
+        top: (_time_disp.size * 0.34).toString() + "px",
+        visibility: "visible",
+        fontSize: (parseInt(_time_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
+        fontFamily: A.all_font_families,
+        color: Disp.rGBALiteralFromArray([_time_color.r,_time_color.g,_time_color.b,_time_color.a]),
+        backgroundColor: "transparent",
+        border: "transparent",
+        outline: "none",
+        textAlign: "left"
+      } ) ;
+
+      _timebkg.id = "timebkg" ;
+      _time_active_label.id = "timelabel" ;
+      _timebkg.addEventListener("mouseover", label_listener);
+      _timebkg.addEventListener("mouseleave", outside_label_listener);
+
+      _time.info = Disp.htmlSpaces(0) + "<br>" + "Last server response (NTP)" + "<br>" + "Client time offset: " ;    
+      _time.padding = Disp.htmlSpaces(5) + "<br>" + Disp.htmlSpaces(10);    
+    }
+
+    let _no_of_channels = (_screen.channels).length;
+    A.chan_index_string = "";
+
+    for (let _i = 0; _i < _no_of_channels; _i++)
+    {  
+      let _channel = _screen.channels[_i];
+      let _disp = _channel.disp;
+      let _bgcol = _disp.bgcol;
+      let _color = _disp.col;
+
+      let _chan_index_string = (_channel.index).toString();
+      A.chan_index_string += _chan_index_string + ";";
+
+      let _chanbkg = document.createElement("DIV");
+      A.CONTAINER.appendChild(_chanbkg);
+
+      let _active_label = document.createElement("BUTTON");
+      _chanbkg.appendChild(_active_label);
+      
+      _active_label.innerHTML = "";
+      let _active_label_text = document.createTextNode("");
+      _active_label.appendChild(_active_label_text);
+
+      _chanbkg.title = ""; 
+      Disp.setProperties( _chanbkg.style, 
+      {
+        width: (_disp.size * 13.9).toString() + "px",
+        height: (_disp.size * 4.1 + 4).toString() + "px",
+        position: "absolute",
+        left: (_disp.pos.x * A.display_img_scale + A.CANVAS_POS_X + A.canvas_shift_x - _disp.size/2 + 1).toString() + "px",
+        top: (_disp.pos.y * A.display_img_scale + A.CANVAS_POS_Y + A.canvas_shift_y - _disp.size + 1).toString() + "px",
+        visibility: "hidden",
+        fontSize: (parseInt(_disp.size * A.display_img_scale)).toString() + "px",
+        fontFamily: A.all_font_families,
+        color: Disp.rGBALiteralFromArray([_color.r,_color.g,_color.b,_color.a]),
+        backgroundColor: Disp.rGBALiteralFromArray([_bgcol.r,_bgcol.g,_bgcol.b,_bgcol.a])
+      } ) ;
+
+      _active_label.title = ""; 
+      Disp.setProperties( _active_label.style, 
+      {
+        position: "absolute",
+        left: (_disp.size * 0.33).toString() + "px",
+        top: (_disp.size * 0.34).toString() + "px",
+        visibility: "visible",
+        fontSize: (parseInt(_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
+        fontFamily: A.all_font_families,
+        color: Disp.rGBALiteralFromArray([_color.r,_color.g,_color.b,_color.a]),
+        backgroundColor: "transparent",
+        border: "transparent",
+        outline: "none",
+        textAlign: "left"
+      } ) ;
+
+      _chanbkg.id = "chanbkg_" + _chan_index_string;
+      _active_label.id = "label_" + _chan_index_string;
+      _chanbkg.addEventListener("mouseover", label_listener);
+      _chanbkg.addEventListener("mouseleave", outside_label_listener);
+      
+      _channel.info = Disp.htmlSpaces(0) + "<br>" + (_channel.label).toString() + "<br>" + "Measurement channel " + _chan_index_string ;    
+      _channel.padding = Disp.htmlSpaces(5) + "<br>" + Disp.htmlSpaces(10);
+    }
+    
+    let _no_of_img_channels = (_screen.img_channels).length;
+
+    A.img_chan_index_string = "";
+    for (let _i = 0; _i < _no_of_img_channels; _i++)
+    {
+      let _img_channel = _screen.img_channels[_i];
+      let _img_chan_index_string = (_img_channel.index).toString();
+      A.img_chan_index_string += _img_chan_index_string + ";";
+      if (_img_channel.disp.pos !== "center")
+      {
+        A.canvas_shift_x = _img_channel.disp.pos.x;
+        A.canvas_shift_y = _img_channel.disp.pos.y;
+      }
+      if (_img_channel.dim !== "source")
       {  
-        let _width = _img.dim.w ; 
-        let _height = _img.dim.h ;
-        if (A.display_kiosk_height > 0) _img.disp.h = A.display_kiosk_height ;
-        let _img_disp_scale = _height / _img.disp.h ;
-        A.display_img_scale = _img.disp.h / A.STD_SCALE_HEIGHT ;
+        let _width = _img_channel.dim.w ; 
+        let _height = _img_channel.dim.h ;
+        if (A.display_kiosk_height > 0) _img_channel.disp.h = A.display_kiosk_height ;
+        let _img_disp_scale = _height / _img_channel.disp.h ;
+        A.display_img_scale = _img_channel.disp.h / A.STD_SCALE_HEIGHT ;
         //if (A.display_kiosk_height > 0) _img_disp_scale = _height / A.display_kiosk_height ;
         A.img_height = _height / _img_disp_scale; 
         A.img_width = _width / _img_disp_scale;
       }
     }
-  }
-  else
-  {
-    A.img_url = A.FILES_URL + "00.jpg";
-    A.img = loadImage(A.img_url, handle_image_loaded);
-    //A.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
-  }
-
-  A.DISPLAY_INFO_TEXT = document.createElement("DIV");
-  A.CONTAINER.appendChild(A.DISPLAY_INFO_TEXT);
-  Disp.setProperties( A.DISPLAY_INFO_TEXT.style, 
-  {
-    width: (parseInt(A.img_width)).toString() + "px",
-    height: (parseInt(A.WARNING_FONTSIZE)).toString() + "px",
-    position: "absolute",
-    left: (parseInt(A.CANVAS_POS_X + A.canvas_shift_x + Math.max(A.img_width/2 - A.WARNING_FONTSIZE*7.0, 0))).toString() + "px",
-    top: (parseInt(A.CANVAS_POS_Y + A.canvas_shift_y + A.img_height/2 - A.WARNING_FONTSIZE/2)).toString() + "px",
-    fontSize: (parseInt(A.WARNING_FONTSIZE * A.display_img_scale/A.display_img_scale)).toString() + "px",
-    fontFamily: A.all_font_families,
-    textAlign: "left",
-    visibility: "hidden"
-  } ) ;
-  A.DISPLAY_INFO_TEXT.id = "infotext";
-
-
-  let _time = _screen.time;
-  if (_time !== null) // Any display but the title page
-  {
-    A.time_bins = _time.bins;
-    A.time_bin_size = _time.bin_size;
-
-    let _time_disp = _time.disp;
-    let _time_color = _time_disp.col;
-    let _time_bgcol = _time_disp.bgcol;
-
-    let _timebkg = document.createElement("DIV");
-    A.CONTAINER.appendChild(_timebkg);
-    let _time_active_label = document.createElement("BUTTON");
-    _timebkg.appendChild(_time_active_label);
-    
-    _time_active_label.innerHTML = "";
-    let _time_active_label_text = document.createTextNode("");
-    _time_active_label.appendChild(_time_active_label_text);
-    
-    _timebkg.title = ""; 
-    Disp.setProperties( _timebkg.style, 
+      
+    let _no_of_ctrl_channels = (_screen.ctrl_channels).length;
+    A.ctrl_chan_index_string = "";
+    for (let _i = 0; _i < _no_of_ctrl_channels; _i++)
     {
-      width: (_time_disp.size * 14.1).toString() + "px",
-      height: (_time_disp.size * 4.1 + 4).toString() + "px",
-      position: "absolute",
-      left: (_time_disp.pos.x * A.display_img_scale + A.CANVAS_POS_X + A.canvas_shift_x - _time_disp.size/2 + 1).toString() + "px",
-      top: (_time_disp.pos.y * A.display_img_scale + A.CANVAS_POS_Y + A.canvas_shift_y - _time_disp.size + 1).toString() + "px",
-      visibility: "hidden",
-      fontSize: (parseInt(_time_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
-      fontFamily: A.all_font_families,
-      color: Disp.rGBALiteralFromArray([_time_color.r,_time_color.g,_time_color.b,_time_color.a]),
-      backgroundColor: Disp.rGBALiteralFromArray([_time_bgcol.r,_time_bgcol.g,_time_bgcol.b,_time_bgcol.a])
-    } ) ;
-
-    _time_active_label.title = ""; 
-    Disp.setProperties( _time_active_label.style, 
-    {
-      position: "absolute",
-      left: (_time_disp.size * 0.33).toString() + "px",
-      top: (_time_disp.size * 0.34).toString() + "px",
-      visibility: "visible",
-      fontSize: (parseInt(_time_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
-      fontFamily: A.all_font_families,
-      color: Disp.rGBALiteralFromArray([_time_color.r,_time_color.g,_time_color.b,_time_color.a]),
-      backgroundColor: "transparent",
-      border: "transparent",
-      outline: "none",
-      textAlign: "left"
-    } ) ;
-
-    _timebkg.id = "timebkg" ;
-    _time_active_label.id = "timelabel" ;
-    _timebkg.addEventListener("mouseover", label_listener);
-    _timebkg.addEventListener("mouseleave", outside_label_listener);
-
-    _time.info = Disp.htmlSpaces(0) + "<br>" + "Last server response (NTP)" + "<br>" + "Client time offset: " ;    
-    _time.padding = Disp.htmlSpaces(5) + "<br>" + Disp.htmlSpaces(10);    
-  }
-
-  let _no_of_channels = (_screen.channels).length;
-  A.chan_index_string = "";
-
-  for (let _i = 0; _i < _no_of_channels; _i++)
-  {  
-    let _channel = _screen.channels[_i];
-    let _disp = _channel.disp;
-    let _bgcol = _disp.bgcol;
-    let _color = _disp.col;
-
-    let _chan_index_string = (_channel.index).toString();
-    A.chan_index_string += _chan_index_string + ";";
-
-    let _chanbkg = document.createElement("DIV");
-    A.CONTAINER.appendChild(_chanbkg);
-
-    let _active_label = document.createElement("BUTTON");
-    _chanbkg.appendChild(_active_label);
-    
-    _active_label.innerHTML = "";
-    let _active_label_text = document.createTextNode("");
-    _active_label.appendChild(_active_label_text);
-
-    _chanbkg.title = ""; 
-    Disp.setProperties( _chanbkg.style, 
-    {
-      width: (_disp.size * 13.9).toString() + "px",
-      height: (_disp.size * 4.1 + 4).toString() + "px",
-      position: "absolute",
-      left: (_disp.pos.x * A.display_img_scale + A.CANVAS_POS_X + A.canvas_shift_x - _disp.size/2 + 1).toString() + "px",
-      top: (_disp.pos.y * A.display_img_scale + A.CANVAS_POS_Y + A.canvas_shift_y - _disp.size + 1).toString() + "px",
-      visibility: "hidden",
-      fontSize: (parseInt(_disp.size * A.display_img_scale)).toString() + "px",
-      fontFamily: A.all_font_families,
-      color: Disp.rGBALiteralFromArray([_color.r,_color.g,_color.b,_color.a]),
-      backgroundColor: Disp.rGBALiteralFromArray([_bgcol.r,_bgcol.g,_bgcol.b,_bgcol.a])
-    } ) ;
-
-    _active_label.title = ""; 
-    Disp.setProperties( _active_label.style, 
-    {
-      position: "absolute",
-      left: (_disp.size * 0.33).toString() + "px",
-      top: (_disp.size * 0.34).toString() + "px",
-      visibility: "visible",
-      fontSize: (parseInt(_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
-      fontFamily: A.all_font_families,
-      color: Disp.rGBALiteralFromArray([_color.r,_color.g,_color.b,_color.a]),
-      backgroundColor: "transparent",
-      border: "transparent",
-      outline: "none",
-      textAlign: "left"
-    } ) ;
-
-    _chanbkg.id = "chanbkg_" + _chan_index_string;
-    _active_label.id = "label_" + _chan_index_string;
-    _chanbkg.addEventListener("mouseover", label_listener);
-    _chanbkg.addEventListener("mouseleave", outside_label_listener);
-    
-    _channel.info = Disp.htmlSpaces(0) + "<br>" + (_channel.label).toString() + "<br>" + "Measurement channel " + _chan_index_string ;    
-    _channel.padding = Disp.htmlSpaces(5) + "<br>" + Disp.htmlSpaces(10);
-  }
-  
-  let _no_of_img_channels = (_screen.img_channels).length;
-
-  A.img_chan_index_string = "";
-  for (let _i = 0; _i < _no_of_img_channels; _i++)
-  {
-    let _img_channel = _screen.img_channels[_i];
-    let _img_chan_index_string = (_img_channel.index).toString();
-    A.img_chan_index_string += _img_chan_index_string + ";";
-    if (_img_channel.disp.pos !== "center")
-    {
-      A.canvas_shift_x = _img_channel.disp.pos.x;
-      A.canvas_shift_y = _img_channel.disp.pos.y;
-    }
-    if (_img_channel.dim !== "source")
-    {  
-      let _width = _img_channel.dim.w ; 
-      let _height = _img_channel.dim.h ;
-      if (A.display_kiosk_height > 0) _img_channel.disp.h = A.display_kiosk_height ;
-      let _img_disp_scale = _height / _img_channel.disp.h ;
-      A.display_img_scale = _img_channel.disp.h / A.STD_SCALE_HEIGHT ;
-      //if (A.display_kiosk_height > 0) _img_disp_scale = _height / A.display_kiosk_height ;
-      A.img_height = _height / _img_disp_scale; 
-      A.img_width = _width / _img_disp_scale;
-    }
-  }
-    
-  let _no_of_ctrl_channels = (_screen.ctrl_channels).length;
-  A.ctrl_chan_index_string = "";
-  for (let _i = 0; _i < _no_of_ctrl_channels; _i++)
-  {
-    let _ctrl_channel = _screen.ctrl_channels[_i];
-        
-    let _ctrl_chan_index_string = (_ctrl_channel.index).toString();
-    A.ctrl_chan_index_string += _ctrl_chan_index_string + ";";
+      let _ctrl_channel = _screen.ctrl_channels[_i];
+          
+      let _ctrl_chan_index_string = (_ctrl_channel.index).toString();
+      A.ctrl_chan_index_string += _ctrl_chan_index_string + ";";
 
 
-    let _ctrlbkg = document.createElement("DIV");
+      let _ctrlbkg = document.createElement("DIV");
 
-    A.CONTAINER.appendChild(_ctrlbkg);
-    
-    let _slider = document.createElement("INPUT");
-    let _setval = document.createElement("BUTTON");
-    let _send = document.createElement("BUTTON");
+      A.CONTAINER.appendChild(_ctrlbkg);
+      
+      let _slider = document.createElement("INPUT");
+      let _setval = document.createElement("BUTTON");
+      let _send = document.createElement("BUTTON");
 
-    _ctrlbkg.appendChild(_slider);
-    _ctrlbkg.appendChild(_setval);
-    _ctrlbkg.appendChild(_send);
-    
-    let _textForButton = document.createTextNode("");
-    _setval.appendChild(_textForButton);
+      _ctrlbkg.appendChild(_slider);
+      _ctrlbkg.appendChild(_setval);
+      _ctrlbkg.appendChild(_send);
+      
+      let _textForButton = document.createTextNode("");
+      _setval.appendChild(_textForButton);
 
-    _ctrlbkg.id = "ctrlbkg_" + _ctrl_chan_index_string;
-    _slider.id = "slider_" + _ctrl_chan_index_string;
-    _setval.id = "setval_" + _ctrl_chan_index_string;
-    _send.id = "send_" + _ctrl_chan_index_string;
+      _ctrlbkg.id = "ctrlbkg_" + _ctrl_chan_index_string;
+      _slider.id = "slider_" + _ctrl_chan_index_string;
+      _setval.id = "setval_" + _ctrl_chan_index_string;
+      _send.id = "send_" + _ctrl_chan_index_string;
 
-    _ctrlbkg.addEventListener("mouseover", label_listener);
-    _ctrlbkg.addEventListener("mouseleave", outside_label_listener);
+      _ctrlbkg.addEventListener("mouseover", label_listener);
+      _ctrlbkg.addEventListener("mouseleave", outside_label_listener);
 
-    
-    let _ctrl_disp = _ctrl_channel.disp;
-    let _ctrl_color = _ctrl_disp.col;
-    let _ctrl_bgcol = _ctrl_disp.bgcol;
+      
+      let _ctrl_disp = _ctrl_channel.disp;
+      let _ctrl_color = _ctrl_disp.col;
+      let _ctrl_bgcol = _ctrl_disp.bgcol;
 
-    _ctrlbkg.title = ""; 
-    Disp.setProperties( _ctrlbkg.style, 
-    {
-      width: (_ctrl_disp.size * 10.8).toString() + "px",
-      height: (_ctrl_disp.size * 8.2).toString() + "px",
-      position: "absolute",
-      left: (_ctrl_disp.pos.x * A.display_img_scale + A.CANVAS_POS_X + A.canvas_shift_x - _ctrl_disp.size/2 + 7).toString() + "px",
-      top: (_ctrl_disp.pos.y * A.display_img_scale + A.CANVAS_POS_Y + A.canvas_shift_y - _ctrl_disp.size + 14).toString() + "px", 
-      visibility: "hidden",
-      fontSize: (parseInt(_ctrl_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
-      fontFamily: A.all_font_families,
-      color: Disp.rGBALiteralFromArray([_ctrl_color.r,_ctrl_color.g,_ctrl_color.b,_ctrl_color.a]) , 
-      backgroundColor: Disp.rGBALiteralFromArray([_ctrl_bgcol.r,_ctrl_bgcol.g,_ctrl_bgcol.b,_ctrl_bgcol.a])
-    } ) ;
+      _ctrlbkg.title = ""; 
+      Disp.setProperties( _ctrlbkg.style, 
+      {
+        width: (_ctrl_disp.size * 10.8).toString() + "px",
+        height: (_ctrl_disp.size * 8.2).toString() + "px",
+        position: "absolute",
+        left: (_ctrl_disp.pos.x * A.display_img_scale + A.CANVAS_POS_X + A.canvas_shift_x - _ctrl_disp.size/2 + 7).toString() + "px",
+        top: (_ctrl_disp.pos.y * A.display_img_scale + A.CANVAS_POS_Y + A.canvas_shift_y - _ctrl_disp.size + 14).toString() + "px", 
+        visibility: "hidden",
+        fontSize: (parseInt(_ctrl_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
+        fontFamily: A.all_font_families,
+        color: Disp.rGBALiteralFromArray([_ctrl_color.r,_ctrl_color.g,_ctrl_color.b,_ctrl_color.a]) , 
+        backgroundColor: Disp.rGBALiteralFromArray([_ctrl_bgcol.r,_ctrl_bgcol.g,_ctrl_bgcol.b,_ctrl_bgcol.a])
+      } ) ;
 
-    _slider.title = "";
-    Disp.setProperties( _slider.style, 
-    {
-      width: (_ctrl_disp.size * 9.0).toString() + "px",
-      height: (_ctrl_disp.size * 1.8).toString() + "px",
-      position: "absolute",
-      left: (_ctrl_disp.size * 0.7).toString() + "px",
-      top: (_ctrl_disp.size * 0.6).toString() + "px",
-      visibility: "hidden",
-      fontSize: (parseInt(_ctrl_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
-      fontFamily: A.all_font_families
-    } ) ;
+      _slider.title = "";
+      Disp.setProperties( _slider.style, 
+      {
+        width: (_ctrl_disp.size * 9.0).toString() + "px",
+        height: (_ctrl_disp.size * 1.8).toString() + "px",
+        position: "absolute",
+        left: (_ctrl_disp.size * 0.7).toString() + "px",
+        top: (_ctrl_disp.size * 0.6).toString() + "px",
+        visibility: "hidden",
+        fontSize: (parseInt(_ctrl_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
+        fontFamily: A.all_font_families
+      } ) ;
 
-    _setval.title = ""; 
-    Disp.setProperties( _setval.style, 
-    {
-      position: "absolute",
-      left: (_ctrl_disp.size * 0.38).toString() + "px",
-      top: (_ctrl_disp.size * 3.0).toString() + "px",
-      visibility: "visible",
-      fontSize: (parseInt(_ctrl_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
-      fontFamily: A.all_font_families,
-      color: Disp.rGBALiteralFromArray([_ctrl_color.r,_ctrl_color.g,_ctrl_color.b,_ctrl_color.a]) , 
-      backgroundColor: "transparent",    
-      border: "transparent",
-      outline: "none",
-      textAlign: "left"
-    } ) ;
+      _setval.title = ""; 
+      Disp.setProperties( _setval.style, 
+      {
+        position: "absolute",
+        left: (_ctrl_disp.size * 0.38).toString() + "px",
+        top: (_ctrl_disp.size * 3.0).toString() + "px",
+        visibility: "visible",
+        fontSize: (parseInt(_ctrl_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
+        fontFamily: A.all_font_families,
+        color: Disp.rGBALiteralFromArray([_ctrl_color.r,_ctrl_color.g,_ctrl_color.b,_ctrl_color.a]) , 
+        backgroundColor: "transparent",    
+        border: "transparent",
+        outline: "none",
+        textAlign: "left"
+      } ) ;
 
-    _send.title = "";
-    _send.disabled = true;
-    Disp.setProperties( _send.style, 
-    {
-      width: (_ctrl_disp.size * 2.7).toString() + "px",
-      height: (_ctrl_disp.size * 1.6).toString() + "px",
-      position: "absolute",
-      left: (_ctrl_disp.size * 7.3).toString() + "px",
-      top: (_ctrl_disp.size * 3.1).toString() + "px",
-      visibility: "hidden",
-      fontSize: (parseInt(_ctrl_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
-      fontFamily: A.all_font_families,
-      borderRadius: "10%",
-      opacity: "0.5",
-      textAlign: "center"
-    } ) ;
-    
-    Disp.setProperties( _slider, 
-    {
-      type: "range",
-      min: _ctrl_channel.min_val,
-      max: _ctrl_channel.max_val,
-      step: _ctrl_channel.val_step,
-      value: _ctrl_channel.val
-    } ) ;
-    _slider.addEventListener("input", slider_listener);
-
-    let _value_unit_string = "";
-    if ( _ctrl_channel.min_str_val !== "" && _ctrl_channel.max_str_val !== "" && _ctrl_channel.str_val !== "" )
-    {
+      _send.title = "";
+      _send.disabled = true;
+      Disp.setProperties( _send.style, 
+      {
+        width: (_ctrl_disp.size * 2.7).toString() + "px",
+        height: (_ctrl_disp.size * 1.6).toString() + "px",
+        position: "absolute",
+        left: (_ctrl_disp.size * 7.3).toString() + "px",
+        top: (_ctrl_disp.size * 3.1).toString() + "px",
+        visibility: "hidden",
+        fontSize: (parseInt(_ctrl_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
+        fontFamily: A.all_font_families,
+        borderRadius: "10%",
+        opacity: "0.5",
+        textAlign: "center"
+      } ) ;
+      
       Disp.setProperties( _slider, 
       {
-        min: 0,
-        max: 1,
-        step: 1,
-        value: 0
+        type: "range",
+        min: _ctrl_channel.min_val,
+        max: _ctrl_channel.max_val,
+        step: _ctrl_channel.val_step,
+        value: _ctrl_channel.val
       } ) ;
-      _value_unit_string = _ctrl_channel.min_str_val;
+      _slider.addEventListener("input", slider_listener);
+
+      let _value_unit_string = "";
+      if ( _ctrl_channel.min_str_val !== "" && _ctrl_channel.max_str_val !== "" && _ctrl_channel.str_val !== "" )
+      {
+        Disp.setProperties( _slider, 
+        {
+          min: 0,
+          max: 1,
+          step: 1,
+          value: 0
+        } ) ;
+        _value_unit_string = _ctrl_channel.min_str_val;
+      }
+      else _value_unit_string = (_ctrl_channel.val * _ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
+      
+      Disp.setProperties( _ctrl_channel, 
+      {
+        str_val: _value_unit_string,
+        info: Disp.htmlSpaces(0) + "<br>" + Disp.htmlSpaces(10) + "<br>" + (_ctrl_channel.label).toString() + "<br>" + "Control channel " + _ctrl_chan_index_string, 
+        padding: Disp.htmlSpaces(0) + "<br>" + Disp.htmlSpaces(10) + "<br>" + Disp.htmlSpaces(10)
+      } ) ;      
+
+      _setval.innerHTML = _value_unit_string + _ctrl_channel.padding; //+ "<br>" + Disp.htmlSpaces(10);
+      _send.addEventListener("click", send_listener);
+      _send.innerHTML = "Go"; //"<div style="text-align:center;">Go</div>";
     }
-    else _value_unit_string = (_ctrl_channel.val * _ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
-    
-    Disp.setProperties( _ctrl_channel, 
-    {
-      str_val: _value_unit_string,
-      info: Disp.htmlSpaces(0) + "<br>" + Disp.htmlSpaces(10) + "<br>" + (_ctrl_channel.label).toString() + "<br>" + "Control channel " + _ctrl_chan_index_string, 
-      padding: Disp.htmlSpaces(0) + "<br>" + Disp.htmlSpaces(10) + "<br>" + Disp.htmlSpaces(10)
-    } ) ;      
 
-    _setval.innerHTML = _value_unit_string + _ctrl_channel.padding; //+ "<br>" + Disp.htmlSpaces(10);
-    _send.addEventListener("click", send_listener);
-    _send.innerHTML = "Go"; //"<div style="text-align:center;">Go</div>";
+    reset_display_variables();
+  
   }
-
-  reset_display_variables();
 }
