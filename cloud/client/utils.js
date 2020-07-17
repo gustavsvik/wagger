@@ -227,11 +227,11 @@ class App
     this.STD_SCALE_HEIGHT = 480;
     this.DISPLAY_SELECT = {};
     this.DISPLAY_INFO_TEXT = {};
-    this.DISPLAY_RELOAD_TEXT = {};
+    this.DISPLAY_TIMEOUT_TEXT = {};
     this.STANDARD_FONT_FAMILIES = "'Arial', 'Verdana'";
     this.STANDARD_FONTSIZE = 14;
     this.WARNING_FONTSIZE = 36;
-    this.RELOAD_FONTSIZE = 14;
+    this.TIMEOUT_FONTSIZE = 14;
     this.MAX_DISPLAY_DIGITS = 13;
     this.STANDARD_FOREGROUND_COLOR = [255,255,255,255];
     this.STANDARD_BACKGROUND_COLOR = [0,0,255,255];
