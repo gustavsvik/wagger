@@ -27,7 +27,7 @@ if ($conn)
   $conn->autocommit(FALSE);
   $conn->begin_transaction();
   $sql_delete = "DELETE FROM " . $acquired_data_table_name . " WHERE CHANNEL_INDEX IN (" . $channels_list . ")";
-  $sql_delete .= " AND AD.STATUS>=" . strval($lowest_status);
+  $sql_delete .= " AND AD.STATUS >= " . strval($lowest_status) . " AND AD.STATUS < " . strval($STATUS_ARCHIVED) ;
   $stmt=$conn->prepare($sql_delete);
   if ($stmt)
   {
