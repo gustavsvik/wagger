@@ -26,20 +26,26 @@ if ($conn)
 {
   $conn->autocommit(FALSE);
   $conn->begin_transaction();
-  $sql_delete = "DELETE FROM " . $acquired_data_table_name . " WHERE CHANNEL_INDEX IN (" . $channels_list . ")";
-  $sql_delete .= " AND AD.STATUS >= " . strval($lowest_status) . " AND AD.STATUS < " . strval($STATUS_ARCHIVED) ;
+  $sql_delete = "DELETE FROM " . $acquired_data_table_name ;
+  $sql_delete .= " WHERE CHANNEL_INDEX IN (" . $channels_list . ")" ;
+  $sql_delete .= " AND TIMEDIFF(SYSDATE(), ADDED_TIMESTAMP)>" . strval($delete_horizon) ;
+  $sql_delete .= " AND AD.STATUS >= " . strval($lowest_status) ;
+  $sql_delete .= " AND AD.STATUS < " . strval($STATUS_STORED) ;
+    
   $stmt=$conn->prepare($sql_delete);
   if ($stmt)
   {
     if(!$stmt->execute())
     {
       $conn->rollback();
+      die();
     }
     $sql_optimize = "OPTIMIZE TABLE " . $acquired_data_table_name;
     $stmt=$conn->prepare($sql_optimize);
     if(!$stmt->execute())
     {
       $conn->rollback();
+      die();
     }
     $stmt->close();
   }
