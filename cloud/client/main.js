@@ -180,7 +180,7 @@ function draw()
       let _lag_text = "";
       let _status_text = "";
 
-      if (A.display_image_loading && A.display_is_static) _status_text = Disp.htmlSpaces(12) + "Loading image..." ;
+      if (A.display_image_loading && A.display_is_static) _status_text = Disp.htmlSpaces(14) + "Loading image..." ;
 
       let _view_lag = A.ntp.timestamp - A.data_timestamp;
       if ( _view_lag > A.time_bins * A.time_bin_size || !navigator.onLine )
