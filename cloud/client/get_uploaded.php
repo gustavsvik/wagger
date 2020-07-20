@@ -84,12 +84,12 @@ if ($data_end > 0)
     $sql_get_all_available_values = "SELECT DISTINCT AD.ACQUIRED_TIME,AD.ACQUIRED_VALUE,AD.ACQUIRED_SUBSAMPLES,AD.ACQUIRED_BASE64 FROM " . $acquired_data_table_name . " AD WHERE AD.CHANNEL_INDEX=" . $channel_string ;
     $sql_get_available_values = $sql_get_all_available_values ;
     if (!$select_all) $sql_get_available_values .= " AND AD.ACQUIRED_TIME IN " . $points_range_string ;
-    $sql_get_available_values .= " AND AD.STATUS >= " . strval($lowest_status) . " AND AD.STATUS < " . strval($STATUS_ARCHIVED) ;
+    $sql_get_available_values .= " AND AD.STATUS >= " . strval($lowest_status) . " AND AD.STATUS < " . strval($STATUS_STORED) ;
     
     $available_values = $conn->query($sql_get_available_values);
     if ($available_values->num_rows <= 0) 
     {
-      $sql_get_stored_archived_values = $sql_get_all_available_values . " AND AD.STATUS = " . strval($STATUS_ARCHIVED) ;
+      $sql_get_stored_archived_values = $sql_get_all_available_values . " AND AD.STATUS >= " . strval($STATUS_STORED) ;
       $available_values = $conn->query($sql_get_stored_archived_values);
       if ($available_values->num_rows > 0) $found_archived_records = TRUE ;
     }
