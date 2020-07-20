@@ -99,19 +99,13 @@ class Disp
   }
 
 
-  static removeAllElements(container)
+  static removeAllElements(container, tag_name_array)
   {  
-    let _all_buttons = container.getElementsByTagName("BUTTON");
-    for (let _i = 0, _len = _all_buttons.length; _i != _len; ++_i) _all_buttons[0].parentNode.removeChild(_all_buttons[0]);
-  
-    let _divs = container.getElementsByTagName("DIV");
-    for (let _i = 0, _len = _divs.length; _i != _len; ++_i) _divs[0].parentNode.removeChild(_divs[0]);
- 
-    let _sliders = container.getElementsByTagName("INPUT");
-    for (let _i = 0, _len = _sliders.length; _i != _len; ++_i) _sliders[0].parentNode.removeChild(_sliders[0]);
-
-    let _sends = container.getElementsByTagName("OUTPUT");
-    for (let _i = 0, _len = _sends.length; _i != _len; ++_i) _sends[0].parentNode.removeChild(_sends[0]);
+    for (let _i = 0, _len = tag_name_array.length; _i != _len; ++_i)
+    {
+      let _all_tag_elements = container.getElementsByTagName(tag_name_array[_i]);
+      for (let _i = 0, _len = _all_tag_elements.length; _i != _len; ++_i) _all_tag_elements[0].parentNode.removeChild(_all_tag_elements[0]) ;
+    }
   }
 
 
@@ -141,45 +135,47 @@ class Disp
   setDisplayTextProperties(display_index, hovered_touched_element, time_adjust_microsecs, full_no_of_digits, text_alpha, hovered_touched_text_alpha)
   {
     this.setAllTextAlpha(display_index, text_alpha);
-
-    let _screen = this.data[display_index].screens[0];
+    if (typeof this.data[display_index] !== 'undefined')
+    {
+      let _screen = this.data[display_index].screens[0];
     
-    let _hovered_tag = "";
-    let _hovered_index = "";
+      let _hovered_tag = "";
+      let _hovered_index = "";
 
-    if ( hovered_touched_element !== null ) [_hovered_tag, _hovered_index] = Disp.getTagChannelIndex(hovered_touched_element);
+      if ( hovered_touched_element !== null ) [_hovered_tag, _hovered_index] = Disp.getTagChannelIndex(hovered_touched_element);
 
-    let _time = _screen.time;
-    if (_time !== null) // All displays except the title page
-    {
-      let _time_label = Disp.getChannelElement( [ "timelabel", null ] );
-      _time_label.innerHTML = _time.str_val + _time.padding;
-      if ( _hovered_tag === "timebkg" ) _time_label.innerHTML = _time.str_val + _time.info + ( - time_adjust_microsecs / 1000000 ).toString().substring(0,7) + " s";
-    }      
-    for (let _i = 0; _i < _screen.channels.length; _i++)
-    {
-      let _channel = _screen.channels[_i];
-      let _index_str = (_channel.index).toString();
-      if ( _hovered_index === _index_str ) this.setAllTextAlpha(display_index, 255);
-      let _label = Disp.getChannelElement( [ "label", _index_str ] );
-      _label.innerHTML = _channel.str_val + _channel.padding;
-      if ( _hovered_index === _index_str ) _label.innerHTML = (_channel.val).toString().substring(0, full_no_of_digits) + " " + _channel.unit + _channel.info; // _channel.str_val + _channel.info; .substring(0,12)
-    }
-    for (let _img_channel_index = 0; _img_channel_index < _screen.img_channels.length; _img_channel_index++)
-    {
-    }
-    for (let _i = 0; _i < _screen.ctrl_channels.length; _i++)
-    {
-      let _ctrl = _screen.ctrl_channels[_i];
-      let _index_str = (_ctrl.index).toString();
-      if ( _hovered_index === _index_str ) this.setAllTextAlpha(display_index, 255);
-      let _setval = Disp.getChannelElement( [ "setval", _index_str ] );
-      _setval.innerHTML = _ctrl.str_val + _ctrl.padding;
-      if ( _hovered_index === _index_str ) 
+      let _time = _screen.time;
+      if (_time !== null) // All displays except the title page
       {
-        _setval.innerHTML = _ctrl.str_val + _ctrl.info;
-        let _slider = Disp.getChannelElement (["slider", _index_str]);
-        _slider.value = _ctrl.val;
+        let _time_label = Disp.getChannelElement( [ "timelabel", null ] );
+        _time_label.innerHTML = _time.str_val + _time.padding;
+        if ( _hovered_tag === "timebkg" ) _time_label.innerHTML = _time.str_val + _time.info + ( - time_adjust_microsecs / 1000000 ).toString().substring(0,7) + " s";
+      }      
+      for (let _i = 0; _i < _screen.channels.length; _i++)
+      {
+        let _channel = _screen.channels[_i];
+        let _index_str = (_channel.index).toString();
+        if ( _hovered_index === _index_str ) this.setAllTextAlpha(display_index, 255);
+        let _label = Disp.getChannelElement( [ "label", _index_str ] );
+        _label.innerHTML = _channel.str_val + _channel.padding;
+        if ( _hovered_index === _index_str ) _label.innerHTML = (_channel.val).toString().substring(0, full_no_of_digits) + " " + _channel.unit + _channel.info; // _channel.str_val + _channel.info; .substring(0,12)
+      }
+      for (let _img_channel_index = 0; _img_channel_index < _screen.img_channels.length; _img_channel_index++)
+      {
+      }
+      for (let _i = 0; _i < _screen.ctrl_channels.length; _i++)
+      {
+        let _ctrl = _screen.ctrl_channels[_i];
+        let _index_str = (_ctrl.index).toString();
+        if ( _hovered_index === _index_str ) this.setAllTextAlpha(display_index, 255);
+        let _setval = Disp.getChannelElement( [ "setval", _index_str ] );
+        _setval.innerHTML = _ctrl.str_val + _ctrl.padding;
+        if ( _hovered_index === _index_str ) 
+        {
+          _setval.innerHTML = _ctrl.str_val + _ctrl.info;
+          let _slider = Disp.getChannelElement (["slider", _index_str]);
+          _slider.value = _ctrl.val;
+        }
       }
     }
   }
@@ -187,10 +183,12 @@ class Disp
 
   setAllTextAlpha(display_index, text_alpha)
   {
-    let _screen = this.data[display_index].screens[0];
-
-    for (let _i = 0; _i < _screen.channels.length; _i++)
+    if (typeof this.data[display_index] !== 'undefined') 
     {
+      let _screen = this.data[display_index].screens[0];
+
+      for (let _i = 0; _i < _screen.channels.length; _i++)
+      {
         let _channel = _screen.channels[_i];
         let _index_str = (_channel.index).toString();
         let _label = Disp.getChannelElement( [ "label", _index_str ] );
@@ -198,6 +196,7 @@ class Disp
         let _rgba = Disp.rGBAArrayFromLiteral(_current_color);
         _rgba[3] = text_alpha;
         _label.style.color = Disp.rGBALiteralFromArray( _rgba );
+      }
     }
   }
 
@@ -259,6 +258,7 @@ class App
     this.display_kiosk_adjust.y = 0 ;
     this.display_kiosk_height = 0 ;
     this.display_is_static = false;
+    this.display_image_loading = false;
     this.display_timed_out = false;
     this.display_override_font = {};
     this.display_override_font.filename = "";
@@ -358,6 +358,75 @@ class App
   {
     for(let _i = 0; _i < arr.length; _i += 1) if (arr[_i][attr] === val) { return _i; }
     return -1;
+  }
+
+  
+  setCanvasAutoScaleCenter(imgs, current_imgs)
+  {
+    let _no_of_imgs = imgs.length;
+    if (_no_of_imgs > 0)
+    {
+      for (let _i = 0; _i < _no_of_imgs; _i++)
+      {
+        let _width = current_imgs[_i].width ; 
+        let _height =  current_imgs[_i].height ; 
+        let _img = imgs[_i];
+        if (_img.dim === "source" && _width > 1 && _height > 1)
+        {
+          if (this.display_kiosk_height > 0) _img.disp.h = this.display_kiosk_height ;
+          let _img_disp_scale = _height / _img.disp.h ;
+          this.display_img_scale = _img.disp.h / this.STD_SCALE_HEIGHT ;
+          this.img_height = _height / _img_disp_scale; 
+          this.img_width = _width / _img_disp_scale;
+        }
+        if (_img.disp.pos === "center")
+        {
+          this.canvas_shift_x = Math.max( parseInt( ( this.display_viewport.w - this.img_width ) / 2 ), 0 ) ;
+          this.canvas_shift_y = Math.max( parseInt( ( this.display_viewport.h - this.img_height ) / 2 ), 0 ) ;
+        }
+      }
+    }
+  }
+
+
+  placeAndSizeCanvasElements(screen_elements, element_tag, x_shift, y_shift)
+  {
+    if (screen_elements !== null)
+    {
+      let _no_of_elements = screen_elements.length;
+      if (_no_of_elements > 0)
+      {
+        for (let _i = 0; _i < _no_of_elements; _i++)
+        {
+          let _element = screen_elements[_i];
+          if (_element !== null)
+          {  
+            let _disp = _element.disp;
+            if (typeof _element.index === 'undefined') _element.index = null;
+            let _html_element = Disp.getChannelElement([element_tag, _element.index]);
+            if (_html_element !== null)
+            { 
+              Disp.setProperties( _html_element.style, 
+              { 
+                fontSize: (parseInt(_disp.size * this.display_img_scale/this.display_img_scale)).toString() + "px",
+                left: (parseInt(_disp.pos.x * this.display_img_scale + this.CANVAS_POS_X + this.canvas_shift_x - _disp.size/2 + x_shift)).toString() + "px",
+                top: (parseInt(_disp.pos.y * this.display_img_scale + this.CANVAS_POS_Y + this.canvas_shift_y - _disp.size + x_shift)).toString() + "px"
+              } ) ;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  placeAndSizeCanvasText(text_html_element, font_size, x_font_scale, x_shift)
+  {
+    Disp.setProperties( text_html_element.style, 
+    { 
+      fontSize: (parseInt(font_size * A.display_img_scale/A.display_img_scale)).toString() + "px",
+      left: (parseInt(A.CANVAS_POS_X + A.canvas_shift_x + Math.max(A.img_width/2 - font_size*x_font_scale + x_shift, 0))).toString() + "px", 
+      top: (parseInt(A.CANVAS_POS_Y + A.canvas_shift_y + A.img_height/2 - font_size/2)).toString() + "px", 
+    } ) ;
   }
 
 }
