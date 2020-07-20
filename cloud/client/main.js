@@ -13,11 +13,29 @@ function setup()
 
   A.ntp.t1 = parseInt((new Date().valueOf()) * 1000) ;
   httpGet(A.CLIENT_URL + "server_time.php", "json", {}, handle_server_time); 
-    
+
+  document.title = "LabRemote"; // New title :)
+  A.CONTAINER = document.getElementById("myContainer");
+  
+  A.DISPLAY_SELECT = document.createElement("SELECT");
+  A.DISPLAY_SELECT.id = "screen_select";
+  A.CONTAINER.appendChild(A.DISPLAY_SELECT);
+  A.DISPLAY_SELECT.addEventListener("change", display_select_listener);
+  A.DISPLAY_SELECT.options[0] = new Option("Loading displays...", 0);
+
+  Disp.setProperties( A.DISPLAY_SELECT.style, 
+  {
+    position: "absolute",
+    left: "10px",
+    top: "10px",
+    visibility: "visible"
+  } ) ;
+
   let _screen_layout_file = document.getElementById("screenLayoutFile").value;
   let _screen_layout_params = {"screen_layout_file": _screen_layout_file};
   httpGet(A.CLIENT_URL + "get_screen_data.php", "json", _screen_layout_params, handle_display_data);
   A.img_url = A.FILES_URL + "0.png";
+  A.display_image_loading = true;
   A.img = loadImage(A.img_url, handle_image_loaded);
   //A.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
   A.img_width = 1280/(720/A.STD_SCALE_HEIGHT);
@@ -36,7 +54,7 @@ function draw()
 
   if (A.frames_active < A.display_timeout * A.FRAME_RATE && typeof A.DISPLAY_SELECT.style !== 'undefined')
   {
-    A.DISPLAY_SELECT.style.visibility = "visible"; 
+    //A.DISPLAY_SELECT.style.visibility = "visible"; 
 
     if (A.display_kiosk_interval > 0)
     {
@@ -128,13 +146,14 @@ function draw()
   A.ntp.timestamp = parseInt((new Date().valueOf()) / 1000) + A.ntp.adjustment / 1000000;
 
 
-  if (typeof A.DISPLAY_SELECT.style !== 'undefined' && !A.display_timed_out)
+  if (!A.display_timed_out) // typeof A.DISPLAY_SELECT.style !== 'undefined' &&
   {
     if (A.frames_active >= A.display_timeout * A.FRAME_RATE)
     {
       A.display_timed_out = true;
       background(255);
-      Disp.removeAllElements(A.CONTAINER);
+      Disp.removeAllElements(A.CONTAINER, ["BUTTON", "DIV", "INPUT", "OUTPUT"]);
+      A.display_image_loading = true;
       A.img = loadImage(A.FILES_URL + "000.jpg", handle_image_loaded);
       //A.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
       A.DISPLAY_TIMEOUT_TEXT = document.createElement("DIV");
@@ -156,27 +175,33 @@ function draw()
 
       reset_display_variables();
     }
-    else if (A.display_is_static === false) // display is not static
+    else
     {
-      A.DISPLAY_INFO_TEXT.innerHTML = "";
-      A.DISPLAY_INFO_TEXT.style.visibility = "hidden"; 
+      let _lag_text = "";
+      let _status_text = "";
+
+      if (A.display_image_loading && A.display_is_static) _status_text = Disp.htmlSpaces(12) + "Loading image..." ;
 
       let _view_lag = A.ntp.timestamp - A.data_timestamp;
-      if ( _view_lag > A.time_bins * A.time_bin_size || !navigator.onLine)
+      if ( _view_lag > A.time_bins * A.time_bin_size || !navigator.onLine )
+      {          
+        if (!App.isValidNumber(_view_lag) || _view_lag > 10*365*24*60*60 ) 
+        {
+        }
+        else if (!A.display_is_static) // display is not static
+        {
+          _lag_text = "Out of date (>" + Disp.getTimeLagText(_view_lag) + "), ";
+          _status_text = "requested new...";
+          if (A.display_image_loading) _status_text = "loading image..." ;
+        }
+      }
+     
+      if (!navigator.onLine) _status_text = "no internet connection!";
+      if (typeof A.DISPLAY_INFO_TEXT.style !== 'undefined')
       {
         if (A.frames_active % 2 === 0) A.DISPLAY_INFO_TEXT.style.color = Disp.rGBALiteralFromArray([255,0,0,127]); else A.DISPLAY_INFO_TEXT.style.color = Disp.rGBALiteralFromArray([255,255,255,127]) ;
-
-        if (!App.isValidNumber(_view_lag) || _view_lag > 10*365*24*60*60) 
-        {
-        }
-        else
-        {
-          let _lag_text = Disp.getTimeLagText(_view_lag);
-          let _status_text = "requesting new...";
-          if (!navigator.onLine) _status_text = "no internet connection!";
-          A.DISPLAY_INFO_TEXT.innerHTML = "Out of date (" + _lag_text + ")" + ", " + _status_text;
-          A.DISPLAY_INFO_TEXT.style.visibility = "visible"; 
-        }
+        A.DISPLAY_INFO_TEXT.innerHTML =  _lag_text + _status_text;
+        A.DISPLAY_INFO_TEXT.style.visibility = "visible"; 
       }
     }
   }
@@ -186,141 +211,38 @@ function draw()
 
 function handle_image_loaded()
 { 
-  let _current_img = {};
-  _current_img[0] = A.img;
-  //_current_img[1] = A.test_img;
+
+  A.display_image_loading = false;
+
+  let _current_imgs = {};
+  _current_imgs[0] = A.img;
+  //_current_imgs[1] = A.test_img;
 
   let _display = D.data[A.display_index];
   if (typeof _display !== 'undefined') 
   {
     let _screen = _display.screens[0];
-    let _no_of_imgs = (_screen.imgs).length;
-    if (_no_of_imgs > 0)
-    {
-      for (let _i = 0; _i < _no_of_imgs; _i++)
-      {
-        let _width = _current_img[_i].width ; 
-        let _height =  _current_img[_i].height ; 
-        let _img = _screen.imgs[_i];
-        if (_img.dim === "source" && _width > 1 && _height > 1)
-        {
-          if (A.display_kiosk_height > 0) _img.disp.h = A.display_kiosk_height ;
-          let _img_disp_scale = _height / _img.disp.h ;
-          A.display_img_scale = _img.disp.h / A.STD_SCALE_HEIGHT ;
-          //if (A.display_kiosk_height > 0) _img_disp_scale = _height / A.display_kiosk_height ;
-          A.img_height = _height / _img_disp_scale; 
-          A.img_width = _width / _img_disp_scale;
-        }
-        if (_img.disp.pos === "center")
-        {
-          A.canvas_shift_x = Math.max( parseInt( ( A.display_viewport.w - A.img_width ) / 2 ), 0 ) ;
-          A.canvas_shift_y = Math.max( parseInt( ( A.display_viewport.h - A.img_height ) / 2 ), 0 ) ;
-        }
-      }
-    }
-    let _no_of_img_channels = (_screen.img_channels).length;
-    if (_no_of_img_channels > 0)
-    {
-      for (let _i = 0; _i < _no_of_img_channels; _i++)
-      {
-        let _width = _current_img[_i].width ; 
-        let _height =  _current_img[_i].height ; 
-        let _img_channel = _screen.img_channels[_i];
-        if (_img_channel.dim === "source" && _width > 1 && _height > 1)
-        {
-          if (A.display_kiosk_height > 0) _img_channel.disp.h = A.display_kiosk_height ;
-          let _img_disp_scale = _height / _img_channel.disp.h ;
-          A.display_img_scale = _img_channel.disp.h / A.STD_SCALE_HEIGHT ;
-          //if (A.display_kiosk_height > 0) _img_disp_scale = _height / A.display_kiosk_height ;
-          A.img_height = _height / _img_disp_scale; 
-          A.img_width = _width / _img_disp_scale;
-        }
-        if (_img_channel.disp.pos === "center")
-        {
-          A.canvas_shift_x = Math.max( parseInt( ( A.display_viewport.w - A.img_width ) / 2 ), 0 ) ;
-          A.canvas_shift_y = Math.max( parseInt( ( A.display_viewport.h - A.img_height ) / 2 ), 0 ) ;
-        }
-      }
-    }
+    A.setCanvasAutoScaleCenter(_screen.imgs, _current_imgs);
+    A.setCanvasAutoScaleCenter(_screen.img_channels, _current_imgs);
 
+    A.show_lag_warning_text = false;
+    
+    A.placeAndSizeCanvasText(A.DISPLAY_INFO_TEXT, A.WARNING_FONTSIZE, 8.0, 0)
     Disp.setProperties( A.DISPLAY_INFO_TEXT.style, 
     { 
-      fontSize: (parseInt(A.WARNING_FONTSIZE * A.display_img_scale/A.display_img_scale)).toString() + "px",
-      left: (parseInt(A.CANVAS_POS_X + A.canvas_shift_x + Math.max(A.img_width/2 - A.WARNING_FONTSIZE*8.0, 0))).toString() + "px", 
-      top: (parseInt(A.CANVAS_POS_Y + A.canvas_shift_y + A.img_height/2 - A.WARNING_FONTSIZE/2)).toString() + "px", 
+      visibility: "hidden"
     } ) ;
 
-    if (A.display_timed_out)
-    {
-      Disp.setProperties( A.DISPLAY_TIMEOUT_TEXT.style, 
-      {
-        left: (parseInt(A.CANVAS_POS_X + A.canvas_shift_x + Math.max(A.img_width/2 - A.TIMEOUT_FONTSIZE*26.0 + 130, 0))).toString() + "px", 
-        top: (parseInt(A.CANVAS_POS_Y + A.canvas_shift_y + A.img_height/2 - A.TIMEOUT_FONTSIZE/2)).toString() + "px", 
-        fontSize: (parseInt(A.TIMEOUT_FONTSIZE)).toString() + "px", 
-      } ) ;
-    }
+    if (A.display_timed_out) A.placeAndSizeCanvasText(A.DISPLAY_TIMEOUT_TEXT, A.TIMEOUT_FONTSIZE, 26.0, 130)
 
-    let _time = _screen.time;
-    if (_time !== null) // Any display but the title page
-    {
-      let _time_disp = _time.disp;
-      let _timebkg = Disp.getChannelElement(["timebkg", null]);
-      if (_timebkg !== null)
-      { 
-        Disp.setProperties( _timebkg.style, 
-        { 
-          fontSize: (parseInt(_time_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
-          left: (_time_disp.pos.x * A.display_img_scale + A.CANVAS_POS_X + A.canvas_shift_x - _time_disp.size/2 + 1).toString() + "px",
-          top: (_time_disp.pos.y * A.display_img_scale + A.CANVAS_POS_Y + A.canvas_shift_y - _time_disp.size + 1).toString() + "px"
-        } ) ;
-        //console.log(Disp.getProperty(_timebkg, 'left'));
-      }
-    }
-
-    let _no_of_channels = (_screen.channels).length;
-    if (_no_of_channels > 0)
-    {
-      for (let _i = 0; _i < _no_of_channels; _i++)
-      {
-        let _channel = _screen.channels[_i];
-        let _disp = _channel.disp;
-        let _chanbkg = Disp.getChannelElement(["chanbkg", _channel.index]);
-        if (_chanbkg !== null)
-        { 
-          Disp.setProperties( _chanbkg.style, 
-          { 
-            fontSize: (parseInt(_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
-            left: (parseInt(_disp.pos.x * A.display_img_scale + A.CANVAS_POS_X + A.canvas_shift_x - _disp.size/2 + 1)).toString() + "px",
-            top: (parseInt(_disp.pos.y * A.display_img_scale + A.CANVAS_POS_Y + A.canvas_shift_y - _disp.size + 1)).toString() + "px"
-          } ) ;
-        }
-      }
-    }
-
-    let _no_of_ctrl_channels = (_screen.ctrl_channels).length;
-    if (_no_of_ctrl_channels > 0)
-    {
-      for (let _i = 0; _i < _no_of_ctrl_channels; _i++)
-      {
-        let _ctrl_channel = _screen.ctrl_channels[_i];
-        let _ctrl_disp = _ctrl_channel.disp;
-        let _ctrlbkg = Disp.getChannelElement(["ctrlbkg", _ctrl_channel.index]);
-        if (_ctrlbkg !== null)
-        { 
-          Disp.setProperties( _ctrlbkg.style, 
-          { 
-            fontSize: (parseInt(_ctrl_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
-            left: (parseInt(_ctrl_disp.pos.x * A.display_img_scale + A.CANVAS_POS_X + A.canvas_shift_x - _ctrl_disp.size/2 + 7)).toString() + "px",
-            top: (parseInt(_ctrl_disp.pos.y * A.display_img_scale + A.CANVAS_POS_Y + A.canvas_shift_y - _ctrl_disp.size + 14)).toString() + "px"
-          } ) ;
-        }
-      }
-    }
-    
+    A.placeAndSizeCanvasElements([_screen.time], "timebkg", 1, 1) ;
+    A.placeAndSizeCanvasElements(_screen.channels, "chanbkg", 1, 1) ;
+    A.placeAndSizeCanvasElements(_screen.ctrl_channels, "ctrlbkg", 7, 14) ;
   }
+  
   for (let _i = 0; _i <= 0; _i++)
   {
-    image(_current_img[_i], A.canvas_shift_x, A.canvas_shift_y, A.img_width*(1-0.5*_i), A.img_height*(1-0.5*_i) );
+    image(_current_imgs[_i], A.canvas_shift_x, A.canvas_shift_y, A.img_width*(1-0.5*_i), A.img_height*(1-0.5*_i) );
   }
 }
 
@@ -429,6 +351,7 @@ function populate_display_variables(timestamp_matrix, value_matrix)
         let _img_channel = _screen.img_channels[_img_channel_index];
         let _img_url = A.FILES_URL + _img_channel.index.toString() + "_" + _latest_data_timestamp.toString() + "." + _img_channel.ext;
         A.img_url = _img_url;
+        A.display_image_loading = true;
         A.img = loadImage(_img_url, handle_image_loaded);
       }
       for (let _channel_index = 0; _channel_index < _screen.channels.length; _channel_index++)
@@ -532,33 +455,21 @@ function handle_display_data(data)
   D.data = data.displays; 
   
   if (typeof data.disp_timeout !== 'undefined') A.display_timeout = data.disp_timeout; 
-
   if (typeof data.disp_viewport_size !== 'undefined') A.display_viewport = data.disp_viewport_size; 
-  if (typeof data.disp_override_font !== 'undefined') A.display_override_font = data.disp_override_font; 
+  if (typeof data.disp_override_font !== 'undefined') A.display_override_font = data.disp_override_font;
+  
   if (typeof data.disp_kiosk_interval !== 'undefined') A.display_kiosk_interval = data.disp_kiosk_interval; 
   if (typeof data.disp_kiosk_adjust !== 'undefined') A.display_kiosk_adjust = data.disp_kiosk_adjust; 
   if (typeof data.disp_kiosk_override_height !== 'undefined') A.display_kiosk_height = data.disp_kiosk_override_height; 
-
-  document.title = "LabRemote"; // New title :)
-  A.CONTAINER = document.getElementById("myContainer");
   
   A.all_font_families = Disp.addFonts([A.display_override_font.filename], A.display_override_font.path) + ", " + A.STANDARD_FONT_FAMILIES ;
 
-  A.DISPLAY_SELECT = document.createElement("SELECT");
-  A.DISPLAY_SELECT.id = "screen_select";
-  A.CONTAINER.appendChild(A.DISPLAY_SELECT);
+  A.DISPLAY_SELECT.options.length = 0 ;
+
   for (let _current_display = 0; _current_display < (D.data).length; _current_display++) 
   {
     A.DISPLAY_SELECT.options[A.DISPLAY_SELECT.options.length] = new Option(D.data[_current_display].title, _current_display);
   }
-  A.DISPLAY_SELECT.addEventListener("change", display_select_listener);
-  Disp.setProperties( A.DISPLAY_SELECT.style, 
-  {
-    position: "absolute",
-    left: "10px",
-    top: "10px",
-    visibility: "hidden"
-  } ) ;
 
   display_select_listener();
 }
@@ -740,14 +651,13 @@ function display_select_listener()
     }
     else
     {
-      //outside_label_listener();
       let _adjust = A.display_kiosk_adjust ;
       window.scrollTo(A.CANVAS_POS_X + _adjust.x, A.CANVAS_POS_Y + _adjust.y);
     }
     
     A.channel_strings_array = [];
 
-    Disp.removeAllElements(A.CONTAINER);
+    Disp.removeAllElements(A.CONTAINER, ["BUTTON", "DIV", "INPUT", "OUTPUT"]);
 
     A.display_index = parseInt(A.DISPLAY_SELECT.options[A.DISPLAY_SELECT.selectedIndex].value);
 
@@ -761,6 +671,7 @@ function display_select_listener()
       {
         let _img = _screen.imgs[i];
         if (i === 0) A.img_url = A.FILES_URL + (_img.file).toString();
+        A.display_image_loading = true;
         A.img = loadImage(A.img_url, handle_image_loaded);
         if (_img.disp.pos !== "center")
         {
@@ -783,6 +694,7 @@ function display_select_listener()
     else
     {
       A.img_url = A.FILES_URL + "00.jpg";
+      A.display_image_loading = true;
       A.img = loadImage(A.img_url, handle_image_loaded);
       //A.test_img = loadImage("http://labremote.net/client/images/test.jpg", handle_image_loaded);
     }
