@@ -248,6 +248,7 @@ class App
     this.last_time_sync = 0; 
     this.display_index = 0;
     this.display_timeout = 900 ;
+    this.display_browser_viewport = false;
     this.display_viewport = {} ;
     this.display_viewport.w = 853 ;
     this.display_viewport.h = 480 ; 
@@ -381,8 +382,8 @@ class App
         }
         if (_img.disp.pos === "center")
         {
-          this.canvas_shift_x = Math.max( parseInt( ( this.display_viewport.w - this.img_width ) / 2 ), 0 ) ;
-          this.canvas_shift_y = Math.max( parseInt( ( this.display_viewport.h - this.img_height ) / 2 ), 0 ) ;
+          this.canvas_shift_x = parseInt( ( this.display_viewport.w - this.img_width ) / 2 ) ; //Math.max( , 0 ) ;
+          this.canvas_shift_y = parseInt( ( this.display_viewport.h - this.img_height ) / 2 ) ; //Math.max( , 0 ) ;
         }
       }
     }
