@@ -150,13 +150,13 @@
         "label": "View",
         "imgs":
         [	
-          { "file": "2.png", "dim": "source", "disp": {"h": 600, "pos": "center"} }
+          { "file": "2.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
         "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
         "channels":
         [
-          { "index": 21, "show": true, "label": "Global insolation", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e-0, "unit": "W/m\u00B2", "disp": {"len": 5, "size": 20, "pos": { "x": 130, "y": 290 }, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} },
-          { "index": 23, "show": true, "label": "Ambient temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 2.0e-1, "unit": "\u00B0C", "disp": {"len": 4 , "size": 20, "pos": { "x": 245, "y": 375 }, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
+          { "index": 21, "show": true, "label": "Global insolation", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e-0, "unit": "W/m\u00B2", "disp": {"len": 5, "size": 16, "pos": { "x": 130, "y": 290 }, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} },
+          { "index": 23, "show": true, "label": "Ambient temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 2.0e-1, "unit": "\u00B0C", "disp": {"len": 4 , "size": 16, "pos": { "x": 245, "y": 375 }, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
         ],
         "img_channels": [],
         "ctrl_channels": []
