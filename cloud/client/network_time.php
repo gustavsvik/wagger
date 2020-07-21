@@ -3,7 +3,6 @@
 
   function network_time_get()
   {
-
     // Adapted from https://www.johnromanodorazio.com/ntptest.php
 
     /* Query an NTP time server on port 123 (SNTP protocol) : */
@@ -11,7 +10,7 @@
     $epoch_convert = 2208988800;
     $vn = 3;
 
-    $servers = array('ntp1.sptime.se','ntp2.sptime.se','ntp3.sptime.se','ntp4.sptime.se') ;     // ('0.uk.pool.ntp.org','1.uk.pool.ntp.org','2.uk.pool.ntp.org','3.uk.pool.ntp.org');
+    $servers = array('ntp1.sptime.se','ntp2.sptime.se','ntp3.sptime.se','ntp4.sptime.se') ; 
     $server_count = count($servers);
 
     //see rfc5905, page 20
@@ -30,7 +29,7 @@
     $i = 0;
     for($i; $i < $server_count; $i++) 
     {
-      $socket = @fsockopen('udp://'.$servers[$i], 123, $err_no, $err_str,1);
+      $socket = @fsockopen('udp://'.$servers[$i], 123, $err_no, $err_str, 1);
       if ($socket) 
       {
         //add nulls to position 11 (the transmit timestamp, later to be returned as originate)
@@ -101,48 +100,23 @@
     $unpack0 = unpack("N12", $response);
 
     //present as a decimal number
-    //$remote_originate_seconds = sprintf('%u', $unpack0[7])-$epoch_convert;
-    $remote_received_seconds = sprintf('%u', $unpack0[9])-$epoch_convert;
-    $remote_transmitted_seconds = sprintf('%u', $unpack0[11])-$epoch_convert;
+    $remote_received_seconds = sprintf('%u', $unpack0[9]) - $epoch_convert;
+    $remote_transmitted_seconds = sprintf('%u', $unpack0[11]) - $epoch_convert;
 
-    //$remote_originate_fraction = sprintf('%u', $unpack0[8]) / $bit_max;
     $remote_received_fraction = sprintf('%u', $unpack0[10]) / $bit_max;
     $remote_transmitted_fraction = sprintf('%u', $unpack0[12]) / $bit_max;
 
-    //$remote_originate = $remote_originate_seconds + $remote_originate_fraction;
     $remote_received = $remote_received_seconds + $remote_received_fraction;
     $remote_transmitted = $remote_transmitted_seconds + $remote_transmitted_fraction;
 
-    //unpack to ascii characters for the header response
-    //$unpack1 = unpack("C12", $response);
-
-    //the header response in binary (base 2)
-    //$header_response =  base_convert($unpack1[1], 10, 2);
-
-    //pad with zeros to 1 byte (8 bits)
-    //$header_response = sprintf('%08d',$header_response);
-
-    //Mode (the last 3 bits of the first byte), converting to decimal for humans;
-    //$mode_response = bindec(substr($header_response, -3));
-
-    //VN
-    //$vn_response = bindec(substr($header_response, -6, 3));
-
-    //the header stratum response in binary (base 2)
-    //$stratum_response =  base_convert($unpack1[2], 10, 2);
-    //$stratum_response = bindec($stratum_response);
-
     //calculations assume a symmetrical delay, fixed point would give more accuracy
-    $delay = (($local_received - $local_sent) / 2)  - ($remote_transmitted - $remote_received);
+    $delay = ( ($local_received - $local_sent) / 2 )  - ( $remote_transmitted - $remote_received );
     $delay_ms = round($delay * 1000) . ' ms';
 
     $server = $servers[$i];
 
     $ntp_time =  $remote_transmitted - $delay;
     
-    //$ntp_time_explode = explode('.',$ntp_time);
-    //$ntp_time_formatted = date('Y-m-d H:i:s A e ', $ntp_time_explode[0]).'.'.$ntp_time_explode[1];
-
     return $ntp_time ;
 
   }
