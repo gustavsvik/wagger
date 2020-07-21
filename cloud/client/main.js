@@ -16,7 +16,7 @@ function setup()
 
   document.title = "LabRemote"; // New title :)
   A.CONTAINER = document.getElementById("myContainer");
-  
+
   A.DISPLAY_SELECT = document.createElement("SELECT");
   A.DISPLAY_SELECT.id = "screen_select";
   A.CONTAINER.appendChild(A.DISPLAY_SELECT);
@@ -44,12 +44,14 @@ function setup()
   A.CANVAS = createCanvas(1500, 800);
   A.CANVAS.parent("myContainer");
   A.CANVAS.position(A.CANVAS_POS_X, A.CANVAS_POS_Y);
+  //A.CANVAS.canvas.style.overflow = "hidden";
+  //A.CONTAINER.requestFullscreen();
 }
 
 
 function draw() 
 {
-  	
+
   A.frames_active++;
 
   if (A.frames_active < A.display_timeout * A.FRAME_RATE && typeof A.DISPLAY_SELECT.style !== 'undefined')
@@ -214,6 +216,14 @@ function handle_image_loaded()
 
   A.display_image_loading = false;
 
+  if (A.display_browser_viewport)
+  {
+    let _current_viewport = window.visualViewport;
+    A.display_viewport = {};
+    A.display_viewport.w = _current_viewport.width;
+    A.display_viewport.h = _current_viewport.height;
+  }
+
   let _current_imgs = {};
   _current_imgs[0] = A.img;
   //_current_imgs[1] = A.test_img;
@@ -242,6 +252,7 @@ function handle_image_loaded()
   
   for (let _i = 0; _i <= 0; _i++)
   {
+    //_current_imgs[_i].canvas.style.overflow = "hidden";
     image(_current_imgs[_i], A.canvas_shift_x, A.canvas_shift_y, A.img_width*(1-0.5*_i), A.img_height*(1-0.5*_i) );
   }
 }
@@ -455,10 +466,16 @@ function handle_display_data(data)
   D.data = data.displays; 
   
   if (typeof data.disp_timeout !== 'undefined') A.display_timeout = data.disp_timeout; 
-  if (typeof data.disp_viewport_size !== 'undefined') A.display_viewport = data.disp_viewport_size; 
+  if (typeof data.disp_viewport_size !== 'undefined')
+  {
+    if (data.disp_viewport_size === "browser") A.display_browser_viewport = true;
+    else A.display_viewport = data.disp_viewport_size;
+  }  
   if (typeof data.disp_override_font !== 'undefined') A.display_override_font = data.disp_override_font;
   
   if (typeof data.disp_kiosk_interval !== 'undefined') A.display_kiosk_interval = data.disp_kiosk_interval; 
+  if (A.display_kiosk_interval) A.CONTAINER.parentNode.style.overflow = "hidden";
+
   if (typeof data.disp_kiosk_adjust !== 'undefined') A.display_kiosk_adjust = data.disp_kiosk_adjust; 
   if (typeof data.disp_kiosk_override_height !== 'undefined') A.display_kiosk_height = data.disp_kiosk_override_height; 
   
@@ -652,6 +669,7 @@ function display_select_listener()
     else
     {
       let _adjust = A.display_kiosk_adjust ;
+      //window.scrollTo(A.CANVAS_POS_X, A.CANVAS_POS_Y);
       window.scrollTo(A.CANVAS_POS_X + _adjust.x, A.CANVAS_POS_Y + _adjust.y);
     }
     
