@@ -1,11 +1,11 @@
 {
 
 "disp_timeout": 900,
-"disp_viewport_size": {"w": 853, "h": 480},
+"disp_viewport_size": "browser",
 "disp_override_font": {"filename": "carlito.woff", "path": "/fonts/"},
 
 "disp_kiosk_interval": 10,
-"disp_kiosk_adjust": {"x": -10, "y": -5},
+"disp_kiosk_adjust": {"x": 0, "y": 0},
 "disp_kiosk_override_height": 480,
 
 
