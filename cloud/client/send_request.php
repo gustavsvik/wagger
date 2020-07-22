@@ -49,6 +49,21 @@ if ($data_end > 0)
     $channel_end = strpos($channels, ';', $channel_start);
     $channel_string = mb_substr($channels, $channel_start, $channel_end-$channel_start);
     $channel = intval($channel_string);
+    $sql_delete = "DELETE FROM " . $acquired_data_table_name . " WHERE CHANNEL_INDEX=" . $channel_string . " AND TIMEDIFF(SYSDATE(), ADDED_TIMESTAMP)>" . strval($delete_horizon) . " AND STATUS IN (-1,0)";
+
+    $conn->autocommit(FALSE);
+    $conn->begin_transaction();
+    $stmt=$conn->prepare($sql_delete);
+    if ($stmt)
+    {
+      if(!$stmt->execute())
+      {
+        $conn->rollback();
+        die();
+      }
+      $stmt->close();
+    }
+    $conn->commit();
 
     $existing_points_array = array();
     $sql_get_existing_points = "SELECT DISTINCT AD.ACQUIRED_TIME FROM " . $acquired_data_table_name . " AD WHERE AD.CHANNEL_INDEX=" . $channel_string . " AND AD.ACQUIRED_TIME IN" . $points_range_string;
@@ -108,4 +123,3 @@ if ($data_end > 0)
   $conn->close();
 
 }
-
