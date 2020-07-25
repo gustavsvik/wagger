@@ -1,7 +1,7 @@
 {
 
 "disp_timeout": 900,
-"disp_viewport_size": {"w": 853, "h": 480},
+"disp_viewport_size": {"w": 1067, "h": 600},
 "disp_override_font": {"filename": "arimo-regular.woff", "path": "/fonts/"},
 
 
@@ -46,6 +46,24 @@
     ]
   },
   {
+    "title": "Flexible webcam 1 (live)",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": [],
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+        "channels": [],
+        "img_channels":
+        [
+          { "index": 140, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+        ],
+        "ctrl_channels": []
+      }
+    ]
+  },
+  {
     "title": "Water treatment plant (plan)",
     "show": true,
     "screens":
@@ -54,7 +72,7 @@
         "label": "View",
         "imgs": 
         [
-          { "file": "4.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          { "file": "4.jpg", "dim": "source", "disp": {"h": 600, "pos": "center"} }
         ],
         "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 200} } },
         "channels":
@@ -150,7 +168,7 @@
         "label": "View",
         "imgs":
         [	
-          { "file": "2.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          { "file": "2.png", "dim": "source", "disp": {"h": 600, "pos": "center"} }
         ],
         "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
         "channels":
@@ -200,7 +218,7 @@
     ]
   },
   {
-    "title": "Flexible webcam 1 (live)",
+    "title": "Flexible webcam 2 (live)",
     "show": true,
     "screens":
     [
@@ -236,7 +254,7 @@
     ]
   },
   {
-    "title": "Flexible webcam 2 (live)",
+    "title": "Flexible webcam 3 (live)",
     "show": true,
     "screens":
     [
