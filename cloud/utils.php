@@ -1,12 +1,6 @@
 <?php
 
 
-$STATUS_REQUESTED = -1;
-$STATUS_FULFILLED = 0;
-$STATUS_STORED = 1;
-$STATUS_ARCHIVED = 2;
-
-
 function getPost($key, $default) 
 {
   if (isset($_POST[$key]))
@@ -73,4 +67,15 @@ function getListByIDs($request_string)
   }
   
   return $channels_list;
+}
+
+
+function getStringBetween($string, $start, $end)
+{
+	$string = " ".$string;
+	$ini = strpos($string,$start);
+	if ($ini == 0) return "";
+	$ini += strlen($start);   
+	$len = strpos($string,$end,$ini) - $ini;
+	return substr($string,$ini,$len);
 }
