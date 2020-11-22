@@ -1,6 +1,7 @@
 <?php
 
 
+include("../header.php");
 include("../db_ini.php");
 include("../utils.php");
 include("header.php");
@@ -8,20 +9,13 @@ include("header.php");
 
 $conn = mysqli_init();
 
-if (!$conn) 
-{
-  die('mysqli_init failed');
-}
-if (!$conn->options(MYSQLI_OPT_CONNECT_TIMEOUT, 5)) 
-{
-  die('Setting MYSQLI_OPT_CONNECT_TIMEOUT failed');
-}
-if (!$conn->real_connect($servername, $username, $password, $dbname)) 
-{
-  die('Connect Error (' . mysqli_connect_errno() . ') ' . mysqli_connect_error());
-}
+if (!$conn) die('mysqli_init failed');
+if (!$conn->options(MYSQLI_OPT_CONNECT_TIMEOUT, 5)) die('Setting MYSQLI_OPT_CONNECT_TIMEOUT failed');
+if (!$conn->real_connect($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME)) die('Connect Error (' . mysqli_connect_errno() . ') ' . mysqli_connect_error());
 
 $conn->autocommit(FALSE);
+
+$file_channels = [] ;
 
 $conn->begin_transaction();
 
@@ -55,8 +49,33 @@ while ($channel_start < $data_end)
     $base64_start = $subsamples_end+1;
     $base64_end = strpos($return_string, ",", $base64_start);
     $base64_string = mb_substr($return_string, $base64_start, $base64_end-$base64_start);
+    
+    if (strlen($base64_string) > 0)
+    {
+      if ($WRITE_IMAGE_FILES == TRUE)
+      {
+        if(!in_array($channel, $file_channels)) $file_channels[] = $channel ;
+        $image_filename = $IMAGE_DIR . "/" . $channel_string . "_" . $timestamp_string . ".jpg";
+        $ifp = fopen($image_filename, 'wb'); 
+        fwrite($ifp, base64_decode($base64_string) );
+        fclose($ifp);
+        copy($image_filename, $IMAGE_DIR . "/" . $channel_string . ".jpg");
+      }
+    }
+    if ($value_string !== "-9999")
+    {
+      if ($WRITE_VALUE_FILES == TRUE)
+      {
+        if(!in_array($channel, $file_channels)) $file_channels[] = $channel ;
+        $text_filename = $IMAGE_DIR . "/" . $channel_string . "_" . $timestamp_string . ".txt";
+        $ifp = fopen($text_filename, 'wb'); 
+        fwrite($ifp, $return_string );
+        fclose($ifp);
+        copy($text_filename, $IMAGE_DIR . "/" . $channel_string . ".txt");
+      }
+    }
 
-    $stmt = $conn->prepare("UPDATE " . $acquired_data_table_name . " SET ACQUIRED_VALUE=?,ACQUIRED_SUBSAMPLES=?,ACQUIRED_BASE64=?,STATUS=0 WHERE CHANNEL_INDEX=? AND ACQUIRED_TIME=? AND STATUS=-1");
+    $stmt = $conn->prepare("UPDATE " . $ACQUIRED_DATA_TABLE_NAME . " SET ACQUIRED_VALUE=?,ACQUIRED_SUBSAMPLES=?,ACQUIRED_BASE64=?,STATUS=0 WHERE CHANNEL_INDEX=? AND ACQUIRED_TIME=? AND STATUS=-1");
     $stmt->bind_param('sssss', $value, $subsamples_string, $base64_string, $channel, $timestamp);
     if(!$stmt->execute())
     {
@@ -71,5 +90,39 @@ while ($channel_start < $data_end)
 }
 
 $conn->commit();
+
+
+foreach ($file_channels as $file_channel) 
+{
+  $file_channel_string = strval($file_channel) ;
+  $sql_get_all_available_values = "SELECT DISTINCT AD.ACQUIRED_TIME FROM " . $ACQUIRED_DATA_TABLE_NAME . " AD WHERE AD.CHANNEL_INDEX =" . $file_channel_string ;
+  $sql_get_stored_archived_values = $sql_get_all_available_values . " AND AD.STATUS >= " . strval($STATUS_STORED) ;
+
+  $stored_archived_values = $conn->query($sql_get_stored_archived_values) ;
+
+  $stored_archived_timestamps = [] ;
+  if ($stored_archived_values->num_rows > 0) 
+  {
+    while ($value_row = $stored_archived_values->fetch_array(MYSQLI_NUM)) 
+    {
+      if (!is_null($value_row[0])) $stored_archived_timestamps[] = strval($value_row[0]) ;
+    }
+  }
+
+  $file_pattern = $IMAGE_DIR . "/" . $channel_string . "_*" ;
+  $files = glob($file_pattern) ;
+  $num_files = count($files) ;
+  foreach($files as $complete_filename)
+  {
+    $filename = basename($complete_filename) ;
+    $file_timestamp_string = getStringBetween($filename, "_", ".") ;
+    if ( is_file($complete_filename) && $num_files > $MAX_FILES_PER_CHANNEL && !in_array($file_timestamp_string, $stored_archived_timestamps) ) 
+    {
+      unlink($complete_filename) ;
+      --$num_files ;
+    }
+  }
+}
+
 
 $conn->close();
