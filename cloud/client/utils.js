@@ -168,13 +168,19 @@ class Disp
         let _ctrl = _screen.ctrl_channels[_i];
         let _index_str = (_ctrl.index).toString();
         if ( _hovered_index === _index_str ) this.setAllTextAlpha(display_index, 255);
-        let _setval = Disp.getChannelElement( [ "setval", _index_str ] );
-        _setval.innerHTML = _ctrl.str_val + _ctrl.padding;
-        if ( _hovered_index === _index_str ) 
+        if (_ctrl.type === "datetime")
         {
-          _setval.innerHTML = _ctrl.str_val + _ctrl.info;
-          let _slider = Disp.getChannelElement (["slider", _index_str]);
-          _slider.value = _ctrl.val;
+        }
+        else
+        {
+          let _setval = Disp.getChannelElement( [ "setval", _index_str ] );
+          _setval.innerHTML = _ctrl.str_val + _ctrl.padding;
+          if ( _hovered_index === _index_str ) 
+          {
+            _setval.innerHTML = _ctrl.str_val + _ctrl.info;
+            let _slider = Disp.getChannelElement (["slider", _index_str]);
+            _slider.value = _ctrl.val;
+          }
         }
       }
     }
