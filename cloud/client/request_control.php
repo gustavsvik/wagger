@@ -11,7 +11,7 @@ $duration = 0;
 if ($data_end > 0)
 {
 
-  $conn = new mysqli($servername, $username, $password, $dbname);
+  $conn = new mysqli($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME);
   if (mysqli_connect_errno())
   {
     printf("Connect failed: %s\n", mysqli_connect_error());
@@ -43,7 +43,7 @@ if ($data_end > 0)
     $channel_end = strpos($channels, ';', $channel_start);
     $channel_string = mb_substr($channels, $channel_start, $channel_end-$channel_start);
     $channel = intval($channel_string);
-    $sql_delete = "DELETE FROM " . $acquired_data_table_name . " WHERE CHANNEL_INDEX=" . $channel_string . " AND TIMEDIFF(SYSDATE(), ADDED_TIMESTAMP)>" . strval($delete_horizon) . " AND STATUS IN (-1,0)";
+    $sql_delete = "DELETE FROM " . $ACQUIRED_DATA_TABLE_NAME . " WHERE CHANNEL_INDEX=" . $channel_string . " AND TIMEDIFF(SYSDATE(), ADDED_TIMESTAMP)>" . strval($delete_horizon) . " AND STATUS IN (-1,0)";
     $conn->autocommit(FALSE);
     $conn->begin_transaction();
     $stmt=$conn->prepare($sql_delete);
@@ -56,7 +56,7 @@ if ($data_end > 0)
     $conn->commit();
 
     $existing_points_array = array();
-    $sql_get_existing_points = "SELECT DISTINCT AD.ACQUIRED_TIME FROM " . $acquired_data_table_name . " AD WHERE AD.CHANNEL_INDEX=" . $channel_string . " AND AD.ACQUIRED_TIME IN" . $points_range_string;
+    $sql_get_existing_points = "SELECT DISTINCT AD.ACQUIRED_TIME FROM " . $ACQUIRED_DATA_TABLE_NAME . " AD WHERE AD.CHANNEL_INDEX=" . $channel_string . " AND AD.ACQUIRED_TIME IN" . $points_range_string;
     $existing_points = $conn->query($sql_get_existing_points);
     if ($existing_points->num_rows > 0)
     {
@@ -92,7 +92,7 @@ if ($data_end > 0)
         }
         else
         {
-          $stmt=$conn->prepare("INSERT INTO " . $acquired_data_table_name . " (ACQUIRED_TIME,CHANNEL_INDEX,ACQUIRED_VALUE,STATUS) VALUES (?,?,?,-1)");
+          $stmt=$conn->prepare("INSERT INTO " . $ACQUIRED_DATA_TABLE_NAME . " (ACQUIRED_TIME,CHANNEL_INDEX,ACQUIRED_VALUE,STATUS) VALUES (?,?,?,-1)");
           $stmt->bind_param('iid',$point,$channel,$value);
 
           if (!$stmt->execute())
