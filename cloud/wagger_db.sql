@@ -1,9 +1,3 @@
--- --------------------------------------------------------
--- Värd:                         localhost
--- Serverversion:                10.5.4-MariaDB-1:10.5.4+maria~stretch - mariadb.org binary distribution
--- Server-OS:                    debian-linux-gnu
--- HeidiSQL Version:             10.3.0.5771
--- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET NAMES utf8 */;
