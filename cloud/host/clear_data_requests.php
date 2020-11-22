@@ -1,6 +1,7 @@
 <?php
 
 
+include("../header.php");
 include("../db_ini.php");
 include("../utils.php");
 include("header.php");
@@ -17,7 +18,7 @@ if (!$conn->options(MYSQLI_OPT_CONNECT_TIMEOUT, 5))
 {
   die('Setting MYSQLI_OPT_CONNECT_TIMEOUT failed');
 }
-if (!$conn->real_connect($servername, $username, $password, $dbname)) 
+if (!$conn->real_connect($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME)) 
 {
   die('Connect Error (' . mysqli_connect_errno() . ') ' . mysqli_connect_error());
 }
@@ -26,7 +27,7 @@ if ($conn)
 {
   $conn->autocommit(FALSE);
   $conn->begin_transaction();
-  $sql_delete = "DELETE FROM " . $acquired_data_table_name ;
+  $sql_delete = "DELETE FROM " . $ACQUIRED_DATA_TABLE_NAME ;
   $sql_delete .= " WHERE CHANNEL_INDEX IN (" . $channels_list . ")" ;
   $sql_delete .= " AND TIMEDIFF(SYSDATE(), ADDED_TIMESTAMP)>" . strval($delete_horizon) ;
   $sql_delete .= " AND AD.STATUS >= " . strval($lowest_status) ;
@@ -40,7 +41,7 @@ if ($conn)
       $conn->rollback();
       die();
     }
-    $sql_optimize = "OPTIMIZE TABLE " . $acquired_data_table_name;
+    $sql_optimize = "OPTIMIZE TABLE " . $ACQUIRED_DATA_TABLE_NAME;
     $stmt=$conn->prepare($sql_optimize);
     if(!$stmt->execute())
     {
