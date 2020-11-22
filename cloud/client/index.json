@@ -46,24 +46,6 @@
     ]
   },
   {
-    "title": "Flexible webcam 1 (live)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
-        "channels": [],
-        "img_channels":
-        [
-          { "index": 140, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
     "title": "Water treatment plant (plan)",
     "show": true,
     "screens":
@@ -98,6 +80,42 @@
         "time": null,
         "channels": [],
         "img_channels": [],
+        "ctrl_channels": []
+      }
+    ]
+  },
+  {
+    "title": "Shore Control Development Lab (live)",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": [],
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+        "channels": [],
+        "img_channels":
+        [
+          { "index": 180, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+        ],
+        "ctrl_channels": []
+      }
+    ]
+  },
+  {
+    "title": "AIS Station Map (live)",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": [],
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 10, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 127, "g": 127, "b": 127, "a": 127} } },
+        "channels": [],
+        "img_channels":
+        [
+          { "index": 602, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+        ],
         "ctrl_channels": []
       }
     ]
@@ -200,6 +218,24 @@
     ]
   },
   {
+    "title": "OpenCPN screen (live)",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": [],
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 10, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 127, "g": 127, "b": 127, "a": 127} } },
+        "channels": [],
+        "img_channels":
+        [
+          { "index": 601, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+        ],
+        "ctrl_channels": []
+      }
+    ]
+  },
+  {
     "title": "Heat pump installation",
     "show": true,
     "screens":
@@ -218,7 +254,7 @@
     ]
   },
   {
-    "title": "Flexible webcam 2 (live)",
+    "title": "AIS display (live)",
     "show": true,
     "screens":
     [
@@ -230,6 +266,27 @@
         "img_channels":
         [
           { "index": 160, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+        ],
+        "ctrl_channels": []
+      }
+    ]
+  },
+  {
+    "title": "Precision Barometer (live)",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": [],
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+        "channels":
+        [
+          { "index": 142, "show": true, "label": "Barometric pressure", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "hPa", "disp": {"len": 7, "size": 30, "pos": {"x": 360, "y": 240}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
+        ],
+        "img_channels":
+        [
+          { "index": 140, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
         "ctrl_channels": []
       }
@@ -249,24 +306,6 @@
         "time": null,
         "channels": [],
         "img_channels": [],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Flexible webcam 3 (live)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
-        "channels": [],
-        "img_channels":
-        [
-          { "index": 180, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
         "ctrl_channels": []
       }
     ]
@@ -362,11 +401,11 @@
         ],
         "ctrl_channels": 
         [
-          { "index": 174, "show": true, "label": "Start heater", "str_val": "Off", "val": 0.0, "min_str_val": "Off", "min_val": 0.0, "max_str_val": "On", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "", "disp": {"len": 5, "size": 14, "pos": {"x": 10, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 175, "show": true, "label": "Temperature setpoint", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": -5.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 5, "size": 14, "pos": {"x": 170, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 176, "show": true, "label": "Controller P value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "", "disp": {"len": 5, "size": 14, "pos": {"x": 320, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 177, "show": true, "label": "Controller I value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "", "disp": {"len": 5, "size": 14, "pos": {"x": 470, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 178, "show": true, "label": "Controller D value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "", "disp": {"len": 5, "size": 14, "pos": {"x": 620, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} }
+          { "index": 174, "show": true, "type": "", "label": "Start heater", "str_val": "Off", "val": 0.0, "min_str_val": "Off", "min_val": 0.0, "max_str_val": "On", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "", "disp": {"len": 5, "size": 14, "pos": {"x": 10, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
+          { "index": 175, "show": true, "type": "", "label": "Temperature setpoint", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": -5.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 5, "size": 14, "pos": {"x": 170, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
+          { "index": 176, "show": true, "type": "", "label": "Controller P value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "", "disp": {"len": 5, "size": 14, "pos": {"x": 320, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
+          { "index": 177, "show": true, "type": "", "label": "Controller I value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "", "disp": {"len": 5, "size": 14, "pos": {"x": 470, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
+          { "index": 178, "show": true, "type": "", "label": "Controller D value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "", "disp": {"len": 5, "size": 14, "pos": {"x": 620, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} }
         ]
       }
     ]
