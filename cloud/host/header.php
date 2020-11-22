@@ -1,5 +1,8 @@
 <?php
 
+$MAX_FILES_PER_CHANNEL = 20 ;
+$WRITE_IMAGE_FILES = TRUE;
+$WRITE_VALUE_FILES = FALSE;
 
 $request_string = NULL;
 $return_string = NULL;
