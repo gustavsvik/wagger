@@ -1,7 +1,7 @@
 <?php
 
-$servername = "0.0.0.0";
-$username = "user";
-$password = "pwd";
-$dbname = "db";
-$acquired_data_table_name = "table";
+$SERVERNAME = "0.0.0.0";
+$USERNAME = "user";
+$PASSWORD = "pwd";
+$DBNAME = "db";
+$ACQUIRED_DATA_TABLE_NAME = "table";
