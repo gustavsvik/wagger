@@ -213,7 +213,7 @@ function draw()
 
 function handle_image_loaded()
 { 
-
+  //console.log(A.data_timestamp);
   A.display_image_loading = false;
 
   if (A.display_browser_viewport)
@@ -529,7 +529,13 @@ function label_listener()
       if (_slider !== null) 
       {
         _slider.style.visibility = "visible";
-        _slider.value = _ctrl_channel.val;
+        if (_ctrl_channel.type === "datetime")
+        {
+        }
+        else
+        {
+          _slider.value = _ctrl_channel.val;
+        }
       }
       let _send = Disp.getChannelElement (["send", _index]);
       if (_send !== null) _send.style.visibility = "visible";
@@ -980,15 +986,29 @@ function display_select_listener()
         opacity: "0.5",
         textAlign: "center"
       } ) ;
-      
-      Disp.setProperties( _slider, 
+
+
+      if (_ctrl_channel.type === "datetime")
       {
-        type: "range",
-        min: _ctrl_channel.min_val,
-        max: _ctrl_channel.max_val,
-        step: _ctrl_channel.val_step,
-        value: _ctrl_channel.val
-      } ) ;
+        let _date = new Date();
+        let _value = _date.getFullYear().toString() + '-' + (_date.getMonth() + 1).toString().padStart(2, 0) + '-' + _date.getDate().toString().padStart(2, 0);
+
+        Disp.setProperties( _slider, 
+        {
+          type: "datetime-local",
+        } ) ;  
+      }
+      else
+      {
+        Disp.setProperties( _slider, 
+        {
+          type: "range",
+          min: _ctrl_channel.min_val,
+          max: _ctrl_channel.max_val,
+          step: _ctrl_channel.val_step,
+          value: _ctrl_channel.val
+        } ) ;
+      }
       _slider.addEventListener("input", slider_listener);
 
       let _value_unit_string = "";
@@ -1016,7 +1036,13 @@ function display_select_listener()
       _send.addEventListener("click", send_listener);
       _send.innerHTML = "Go"; //"<div style="text-align:center;">Go</div>";
     }
-
+    
+    //if (A.display_index === 20)
+    //{
+    //  let vid = createVideo( ['http://labremote.net/client/images/labremote_mockup.mp4'] );
+    //  vid.loop();
+    //}
+    
     reset_display_variables();
   
   }
