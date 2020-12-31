@@ -178,6 +178,42 @@
     ]
   },
   {
+    "title": "Radar image mockup original",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": [],
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 10, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 127, "g": 127, "b": 127, "a": 127} } },
+        "channels": [],
+        "img_channels":
+        [
+          { "index": 2000, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+        ],
+        "ctrl_channels": []
+      }
+    ]
+  },  
+  {
+    "title": "Radar image mockup variant 1",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": [],
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 10, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 127, "g": 127, "b": 127, "a": 127} } },
+        "channels": [],
+        "img_channels":
+        [
+          { "index": 2002, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+        ],
+        "ctrl_channels": []
+      }
+    ]
+  },  
+  {
     "title": "Weather station (view)",
     "show": true,
     "screens":
