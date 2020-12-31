@@ -5,9 +5,9 @@ include("../db_ini.php");
 include("../utils.php");
 
 $id_range = NULL;
-$id_range = strval(getPost("idrange", "NULL"));
+$id_range = strval(getPost("id_range", "NULL"));
 $table_label = NULL;
-$table_label = strval(getPost("tablelabel", "none"));
+$table_label = strval(getPost("table_label", "none"));
 
 $conn = new mysqli($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME);
 
