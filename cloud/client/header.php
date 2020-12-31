@@ -1,7 +1,7 @@
 <?php
 
 
-$ACCESSIBLE_CHANNELS = array_merge( range(17,32), range(97,112), range(174,178), [140,142,160,180,202], range(600,602), range(61010,61012) ) ; 
+$ACCESSIBLE_CHANNELS = array_merge( range(17,32), range(97,112), range(174,178), [140,142,160,180,202], range(600,602), range(61010,61012), [2000,2001,2002,2003]) ; 
 $MAX_FILES_PER_CHANNEL = 20 ;
 $WRITE_IMAGE_FILES = FALSE;
 $WRITE_VALUE_FILES = FALSE;
@@ -31,4 +31,3 @@ $lowest_status = intval(getPost('lowest_status', -1));
 
 $channel_start = 0;
 $data_end = strlen($channels);
-
