@@ -49,7 +49,12 @@ while ($channel_start < $data_end)
     $base64_start = $subsamples_end+1;
     $base64_end = strpos($return_string, ",", $base64_start);
     $base64_string = mb_substr($return_string, $base64_start, $base64_end-$base64_start);
-    
+    if (strlen($base64_string) > 0)
+    {
+      $base64_string = str_replace("|", ",", $base64_string) ;
+      $base64_string = str_replace("~", ";", $base64_string) ;
+    }
+
     if (strlen($base64_string) > 0)
     {
       if ($WRITE_IMAGE_FILES == TRUE)
