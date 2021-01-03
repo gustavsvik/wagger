@@ -95,7 +95,18 @@ if ($data_end > 0)
         if (!is_null($value_row[2])) $subsample_string = strval($value_row[2]);
         $base64_string = "";
         if (!is_null($value_row[3])) $base64_string = strval($value_row[3]);
-        $return_string .= $time_string . "," . $value_string . "," . $subsample_string . "," . "," ; // . $base64_string . ",";
+        $return_string .= $time_string . "," . $value_string . "," . $subsample_string . "," ;
+        if (strlen($base64_string) > 0)
+        {
+          if (in_array($channel, $BYTE_STRING_CHANNELS, TRUE)) 
+          {
+            $base64_string = str_replace(",", "|", $base64_string) ;
+            $base64_string = str_replace(";", "~", $base64_string) ;
+            $return_string .= $base64_string ;
+          }
+        }
+        $return_string .= "," ;
+
         if (strlen($base64_string) > 0)
         {
           $image_filename = $IMAGE_DIR . "/" . $channel_string . "_" . $time_string . ".jpg";
