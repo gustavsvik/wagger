@@ -318,7 +318,7 @@
         "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
         "channels":
         [
-          { "index": 142, "show": true, "label": "Barometric pressure", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "hPa", "disp": {"len": 7, "size": 30, "pos": {"x": 360, "y": 240}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
+          { "index": 143, "show": true, "label": "Barometric pressure", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "hPa", "disp": {"len": 7, "size": 30, "pos": {"x": 360, "y": 240}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
         ],
         "img_channels":
         [
