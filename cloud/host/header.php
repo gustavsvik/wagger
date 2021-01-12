@@ -15,3 +15,4 @@ $return_string = strval(getPost('returnstring', ';,,,;'));
 $duration = intval(getPost('duration', 10));
 $unit = intval(getPost('unit', 1));
 $lowest_status = intval(getPost('lowest_status', -1));
+$delete_horizon = intval(getPost('delete_horizon', PHP_INT_MAX));
