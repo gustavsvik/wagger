@@ -89,6 +89,24 @@
     ]
   },
   {
+    "title": "AIS Station Map (live)",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": [],
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 10, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 127, "g": 127, "b": 127, "a": 127} } },
+        "channels": [],
+        "img_channels":
+        [
+          { "index": 602, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+        ],
+        "ctrl_channels": []
+      }
+    ]
+  },
+  {
     "title": "Algae cultivation project",
     "show": true,
     "screens":
@@ -146,6 +164,28 @@
     ]
   },
   {
+    "title": "Weather station (view)",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs":
+        [	
+          { "file": "2.png", "dim": "source", "disp": {"h": 600, "pos": "center"} }
+        ],
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+        "channels":
+        [
+          { "index": 21, "show": true, "label": "Global insolation", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e-0, "unit": "W/m\u00B2", "disp": {"len": 5, "size": 16, "pos": { "x": 130, "y": 290 }, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} },
+          { "index": 23, "show": true, "label": "Ambient temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 2.0e-1, "unit": "\u00B0C", "disp": {"len": 4 , "size": 16, "pos": { "x": 245, "y": 375 }, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
+        ],
+        "img_channels": [],
+        "ctrl_channels": []
+      }
+    ]
+  },
+  {
     "title": "Solar energy measurements",
     "show": true,
     "screens":
@@ -164,7 +204,7 @@
     ]
   },
   {
-    "title": "AIS Station Map (live)",
+    "title": "OpenCPN screen (live)",
     "show": true,
     "screens":
     [
@@ -200,7 +240,7 @@
     ]
   },
   {
-    "title": "AIS display view (live)",
+    "title": "AIS display (live)",
     "show": true,
     "screens":
     [
@@ -212,6 +252,27 @@
         "img_channels":
         [
           { "index": 160, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+        ],
+        "ctrl_channels": []
+      }
+    ]
+  },
+  {
+    "title": "Precision Barometer (view)",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": [],
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+        "channels":
+        [
+          { "index": 143, "show": true, "label": "Barometric pressure", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "hPa", "disp": {"len": 7, "size": 30, "pos": {"x": 360, "y": 240}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
+        ],
+        "img_channels":
+        [
+          { "index": 140, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
         "ctrl_channels": []
       }
@@ -231,24 +292,6 @@
         "time": null,
         "channels": [],
         "img_channels": [],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Flexible webcam 1 (live)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
-        "channels": [],
-        "img_channels":
-        [
-          { "index": 140, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
         "ctrl_channels": []
       }
     ]
