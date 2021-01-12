@@ -61,7 +61,9 @@ while ($channel_start < $data_end)
       {
         if(!in_array($channel, $file_channels)) $file_channels[] = $channel ;
         $image_filename = $IMAGE_DIR . "/" . $channel_string . "_" . $timestamp_string . ".jpg";
+        //error_log('$image_filename: ' . mb_substr($image_filename, 0, 100) . PHP_EOL, 3, '/var/tmp/debug.log');
         $ifp = fopen($image_filename, 'wb'); 
+        //error_log('$base64_string: ' . mb_substr($base64_string, 0, 100) . PHP_EOL, 3, '/var/tmp/debug.log');
         fwrite($ifp, base64_decode($base64_string) );
         fclose($ifp);
         copy($image_filename, $IMAGE_DIR . "/" . $channel_string . ".jpg");
