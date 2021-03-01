@@ -74,70 +74,73 @@ if ($data_end > 0)
     $sql_get_available_values = $sql_get_all_available_values ;
     if (!$select_all) $sql_get_available_values .= " AND AD.ACQUIRED_TIME IN " . $points_range_string ;
     $sql_get_available_values .= " AND AD.STATUS >= " . strval($lowest_status) . " AND AD.STATUS < " . strval($STATUS_STORED) ;
-    
     $available_values = $conn->query($sql_get_available_values);
-    if ($available_values->num_rows <= 0) 
-    {
-      $sql_get_stored_archived_values = $sql_get_all_available_values . " AND AD.STATUS >= " . strval($STATUS_STORED) ;
-      $available_values = $conn->query($sql_get_stored_archived_values);
-      if ($available_values->num_rows > 0) $found_archived_records = TRUE ;
-    }
-    
-    if ($available_values->num_rows > 0) 
-    {
-      while ($value_row = $available_values->fetch_array(MYSQLI_NUM)) 
-      {
-        $time_string = "";
-        if (!is_null($value_row[0])) $time_string = strval($value_row[0]);
-        $value_string = "";
-        if (!is_null($value_row[1])) $value_string = strval($value_row[1]);
-        $subsample_string = "";
-        if (!is_null($value_row[2])) $subsample_string = strval($value_row[2]);
-        $base64_string = "";
-        if (!is_null($value_row[3])) $base64_string = strval($value_row[3]);
-        $return_string .= $time_string . "," . $value_string . "," . $subsample_string . "," ;
-        if (strlen($base64_string) > 0)
-        {
-          if (in_array($channel, $BYTE_STRING_CHANNELS, TRUE)) 
-          {
-            $base64_string = str_replace(",", "|", $base64_string) ;
-            $base64_string = str_replace(";", "~", $base64_string) ;
-            $return_string .= $base64_string ;
-          }
-        }
-        $return_string .= "," ;
 
-        if (strlen($base64_string) > 0)
+	if ($available_values)
+	{
+      if ($available_values->num_rows <= 0) 
+      {
+        $sql_get_stored_archived_values = $sql_get_all_available_values . " AND AD.STATUS >= " . strval($STATUS_STORED) ;
+        $available_values = $conn->query($sql_get_stored_archived_values);
+        if ($available_values->num_rows > 0) $found_archived_records = TRUE ;
+      }
+      if ($available_values->num_rows > 0) 
+      {
+        while ($value_row = $available_values->fetch_array(MYSQLI_NUM)) 
         {
-          $image_filename = $IMAGE_DIR . "/" . $channel_string . "_" . $time_string . ".jpg";
-          if ($found_archived_records) $archived_record_files[] = $image_filename ;
-          if ($WRITE_IMAGE_FILES == TRUE)
+          $time_string = "";
+          if (!is_null($value_row[0])) $time_string = strval($value_row[0]);
+          $value_string = "";
+          if (!is_null($value_row[1])) $value_string = strval($value_row[1]);
+          $subsample_string = "";
+          if (!is_null($value_row[2])) $subsample_string = strval($value_row[2]);
+          $base64_string = "";
+          if (!is_null($value_row[3])) $base64_string = strval($value_row[3]);
+          $return_string .= $time_string . "," . $value_string . "," . $subsample_string . "," ;
+          if (strlen($base64_string) > 0)
           {
-            $ifp = fopen($image_filename, 'wb'); 
-            fwrite($ifp, base64_decode($base64_string) );
-            fclose($ifp);
-            copy($image_filename, $IMAGE_DIR . "/" . $channel_string . ".jpg");
+            if (in_array($channel, $ARMORED_BYTE_STRING_CHANNELS, TRUE)) 
+            {
+              $base64_string = str_replace(",", "|", $base64_string) ;
+              $base64_string = str_replace(";", "~", $base64_string) ;
+              $return_string .= $base64_string ;
+            }
           }
-        }
-        if ($value_string !== "-9999")
-        {
-          $text_filename = $IMAGE_DIR . "/" . $channel_string . "_" . $time_string . ".txt";
-          if ($found_archived_records) $archived_record_files[] = $text_filename ;
-          if ($WRITE_VALUE_FILES == TRUE)
+          $return_string .= "," ;
+
+          if (strlen($base64_string) > 0)
           {
-            $ifp = fopen($text_filename, 'wb'); 
-            fwrite($ifp, $return_string );
-            fclose($ifp);
-            copy($text_filename, $IMAGE_DIR . "/" . $channel_string . ".txt");
+            $image_filename = $IMAGE_DIR . "/" . $channel_string . "_" . $time_string . ".jpg";
+            if ($found_archived_records) $archived_record_files[] = $image_filename ;
+            if ($WRITE_IMAGE_FILES == TRUE)
+            {
+              $ifp = fopen($image_filename, 'wb'); 
+              fwrite($ifp, base64_decode($base64_string) );
+              fclose($ifp);
+              copy($image_filename, $IMAGE_DIR . "/" . $channel_string . ".jpg");
+            }
+          }
+          if ($value_string !== "-9999")
+          {
+            $text_filename = $IMAGE_DIR . "/" . $channel_string . "_" . $time_string . ".txt";
+            if ($found_archived_records) $archived_record_files[] = $text_filename ;
+            if ($WRITE_VALUE_FILES == TRUE)
+            {
+              $ifp = fopen($text_filename, 'wb'); 
+              fwrite($ifp, $return_string );
+              fclose($ifp);
+              copy($text_filename, $IMAGE_DIR . "/" . $channel_string . ".txt");
+            }
           }
         }
       }
-    } 
+    }
     else 
     {
     }
 
     $return_string .= ";";
+    debug_log('$return_string: ' . mb_substr($return_string, 0, 100));
 
     $channel_start = $channel_end+1;
 
