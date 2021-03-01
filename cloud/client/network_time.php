@@ -10,7 +10,7 @@
     $epoch_convert = 2208988800;
     $vn = 3;
 
-    $servers = array('ntp1.sptime.se','ntp2.sptime.se','ntp3.sptime.se','ntp4.sptime.se') ; 
+    $servers = array('0.se.pool.ntp.org','1.se.pool.ntp.org','2.se.pool.ntp.org','3.se.pool.ntp.org') ; 
     $server_count = count($servers);
 
     //see rfc5905, page 20
@@ -29,9 +29,12 @@
     $i = 0;
     for($i; $i < $server_count; $i++) 
     {
+      debug_log('udp://.$servers[$i]: ' . strval('udp://'.$servers[$i]));
       $socket = @fsockopen('udp://'.$servers[$i], 123, $err_no, $err_str, 1);
+
       if ($socket) 
       {
+        debug_log('$socket create successful');
         //add nulls to position 11 (the transmit timestamp, later to be returned as originate)
         //10 lots of 32 bits
         for ($j = 1; $j < 40; $j++) 
@@ -59,13 +62,15 @@
         //add the packed transmit timestamp
         $request_packet .= $packed_seconds;
         $request_packet .= $packed_fractional;
-
+        debug_log('$request_packet: ' . strval(bin2hex($request_packet)));
         if (fwrite($socket, $request_packet)) 
         {
+          debug_log('fwrite($socket, $request_packet) successful');
           $data = NULL;
           stream_set_timeout($socket, 1);
 
           $response = fread($socket, 48);
+          debug_log('$response: ' . strval(bin2hex($response)));
 
           //the time the response was received
           $local_received = microtime(true);
@@ -79,6 +84,7 @@
         }
         else 
         {
+          debug_log('$response incorrect length!');
           if ($i == $server_count - 1) 
           {
             //this was the last server on the list, so give up
@@ -88,6 +94,7 @@
       }
       else 
       {
+        debug_log('$socket create unsuccessful');
         if ($i == $server_count-1) 
         {
           //this was the last server on the list, so give up
