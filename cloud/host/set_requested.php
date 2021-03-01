@@ -6,7 +6,7 @@ include("../db_ini.php");
 include("../utils.php");
 include("header.php");
 
-//error_log('$return_string: ' . mb_substr($return_string, 0, 100) . PHP_EOL, 3, '/var/tmp/debug.log');
+debug_log('$return_string: ' . mb_substr($return_string, 0, 100));
 
 $conn = mysqli_init();
 
@@ -62,9 +62,9 @@ while ($channel_start < $data_end)
       {
         if(!in_array($channel, $file_channels)) $file_channels[] = $channel ;
         $image_filename = $IMAGE_DIR . "/" . $channel_string . "_" . $timestamp_string . ".jpg";
-        //error_log('$image_filename: ' . mb_substr($image_filename, 0, 100) . PHP_EOL, 3, '/var/tmp/debug.log');
+        debug_log('$image_filename: ' . mb_substr($image_filename, 0, 100));
         $ifp = fopen($image_filename, 'wb'); 
-        //error_log('$base64_string: ' . mb_substr($base64_string, 0, 100) . PHP_EOL, 3, '/var/tmp/debug.log');
+        debug_log('$base64_string: ' . mb_substr($base64_string, 0, 100));
         fwrite($ifp, base64_decode($base64_string) );
         fclose($ifp);
         copy($image_filename, $IMAGE_DIR . "/" . $channel_string . ".jpg");
@@ -82,7 +82,7 @@ while ($channel_start < $data_end)
         copy($text_filename, $IMAGE_DIR . "/" . $channel_string . ".txt");
       }
     }
-    //error_log('$timestamp: ' . strval($timestamp) . ' $channel: ' . strval($channel) . ' $base64_string: ' . mb_substr($base64_string, 0, 100) . PHP_EOL, 3, '/var/tmp/debug.log');
+    debug_log('$timestamp: ' . strval($timestamp) . ' $channel: ' . strval($channel) . ' $base64_string: ' . mb_substr($base64_string, 0, 100));
     $stmt = $conn->prepare("UPDATE " . $ACQUIRED_DATA_TABLE_NAME . " SET ACQUIRED_VALUE=?,ACQUIRED_SUBSAMPLES=?,ACQUIRED_BASE64=?,STATUS=0 WHERE CHANNEL_INDEX=? AND ACQUIRED_TIME=? AND STATUS=-1");
     $stmt->bind_param('sssss', $value, $subsamples_string, $base64_string, $channel, $timestamp);
     if(!$stmt->execute())
