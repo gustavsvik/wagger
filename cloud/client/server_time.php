@@ -1,10 +1,11 @@
 <?php
 
-
+include("../utils.php");
 include ("network_time.php") ;
 
 //$receive_timestamp = intval( microtime($get_as_float = TRUE) * 1000000 ) ;
 $receive_timestamp = intval(network_time_get() * 1000000) ;
+debug_log('$receive_timestamp: ' . strval($receive_timestamp));
 
 header("Content-type: application/json");
 
