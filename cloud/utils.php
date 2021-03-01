@@ -1,7 +1,20 @@
 <?php
 
 
-function getPost($key, $default) 
+function debug_log($log_str)
+{
+  $logged_scripts = []; // 'get_uploaded.php', 'server_time.php', 'network_time.php'
+  $logfile = 'images/debug.log';
+  $trace = debug_backtrace();
+  $caller = array_shift($trace);
+  foreach($logged_scripts as $script_name) 
+  {
+    if (strpos($caller['file'], $script_name) !== FALSE) error_log(gmdate('YmdHis') . ' ' . $caller['file'] . ', line ' . $caller['line'] . ': ' . $log_str . PHP_EOL, 3, $logfile) ;
+  }
+}
+
+
+function getPost($key, $default)
 {
   if (isset($_POST[$key]))
     return $_POST[$key];
@@ -19,13 +32,14 @@ function getGet($key, $default)
 
 function csvstr(array $fields) : string
 {
-    $f = fopen('php://memory', 'r+');
-    if (fputcsv($f, $fields) === false) {
-        return false;
-    }
-    rewind($f);
-    $csv_line = stream_get_contents($f);
-    return rtrim($csv_line);
+  $f = fopen('php://memory', 'r+');
+  if (fputcsv($f, $fields) === false) 
+  {
+      return false;
+  }
+  rewind($f);
+  $csv_line = stream_get_contents($f);
+  return rtrim($csv_line);
 }
 
 
