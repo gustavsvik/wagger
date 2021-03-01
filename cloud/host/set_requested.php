@@ -6,6 +6,7 @@ include("../db_ini.php");
 include("../utils.php");
 include("header.php");
 
+//error_log('$return_string: ' . mb_substr($return_string, 0, 100) . PHP_EOL, 3, '/var/tmp/debug.log');
 
 $conn = mysqli_init();
 
@@ -81,7 +82,7 @@ while ($channel_start < $data_end)
         copy($text_filename, $IMAGE_DIR . "/" . $channel_string . ".txt");
       }
     }
-
+    //error_log('$timestamp: ' . strval($timestamp) . ' $channel: ' . strval($channel) . ' $base64_string: ' . mb_substr($base64_string, 0, 100) . PHP_EOL, 3, '/var/tmp/debug.log');
     $stmt = $conn->prepare("UPDATE " . $ACQUIRED_DATA_TABLE_NAME . " SET ACQUIRED_VALUE=?,ACQUIRED_SUBSAMPLES=?,ACQUIRED_BASE64=?,STATUS=0 WHERE CHANNEL_INDEX=? AND ACQUIRED_TIME=? AND STATUS=-1");
     $stmt->bind_param('sssss', $value, $subsamples_string, $base64_string, $channel, $timestamp);
     if(!$stmt->execute())
