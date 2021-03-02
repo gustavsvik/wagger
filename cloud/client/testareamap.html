@@ -46,7 +46,7 @@ var shore_icon = new CustomIcon({iconUrl: 'icons/building_symbol.png'}),
 // center of the map
 var center = [62.826, 17.879];
 var shore = [62.8315, 17.8705];
-var sea_mobile = [62.82, 17.89];
+var sea_mobile = [62.827, 17.90];
 var land_mobile = [62.832, 17.88];
 var buoy_1 = [62.8219465526254, 17.878395190126632];
 var buoy_2 = [62.830045904677235, 17.88962710650322];
@@ -57,14 +57,25 @@ var virtual_2 = [62.8271661350588, 17.887655981226686];
 var map = L.map('map').setView(center, 13);
 // Set up the OSM layer
 L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map);
+L.control.scale().addTo(map);
 // add a marker in the given location
-L.marker(shore, {icon: shore_icon}).addTo(map).bindPopup("Testledningskontor (Kan. 16, tel. 07X-XXXXXXX)");
-L.marker(sea_mobile, {icon: sea_mobile_icon}).addTo(map).bindPopup("Sjömobil testövervakning (Kan. 16, tel. 07X-XXXXXXX)");
-L.marker(land_mobile, {icon: land_mobile_icon}).addTo(map).bindPopup("Landmobil testövervakning (Kan. 16, tel. 07X-XXXXXXX)");
-L.marker(buoy_1, {icon: redIcon}).addTo(map).bindPopup("Mätboj - håll avstånd!");
-L.marker(buoy_2, {icon: redIcon}).addTo(map).bindPopup("Mätboj - håll avstånd!");
-L.marker(virtual_1, {icon: orangeIcon}).addTo(map).bindPopup("Avgränsning testområde - obehörig trafik förbjuden!");
-L.marker(virtual_2, {icon: orangeIcon}).addTo(map).bindPopup("Avgränsning testområde - obehörig trafik förbjuden!");
+var shore_marker = L.marker(shore, {icon: shore_icon}).addTo(map).bindPopup("Testledningscentral<br>Tel. 07X-XXXXXXX<br>Passning kanal 16", {closeOnClick: false, autoClose: false});
+var sea_mobile_marker = L.marker(sea_mobile, {icon: sea_mobile_icon}).addTo(map).bindPopup("Sjömobil testövervakning<br>Tel. 07X-XXXXXXX<br>Passning kanal 16", {closeOnClick: false, autoClose: false});
+L.marker(land_mobile, {icon: land_mobile_icon}).addTo(map).bindPopup("Landmobil testövervakning<br>Tel. 07X-XXXXXXX<br>Passning kanal 16", {closeOnClick: false, autoClose: false});
+var buoy_1_marker = L.marker(buoy_1, {icon: redIcon}).addTo(map).bindPopup("Mätboj - håll avstånd!", {closeOnClick: false, autoClose: false});
+var buoy_2_marker = L.marker(buoy_2, {icon: redIcon}).addTo(map).bindPopup("Mätboj - håll avstånd!", {closeOnClick: false, autoClose: false});
+L.marker(virtual_1, {icon: orangeIcon}).addTo(map).bindPopup("Obehörig trafik förbjuden!<br>Avgränsning testområde", {closeOnClick: false, autoClose: false});
+L.marker(virtual_2, {icon: orangeIcon}).addTo(map).bindPopup("Obehörig trafik förbjuden!<br>Avgränsning testområde", {closeOnClick: false, autoClose: false});
+
+var myInterval = setInterval
+(
+  function() 
+  {
+    buoy_2_marker.getPopup().setContent("Mätboj - håll avstånd!<br>Vindhastighet: " + Math.random().toString().substring(0,5) + " m/s");
+    buoy_2_marker.getPopup().update();
+    sea_mobile_marker.setLatLng([sea_mobile[0]+Math.random()/5000, sea_mobile[1]+Math.random()/5000]);
+  }, 2000
+);
 
 </script>
 
