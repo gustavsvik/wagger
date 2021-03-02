@@ -15,6 +15,7 @@
 <title>Särskilda hinder för sjöfart - Test Site Bothnia</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-beta.2.rc.2/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.boatmarker/leaflet.boatmarker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-beta.2.rc.2/leaflet.css">
 <style id="compiled-css" type="text/css"> #map { height: 400px; } /* EOS */ </style>
 </head>
@@ -60,7 +61,7 @@ L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }
 L.control.scale().addTo(map);
 // add a marker in the given location
 var shore_marker = L.marker(shore, {icon: shore_icon}).addTo(map).bindPopup("Testledningscentral<br>Tel. 07X-XXXXXXX<br>Passning kanal 16", {closeOnClick: false, autoClose: false});
-var sea_mobile_marker = L.marker(sea_mobile, {icon: sea_mobile_icon}).addTo(map).bindPopup("Sjömobil testövervakning<br>Tel. 07X-XXXXXXX<br>Passning kanal 16", {closeOnClick: false, autoClose: false});
+var sea_mobile_marker = L.boatMarker(sea_mobile, {icon: sea_mobile_icon}).addTo(map).bindPopup("Sjömobil testövervakning<br>Tel. 07X-XXXXXXX<br>Passning kanal 16", {closeOnClick: false, autoClose: false, idleCircle: false});
 L.marker(land_mobile, {icon: land_mobile_icon}).addTo(map).bindPopup("Landmobil testövervakning<br>Tel. 07X-XXXXXXX<br>Passning kanal 16", {closeOnClick: false, autoClose: false});
 var buoy_1_marker = L.marker(buoy_1, {icon: redIcon}).addTo(map).bindPopup("Mätboj - håll avstånd!", {closeOnClick: false, autoClose: false});
 var buoy_2_marker = L.marker(buoy_2, {icon: redIcon}).addTo(map).bindPopup("Mätboj - håll avstånd!", {closeOnClick: false, autoClose: false});
@@ -74,6 +75,8 @@ var myInterval = setInterval
     buoy_2_marker.getPopup().setContent("Mätboj - håll avstånd!<br>Vindhastighet: " + Math.random().toString().substring(0,5) + " m/s");
     buoy_2_marker.getPopup().update();
     sea_mobile_marker.setLatLng([sea_mobile[0]+Math.random()/5000, sea_mobile[1]+Math.random()/5000]);
+    random_two_sided = (Math.random()*(1 - (-1)) + (-1));
+    sea_mobile_marker.setHeading( random_two_sided * 10 + 130 ) ;
   }, 2000
 );
 
