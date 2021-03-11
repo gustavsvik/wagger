@@ -61,10 +61,10 @@ L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }
 L.control.scale().addTo(map);
 // add a marker in the given location
 var shore_marker = L.marker(shore, {icon: shore_icon}).addTo(map).bindPopup("Testledningscentral<br>Tel. 07X-XXXXXXX<br>Passning kanal 16", {closeOnClick: false, autoClose: false});
-var sea_mobile_marker = L.boatMarker(sea_mobile, {icon: sea_mobile_icon}).addTo(map).bindPopup("Sjömobil testövervakning<br>Tel. 07X-XXXXXXX<br>Passning kanal 16", {closeOnClick: false, autoClose: false, idleCircle: false});
+var sea_mobile_marker = L.boatMarker(sea_mobile, {icon: sea_mobile_icon, idleCircle: false}).addTo(map).bindPopup("Sjömobil testövervakning<br>Tel. 07X-XXXXXXX<br>Passning kanal 16", {closeOnClick: false, autoClose: false});
 L.marker(land_mobile, {icon: land_mobile_icon}).addTo(map).bindPopup("Landmobil testövervakning<br>Tel. 07X-XXXXXXX<br>Passning kanal 16", {closeOnClick: false, autoClose: false});
-var buoy_1_marker = L.marker(buoy_1, {icon: redIcon}).addTo(map).bindPopup("Mätboj - håll avstånd!", {closeOnClick: false, autoClose: false});
-var buoy_2_marker = L.marker(buoy_2, {icon: redIcon}).addTo(map).bindPopup("Mätboj - håll avstånd!", {closeOnClick: false, autoClose: false});
+var buoy_2_marker = L.marker(buoy_2, {icon: redIcon}).addTo(map).bindPopup("Håll avstånd!<br>Mätboj", {closeOnClick: false, autoClose: false});
+var buoy_1_marker = L.boatMarker(buoy_1, {icon: sea_mobile_icon, idleCircle: true}).addTo(map).bindPopup("Mätboj - håll avstånd!", {closeOnClick: false, autoClose: false});
 L.marker(virtual_1, {icon: orangeIcon}).addTo(map).bindPopup("Obehörig trafik förbjuden!<br>Avgränsning testområde", {closeOnClick: false, autoClose: false});
 L.marker(virtual_2, {icon: orangeIcon}).addTo(map).bindPopup("Obehörig trafik förbjuden!<br>Avgränsning testområde", {closeOnClick: false, autoClose: false});
 
@@ -72,11 +72,13 @@ var myInterval = setInterval
 (
   function() 
   {
-    buoy_2_marker.getPopup().setContent("Mätboj - håll avstånd!<br>Vindhastighet: " + Math.random().toString().substring(0,5) + " m/s");
-    buoy_2_marker.getPopup().update();
-    sea_mobile_marker.setLatLng([sea_mobile[0]+Math.random()/5000, sea_mobile[1]+Math.random()/5000]);
-    random_two_sided = (Math.random()*(1 - (-1)) + (-1));
-    sea_mobile_marker.setHeading( random_two_sided * 10 + 130 ) ;
+    var random_one_sided = Math.random();
+    var random_two_sided = (Math.random()*(1 - (-1)) + (-1));
+    buoy_1_marker.getPopup().setContent("Håll avstånd!<br>Sjömobil mätstation<br>Vindhastighet: " + (random_two_sided * 2 + 5).toString().substring(0,5) + " kts");
+    buoy_1_marker.getPopup().update();
+    buoy_1_marker.setHeadingWind( 0, random_two_sided * 2 + 5, random_two_sided * 10 + 190 ) ;
+    sea_mobile_marker.setLatLng([sea_mobile[0]+random_one_sided/5000, sea_mobile[1]+random_one_sided/5000]);
+    sea_mobile_marker.setHeadingWind( random_two_sided * 10 + 130, random_one_sided * 5 + 5, random_one_sided * 10 + 190 ) ;
   }, 2000
 );
 
