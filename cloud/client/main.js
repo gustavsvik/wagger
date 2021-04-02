@@ -495,8 +495,11 @@ function handle_display_data(data)
 function label_listener()
 {
   let _element = this;
+
   if (typeof _element !== 'undefined')
   {
+    display_label(_element);
+    /*
     A.hovered_clicked_label = _element ;
     _element.style.visibility = "visible";
     let [_tag, _index] = Disp.getTagChannelIndex(_element);
@@ -555,17 +558,82 @@ function label_listener()
       let _str_val = _value_unit_string + _channel.info;
       _label.innerHTML = _str_val;
     }
+    */
   }
 }
 
+function display_label(_element)
+
+{
+    A.hovered_clicked_label = _element ;
+
+    _element.style.visibility = "visible";
+    let [_tag, _index] = Disp.getTagChannelIndex(_element);
+
+    if (_tag === "timebkg")
+    {
+      let _time_label = Disp.getChannelElement (["timelabel", null]);
+      if (_time_label !== null)
+      {
+        _time_label.style.visibility = "visible";
+        let _time = (D.data[A.display_index]).screens[0].time;
+        let _str_val = _time.str_val + _time.info;
+        _time_label.innerHTML = _str_val + ( - A.ntp.adjustment / 1000000 ).toString().substring(0,7) + " s";
+      }
+    }
+
+    let _setval = Disp.getChannelElement (["setval", _index]);
+    if (_setval !== null)
+    {
+      let _ctrl_channels = (D.data[A.display_index]).screens[0].ctrl_channels;
+      let _ctrl_index = App.findWithAttr(_ctrl_channels, "index", parseInt(_index) );
+      let _ctrl_channel = _ctrl_channels[_ctrl_index];
+      let _value_unit_string = "";
+      if ( _ctrl_channel.str_val !== "" ) _value_unit_string = _ctrl_channel.str_val;
+      else _value_unit_string = (_ctrl_channel.val * _ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
+      let _str_val = _value_unit_string + _ctrl_channel.info;         
+      _setval.innerHTML = _str_val;
+      _setval.style.visibility = "visible";
+      let _slider = Disp.getChannelElement (["slider", _index]);
+      if (_slider !== null) 
+      {
+        _slider.style.visibility = "visible";
+        if (_ctrl_channel.type === "datetime")
+        {
+        }
+        else
+        {
+          _slider.value = _ctrl_channel.val;
+        }
+      }
+      let _send = Disp.getChannelElement (["send", _index]);
+      if (_send !== null) _send.style.visibility = "visible";
+    }
+
+    let _label = Disp.getChannelElement (["label", _index]);
+    if (_label !== null)
+    {
+      _label.style.visibility = "visible"; 
+      let _channels = (D.data[A.display_index]).screens[0].channels;
+      let _chan_index = App.findWithAttr(_channels, "index", parseInt(_index) );
+      let _channel = _channels[_chan_index];
+      let _value_unit_string = "";
+      //if ( _channel.str_val !== "" ) _value_unit_string = _channel.str_val;
+      //else 
+      _value_unit_string = (_channel.val).toString().substring(0, A.MAX_DISPLAY_DIGITS) + " " + _channel.unit;  // .substring(0,12)
+      let _str_val = _value_unit_string + _channel.info;
+      _label.innerHTML = _str_val;
+    }
+}
 
 function outside_label_listener()
 {
   let _element = this;
+
   if (typeof _element !== 'undefined')
   {
     A.hovered_clicked_label = null ;
-    _element.style.visibility = "hidden";
+
     let [_tag, _index] = Disp.getTagChannelIndex(_element);
   
     if (_tag === "timebkg")
@@ -579,31 +647,37 @@ function outside_label_listener()
       }
     }
 
-    let _send = Disp.getChannelElement (["send", _index]);
-    if (_send !== null) _send.style.visibility = "hidden";
-    let _slider = Disp.getChannelElement (["slider", _index]);
-    if (_slider !== null) _slider.style.visibility = "hidden";
-    let _setval = Disp.getChannelElement (["setval", _index]);
-    if (_setval !== null)
+    let _ctrl_channels = (D.data[A.display_index]).screens[0].ctrl_channels;
+    let _ctrl_index = App.findWithAttr(_ctrl_channels, "index", parseInt(_index) );
+    let _ctrl_channel = _ctrl_channels[_ctrl_index];
+
+    if ( typeof _ctrl_channel !== 'undefined' && !(_ctrl_channel.show == true && _ctrl_channel.lock == true) ) 
     {
-      let _ctrl_channels = (D.data[A.display_index]).screens[0].ctrl_channels;
-      let _ctrl_index = App.findWithAttr(_ctrl_channels, "index", parseInt(_index) );
-      let _ctrl_channel = _ctrl_channels[_ctrl_index];
+      let _setval = Disp.getChannelElement (["setval", _index]);
+      if (_setval !== null)
+      {
+        _element.style.visibility = "hidden";
+        let _send = Disp.getChannelElement (["send", _index]);
+        if (_send !== null) _send.style.visibility = "hidden";
+        let _slider = Disp.getChannelElement (["slider", _index]);
+        if (_slider !== null) _slider.style.visibility = "hidden";
+      }
       let _value_unit_string = "";
       if ( _ctrl_channel.str_val !== "" ) _value_unit_string = _ctrl_channel.str_val;
       else _value_unit_string = (_ctrl_channel.val  *_ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
       _setval.innerHTML = _value_unit_string + Disp.htmlSpaces(0) + "<br>" + Disp.htmlSpaces(10) ; 
-    }
-    let _label = Disp.getChannelElement (["label", _index]);
-    if (_label !== null)
-    {
-      let _channels = (D.data[A.display_index]).screens[0].channels;
-      let _chan_index = App.findWithAttr(_channels, "index", parseInt(_index) );
-      let _channel = _channels[_chan_index];
-      let _value_unit_string = "";
-      if ( _channel.str_val !== "" ) _value_unit_string = _channel.str_val;
-      else _value_unit_string = (_channel.val  *_channel.scale).toString().substring(0,_channel.disp.len) + " " + _channel.unit;
-      _label.innerHTML = _value_unit_string + Disp.htmlSpaces(0) + "<br>" + Disp.htmlSpaces(10) ; 
+
+      let _label = Disp.getChannelElement (["label", _index]);
+      if (_label !== null)
+      {
+        let _channels = (D.data[A.display_index]).screens[0].channels;
+        let _chan_index = App.findWithAttr(_channels, "index", parseInt(_index) );
+        let _channel = _channels[_chan_index];
+        let _value_unit_string = "";
+        if ( _channel.str_val !== "" ) _value_unit_string = _channel.str_val;
+        else _value_unit_string = (_channel.val  *_channel.scale).toString().substring(0,_channel.disp.len) + " " + _channel.unit;
+        _label.innerHTML = _value_unit_string + Disp.htmlSpaces(0) + "<br>" + Disp.htmlSpaces(10) ; 
+      }
     }
   }
 }
@@ -934,7 +1008,7 @@ function display_select_listener()
         position: "absolute",
         left: (_ctrl_disp.pos.x * A.display_img_scale + A.CANVAS_POS_X + A.canvas_shift_x - _ctrl_disp.size/2 + 7).toString() + "px",
         top: (_ctrl_disp.pos.y * A.display_img_scale + A.CANVAS_POS_Y + A.canvas_shift_y - _ctrl_disp.size + 14).toString() + "px", 
-        visibility: "hidden",
+        visibility: ( (_ctrl_channel.show == true && _ctrl_channel.lock == true) ? "visible" : "hidden" ), 
         fontSize: (parseInt(_ctrl_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
         fontFamily: A.all_font_families,
         color: Disp.rGBALiteralFromArray([_ctrl_color.r,_ctrl_color.g,_ctrl_color.b,_ctrl_color.a]) , 
@@ -949,7 +1023,7 @@ function display_select_listener()
         position: "absolute",
         left: (_ctrl_disp.size * 0.7).toString() + "px",
         top: (_ctrl_disp.size * 0.6).toString() + "px",
-        visibility: "hidden",
+        visibility: ( (_ctrl_channel.show == true && _ctrl_channel.lock == true) ? "visible" : "hidden" ), 
         fontSize: (parseInt(_ctrl_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
         fontFamily: A.all_font_families
       } ) ;
@@ -979,7 +1053,7 @@ function display_select_listener()
         position: "absolute",
         left: (_ctrl_disp.size * 7.3).toString() + "px",
         top: (_ctrl_disp.size * 3.1).toString() + "px",
-        visibility: "hidden",
+        visibility: ( (_ctrl_channel.show == true && _ctrl_channel.lock == true) ? "visible" : "hidden" ), 
         fontSize: (parseInt(_ctrl_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
         fontFamily: A.all_font_families,
         borderRadius: "10%",
@@ -987,6 +1061,11 @@ function display_select_listener()
         textAlign: "center"
       } ) ;
 
+      //_label.style.visibility = "visible"; 
+      //let _value_unit_string = "";
+      //_value_unit_string = (_ctrl_channel.val).toString().substring(0, A.MAX_DISPLAY_DIGITS) + " " + _ctrl_channel.unit;  // .substring(0,12)
+      //let _str_val = _value_unit_string + _ctrl_channel.info;
+      //_label.innerHTML = _str_val;
 
       if (_ctrl_channel.type === "datetime")
       {
@@ -1035,8 +1114,11 @@ function display_select_listener()
       _setval.innerHTML = _value_unit_string + _ctrl_channel.padding; //+ "<br>" + Disp.htmlSpaces(10);
       _send.addEventListener("click", send_listener);
       _send.innerHTML = "Go"; //"<div style="text-align:center;">Go</div>";
+
+      if (_ctrl_channel.show == true && _ctrl_channel.lock == true) display_label(_ctrlbkg);
+
     }
-    
+
     //if (A.display_index === 20)
     //{
     //  let vid = createVideo( ['http://labremote.net/client/images/labremote_mockup.mp4'] );
@@ -1044,6 +1126,6 @@ function display_select_listener()
     //}
     
     reset_display_variables();
-  
+
   }
 }
