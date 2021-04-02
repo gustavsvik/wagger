@@ -100,7 +100,7 @@ while ($channel_start < $data_end)
 $conn->commit();
 
 
-foreach ($file_channels as $file_channel) 
+foreach ($file_channels as $file_channel)
 {
   $file_channel_string = strval($file_channel) ;
   $sql_get_all_available_values = "SELECT DISTINCT AD.ACQUIRED_TIME FROM " . $ACQUIRED_DATA_TABLE_NAME . " AD WHERE AD.CHANNEL_INDEX =" . $file_channel_string ;
