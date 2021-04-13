@@ -3,8 +3,8 @@
 
 function debug_log($log_str)
 {
-  $logged_scripts = []; // 'get_uploaded.php', 'server_time.php', 'network_time.php'
-  $logfile = 'images/debug.log';
+  $logged_scripts = []; // 'update_devices.php', 'get_uploaded.php', 'server_time.php', 'network_time.php'
+  $logfile = '/srv/wagger/cloud/client/images/debug.log';
   $trace = debug_backtrace();
   $caller = array_shift($trace);
   foreach($logged_scripts as $script_name) 
