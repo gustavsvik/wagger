@@ -7,6 +7,9 @@ include("../utils.php");
 include("header.php");
 
 
+if ($web_api_channel > 0) $channels = strval($web_api_channel) . ';' ;
+
+
 $select_all = FALSE;
 if ($duration === -9999) $select_all = TRUE;
 
@@ -74,6 +77,7 @@ if ($data_end > 0)
     $sql_get_available_values = $sql_get_all_available_values ;
     if (!$select_all) $sql_get_available_values .= " AND AD.ACQUIRED_TIME IN " . $points_range_string ;
     $sql_get_available_values .= " AND AD.STATUS >= " . strval($lowest_status) . " AND AD.STATUS < " . strval($STATUS_STORED) ;
+
     $available_values = $conn->query($sql_get_available_values);
 
 	if ($available_values)
@@ -106,6 +110,7 @@ if ($data_end > 0)
               $return_string .= $base64_string ;
             }
           }
+
           $return_string .= "," ;
 
           if (strlen($base64_string) > 0)
