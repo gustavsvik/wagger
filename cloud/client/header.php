@@ -1,8 +1,8 @@
 <?php
 
 
-$ACCESSIBLE_CHANNELS = array_merge( range(17,32), range(97,112), range(174,178), [140,143,144,145,146,147,160,162,163,180,202], range(600,602), range(61010,61012), [168,169,170,171], [2000,2001,2002,2003] ) ; 
-$ARMORED_BYTE_STRING_CHANNELS = array_merge( range(144,145), [150,151,162,163,170,171] ) ; 
+$ACCESSIBLE_CHANNELS = array_merge( range(17,32), range(97,112), range(174,178), [140,143,144,145,146,147,160,162,163,180,202], range(600,602), range(61010,61012), [168,169,170,171,148], [2000,2001,2002,2003] ) ; 
+$ARMORED_BYTE_STRING_CHANNELS = array_merge( range(144,145), [150,151,162,163,170,171,148] ) ; 
 $MAX_FILES_PER_CHANNEL = 20 ;
 $WRITE_IMAGE_FILES = FALSE;
 $WRITE_VALUE_FILES = FALSE;
@@ -29,6 +29,8 @@ $unit = intval(getPost('unit', 1));
 $value = floatval(getPost('value', -9999.0));
 $delete_horizon = intval(getPost('delete_horizon', 3600));
 $lowest_status = intval(getPost('lowest_status', -1));
+
+$web_api_channel = intval(getGet('web_api_channel', 0));
 
 $channel_start = 0;
 $data_end = strlen($channels);
