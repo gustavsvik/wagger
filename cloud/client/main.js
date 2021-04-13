@@ -284,6 +284,7 @@ function handle_image_request_data(data)
  */
 function handle_get_data(data)
 { 
+  /* TODO: Call App.decodeTransferString here. */
   let _latest_time_array = [];
   let _json_string = data.returnstring;
   let _json_array = _json_string.split(";");
