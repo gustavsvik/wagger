@@ -16,6 +16,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-beta.2.rc.2/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.boatmarker/leaflet.boatmarker.min.js"></script>
+<script language="javascript" type="text/javascript" src="utils.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-beta.2.rc.2/leaflet.css">
 <style id="compiled-css" type="text/css"> #map { height: 400px; } /* EOS */ </style>
 </head>
@@ -25,6 +26,9 @@
 <div id="map"></div>
 
 <script type="text/javascript">
+
+let A = new App();
+let Ais = new AisData();
 
 var CustomIcon = L.Icon.extend(
 {
@@ -79,8 +83,71 @@ var myInterval = setInterval
     buoy_1_marker.setHeadingWind( 0, random_two_sided * 2 + 5, random_two_sided * 10 + 190 ) ;
     sea_mobile_marker.setLatLng([sea_mobile[0]+random_one_sided/5000, sea_mobile[1]+random_one_sided/5000]);
     sea_mobile_marker.setHeadingWind( random_two_sided * 10 + 130, random_one_sided * 5 + 5, random_one_sided * 10 + 190 ) ;
-  }, 2000
+    //console.log(Ais.MMSI_ARRAY);
+    //console.log(Ais.POS_ARRAY);
+    Ais.MARKER_ARRAY = [];
+    for (let _mmsi_counter = 0; _mmsi_counter < Ais.MMSI_ARRAY.length; _mmsi_counter++)
+    {
+      let latitude = Ais.POS_ARRAY[_mmsi_counter][1];
+      let longitude = Ais.POS_ARRAY[_mmsi_counter][0];
+      if (typeof latitude !== 'undefined' && typeof longitude !== 'undefined')
+      {
+        Ais.MARKER_ARRAY.push(L.boatMarker([ latitude, longitude ], {icon: sea_mobile_icon, idleCircle: true}).addTo(map).bindPopup("", {closeOnClick: false, autoClose: false}) );
+      }
+    }
+    //console.log(Ais.MARKER_ARRAY);
+  }, 5000
 );
+
+
+const api_url = 'http://labremote.net/client/get_uploaded.php?web_api_channel=148' ;
+
+//let firstTime = true;
+
+async function getISS() 
+{
+  const response = await fetch(api_url);
+  const data = await response.json();
+  let data_array = A.decodeTransferString(data)
+  let ais_string_array = data_array[2][0];
+  for (let _ais_string_counter = 0; _ais_string_counter < ais_string_array.length; _ais_string_counter++)
+  {
+    let ais_string = ais_string_array[_ais_string_counter]
+    if (ais_string.length > 0)
+    {
+      const regex_comma = /\|/g;
+      const regex_semicolon = /\~/g;
+      let ais_json_string = ais_string.replace(regex_semicolon, ";").replace(regex_comma, ",");
+      //console.log(ais_json_string);
+      let ais_json = JSON.parse(ais_json_string)[0];
+      let mmsi_index = Ais.MMSI_ARRAY.indexOf(ais_json["mmsi"]);
+      if (mmsi_index === -1)
+      {
+        Ais.MMSI_ARRAY.push( ais_json["mmsi"] ) ;
+        Ais.POS_ARRAY.push( [ ais_json["lon"], ais_json["lat"] ] ) ;
+      }
+      else
+      {
+        if (typeof ais_json["lon"] !== 'undefined' && typeof ais_json["lat"] !== 'undefined') Ais.POS_ARRAY[mmsi_index] = [ ais_json["lon"], ais_json["lat"] ] ;
+      }
+    }
+  }
+
+  //const { latitude, longitude } = data;
+  //marker.setLatLng([latitude, longitude]);
+  //if (firstTime) 
+  //{
+  //  mymap.setView([latitude, longitude], 2);
+  //  firstTime = false;
+  //}
+  //document.getElementById('lat').textContent = latitude.toFixed(2);
+  //document.getElementById('lon').textContent = longitude.toFixed(2);
+}
+
+getISS();
+
+setInterval(getISS, 2000);
+
 
 </script>
 
