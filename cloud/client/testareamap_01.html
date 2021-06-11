@@ -67,6 +67,7 @@ L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }
 L.control.scale().addTo(map);
 var markersLayer = new L.LayerGroup();// add a marker in the given location
 markersLayer.addTo(map);
+/*
 var shore_marker = L.marker(shore, {icon: shore_icon}).addTo(map).bindPopup("Testledningscentral<br>Tel. 07X-XXXXXXX<br>Passning kanal 16", {closeOnClick: false, autoClose: false});
 var sea_mobile_marker = L.boatMarker(sea_mobile, {icon: sea_mobile_icon, idleCircle: false}).addTo(map).bindPopup("Sjömobil testövervakning<br>Tel. 07X-XXXXXXX<br>Passning kanal 16", {closeOnClick: false, autoClose: false});
 L.marker(land_mobile, {icon: land_mobile_icon}).addTo(map).bindPopup("Landmobil testövervakning<br>Tel. 07X-XXXXXXX<br>Passning kanal 16", {closeOnClick: false, autoClose: false});
@@ -74,29 +75,26 @@ var buoy_2_marker = L.marker(buoy_2, {icon: redIcon}).addTo(map).bindPopup("Hål
 var buoy_1_marker = L.boatMarker(buoy_1, {icon: sea_mobile_icon, idleCircle: true}).addTo(map).bindPopup("Mätboj - håll avstånd!", {closeOnClick: false, autoClose: false});
 L.marker(virtual_1, {icon: orangeIcon}).addTo(map).bindPopup("Obehörig trafik förbjuden!<br>Avgränsning testområde", {closeOnClick: false, autoClose: false});
 L.marker(virtual_2, {icon: orangeIcon}).addTo(map).bindPopup("Obehörig trafik förbjuden!<br>Avgränsning testområde", {closeOnClick: false, autoClose: false});
+*/
 
 var myInterval = setInterval
 (
   function() 
   {
     markersLayer.clearLayers();
+    /*
     var random_one_sided = Math.random();
     var random_two_sided = (Math.random()*(1 - (-1)) + (-1));
     buoy_1_marker.getPopup().setContent("Håll avstånd!<br>Sjömobil mätstation<br>Vindhastighet: " + (random_two_sided * 2 + 5).toString().substring(0,5) + " kts");
     buoy_1_marker.getPopup().update();
-    //buoy_1_marker.setHeadingWind( 0, random_two_sided * 2 + 5, random_two_sided * 10 + 190 ) ;
     sea_mobile_marker.setLatLng([sea_mobile[0]+random_one_sided/5000, sea_mobile[1]+random_one_sided/5000]);
-    //sea_mobile_marker.setHeadingWind( random_two_sided * 10 + 130, random_one_sided * 5 + 5, random_one_sided * 10 + 190 ) ;
-    //console.log(Ais.MMSI_ARRAY);
-    //console.log(Ais.POS_ARRAY);
-    //Ais.MARKER_ARRAY = [];
-
+    */
     for (let _pos_counter = 0; _pos_counter < Ais.ALL_POS_ARRAY.length; _pos_counter++)
     {
       let latitude = Ais.ALL_POS_ARRAY[_pos_counter][1];
       let longitude = Ais.ALL_POS_ARRAY[_pos_counter][0];
       let age = Ais.ALL_AGE_ARRAY[_pos_counter];
-/*
+      /*
       if (typeof latitude !== 'undefined' && typeof longitude !== 'undefined')
       {
         let marker_2 = L.circleMarker([ latitude, longitude ], {opacity: 0.5, color: "#000"}).addTo(map);
@@ -114,7 +112,7 @@ var myInterval = setInterval
           markersLayer.addLayer(marker_2);
         }
       }
-*/
+      */
       if (typeof latitude !== 'undefined' && typeof longitude !== 'undefined')
       {
         let marker_2 = L.circleMarker([ latitude, longitude ], {opacity: 0.5, color: "#000"}).addTo(map);
