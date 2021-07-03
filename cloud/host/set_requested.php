@@ -4,15 +4,18 @@
 include("../header.php");
 include("../db_ini.php");
 include("../utils.php");
+include("../database.php");
 include("header.php");
 
-debug_log('$return_string: ' . mb_substr($return_string, 0, 100));
-
+/*
 $conn = mysqli_init();
-
 if (!$conn) die('mysqli_init failed');
 if (!$conn->options(MYSQLI_OPT_CONNECT_TIMEOUT, 5)) die('Setting MYSQLI_OPT_CONNECT_TIMEOUT failed');
 if (!$conn->real_connect($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME)) die('Connect Error (' . mysqli_connect_errno() . ') ' . mysqli_connect_error());
+*/
+$conn = db_get_connection($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME);
+
+debug_log('$return_string: ' . mb_substr($return_string, 0, 100));
 
 $conn->autocommit(FALSE);
 
@@ -83,7 +86,7 @@ while ($channel_start < $data_end)
       }
     }
     debug_log('$timestamp: ' . strval($timestamp) . ' $channel: ' . strval($channel) . ' $base64_string: ' . mb_substr($base64_string, 0, 100));
-    $stmt = $conn->prepare("UPDATE " . $ACQUIRED_DATA_TABLE_NAME . " SET ACQUIRED_VALUE=?,ACQUIRED_SUBSAMPLES=?,ACQUIRED_BASE64=?,STATUS=0 WHERE CHANNEL_INDEX=? AND ACQUIRED_TIME=? AND STATUS=-1");
+    $stmt = $conn->prepare("UPDATE " . $ACQUIRED_DATA_TABLE_NAME . " SET ACQUIRED_VALUE = ?, ACQUIRED_TEXT = ?, ACQUIRED_BYTES = ?, STATUS = " . strval($STATUS_FULFILLED) . " WHERE CHANNEL_INDEX = ? AND ACQUIRED_TIME = ? AND STATUS = " . strval($STATUS_REQUESTED));
     $stmt->bind_param('sssss', $value, $subsamples_string, $base64_string, $channel, $timestamp);
     if(!$stmt->execute())
     {
