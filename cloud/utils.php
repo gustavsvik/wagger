@@ -1,15 +1,40 @@
 <?php
 
 
-function debug_log($log_str)
+function safe_get($object, $key)
 {
-  $logged_scripts = []; // 'update_devices.php', 'get_uploaded.php', 'server_time.php', 'network_time.php'
-  $logfile = '/srv/wagger/cloud/client/images/debug.log';
-  $trace = debug_backtrace();
-  $caller = array_shift($trace);
-  foreach($logged_scripts as $script_name) 
+  return !empty($object[$key]) ? $object[$key] : NULL ;
+}
+
+
+function is_stringy($val) 
+{
+  return (is_string($val) || is_numeric($val) || (is_object($val) && method_exists($val, '__toString')));
+}
+
+
+function is_iterable($var) 
+{
+  return (is_array($var) || $var instanceof Traversable);
+}
+
+
+function debug_log($log_label, $log_var = "")
+{
+  $logged_scripts = [];  // 'db.php', 'get_static_data.php', 'get_ais_data_records_string.php', 'get_static_records.php', 'update_static_data.php', 'update_devices.php', 'get_uploaded.php', 'server_time.php', 'network_time.php'
+  if (count($logged_scripts) > 0)
   {
-    if (strpos($caller['file'], $script_name) !== FALSE) error_log(gmdate('YmdHis') . ' ' . $caller['file'] . ', line ' . $caller['line'] . ': ' . $log_str . PHP_EOL, 3, $logfile) ;
+    $logfile = '/srv/wagger/cloud/client/images/debug.log';
+    $trace = debug_backtrace();
+    $caller = array_shift($trace);
+    foreach($logged_scripts as $script_name) 
+    {
+      $log_var_str = "";
+      if (is_array($log_var)) $log_var_str = json_encode($log_var);
+      elseif (is_stringy($log_var)) $log_var_str = strval($log_var);
+      $log_str = strval( (is_null($log_var_str)) ? "NULL" : $log_var_str );
+      if (strpos($caller['file'], $script_name) !== FALSE) error_log(gmdate('YmdHis') . ' ' . $caller['file'] . ', line ' . $caller['line'] . ': ' . $log_label . $log_str . PHP_EOL, 3, $logfile) ;
+    }
   }
 }
 
@@ -27,6 +52,28 @@ function getGet($key, $default)
   if (isset($_GET[$key]))
     return $_GET[$key];
   return $default;
+}
+
+
+function get_separated_value_range_string($range_array, $separator)
+{
+  $range_string = "";
+  foreach ($range_array as $point) 
+  {
+    $range_string .= strval($point) . strval($separator);
+  }
+  return rtrim($range_string, $separator);
+}
+
+
+function get_separated_string_range_string($range_array, $separator)
+{
+  $range_string = "";
+  foreach ($range_array as $point) 
+  {
+    $range_string .= "'" . strval($point) . "'" . strval($separator);
+  }
+  return rtrim($range_string, $separator);
 }
 
 
@@ -92,4 +139,13 @@ function getStringBetween($string, $start, $end)
 	$ini += strlen($start);   
 	$len = strpos($string,$end,$ini) - $ini;
 	return substr($string,$ini,$len);
+}
+
+
+function ais_armor_string($ais_string)
+{
+  $ais_string = str_replace(",", "|", $ais_string) ;
+  $ais_string = str_replace(";", "~", $ais_string) ;
+
+  return $ais_string;
 }
