@@ -4,6 +4,7 @@
 include("../header.php");
 include("../db_ini.php");
 include("../utils.php");
+include("../database.php");
 include("header.php");
 
 
@@ -16,12 +17,13 @@ if ($duration === -9999) $select_all = TRUE;
 
 if ($data_end > 0)
 {
-
+/*
   $conn = mysqli_init();
-
   if (!$conn) die('mysqli_init failed');
   if (!$conn->options(MYSQLI_OPT_CONNECT_TIMEOUT, 5)) die('Setting MYSQLI_OPT_CONNECT_TIMEOUT failed');
   if (!$conn->real_connect($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME)) die('Connect Error (' . mysqli_connect_errno() . ') ' . mysqli_connect_error());
+*/
+  $conn = db_get_connection($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME);
 
   $conn->autocommit(FALSE);
 
@@ -63,17 +65,18 @@ if ($data_end > 0)
 
     $points_range = range($start_time, $end_time, $unit);
 
-    $points_range_string = "(";
-    foreach ($points_range as $point) 
-    {
-      $points_range_string .= "'" . strval($point) . "'";
-      if ($point < $end_time) $points_range_string .= ",";
-    }
-    $points_range_string .= ")";
+    $points_range_string = "(" . get_separated_string_range_string($points_range, ",") . ")";
+
+    //foreach ($points_range as $point) 
+    //{
+    //  $points_range_string .= "'" . strval($point) . "'";
+    //  if ($point < $end_time) $points_range_string .= ",";
+    //}
+    //$points_range_string .= ")";
 
     $return_string .= $channel_string . ";";
 
-    $sql_get_all_available_values = "SELECT AD.ACQUIRED_TIME,AD.ACQUIRED_VALUE,AD.ACQUIRED_SUBSAMPLES,AD.ACQUIRED_BASE64 FROM " . $ACQUIRED_DATA_TABLE_NAME . " AD WHERE AD.CHANNEL_INDEX=" . $channel_string ;
+    $sql_get_all_available_values = "SELECT AD.ACQUIRED_TIME,AD.ACQUIRED_VALUE,AD.ACQUIRED_TEXT,AD.ACQUIRED_BYTES FROM " . $ACQUIRED_DATA_TABLE_NAME . " AD WHERE AD.CHANNEL_INDEX=" . $channel_string ;
     $sql_get_available_values = $sql_get_all_available_values ;
     if (!$select_all) $sql_get_available_values .= " AND AD.ACQUIRED_TIME IN " . $points_range_string ;
     $sql_get_available_values .= " AND AD.STATUS >= " . strval($lowest_status) . " AND AD.STATUS < " . strval($STATUS_STORED) ;
