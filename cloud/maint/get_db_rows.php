@@ -3,22 +3,14 @@
 
 include("../db_ini.php");
 include("../utils.php");
+include("../database.php");
 
 $id_range = NULL;
 $id_range = strval(getPost("id_range", "NULL"));
 $table_label = NULL;
 $table_label = strval(getPost("table_label", "none"));
 
-$conn = new mysqli($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME);
-
-if ($conn->connect_errno)
-{
-  printf("Connect failed: %s\n", mysqli_connect_error());
-  exit();
-}
-
-$sql_request_channels = "SELECT * FROM t_" . strtolower($table_label);
-if ($id_range !== "-9999") $sql_request_channels .= " C WHERE C." . strtoupper($table_label) . "_" . "UNIQUE_INDEX IN (" . $id_range . ")";
+$conn = db_get_connection($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME);
 
 //$ifp = fopen("/srv/wagger/cloud/client/images/test.txt", "wb"); 
 //fwrite($ifp, " table_name:" . $table_name);
@@ -26,18 +18,7 @@ if ($id_range !== "-9999") $sql_request_channels .= " C WHERE C." . strtoupper($
 //fwrite($ifp, " sql_request_channels:" . $sql_request_channels);
 //fclose($ifp);
 
-$rows_requested = $conn->query($sql_request_channels); 
-
-if ($rows_requested->num_rows > 0) 
-{
-  while ($row = $rows_requested->fetch_assoc()) 
-  {
-    $rows[] = $row;
-  }
-}
-else 
-{
-}
+$rows = db_get_full_rows($conn, "t_" . $table_label, explode(",", $id_range))
 
 $conn->close();
 
