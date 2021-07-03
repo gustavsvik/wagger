@@ -4,11 +4,13 @@
 include("../header.php");
 include("../db_ini.php");
 include("../utils.php");
+include("../database.php");
 include("header.php");
 
 
 $channels_list = getListByIDs($request_string);
 
+/*
 $conn = mysqli_init();
 if (!$conn) 
 {
@@ -22,6 +24,8 @@ if (!$conn->real_connect($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME))
 {
   die('Connect Error (' . mysqli_connect_errno() . ') ' . mysqli_connect_error());
 }
+*/
+$conn = db_get_connection($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME);
 
 if ($conn)
 {
