@@ -2,6 +2,110 @@
 
 
 
+class Help
+{
+
+  constructor()
+  {
+  }
+
+
+  static safe_get(obj, key, def = null)
+  {
+    let val = def;
+    if (obj !== null)
+    {
+      if (key in obj) val = obj[key];
+    }
+    return val;
+  }
+
+
+  static json_safe_parse(json_string)
+  {
+    let json = null;
+    try
+    {
+      json = JSON.parse(json_string);
+    }
+    catch(e)
+    {
+    }
+    return json;
+  }
+
+
+  static jsonToTable(json, labels) 
+  {
+    let json_table = '' ; //'<div style="font-size:10px;line-height:100%;">';
+    //for (let i = 0; i < json.length; i++) json[i]
+    for(let key in json) 
+    {
+      //labels(key)
+      try
+      {
+        json_table += key.toString() + ': ' + json[key].toString() + '<br>';
+      }
+      catch(e)
+      {
+      }
+    }
+    json_table += '</div>';
+    return json_table
+  }
+
+
+  static isTouchDevice() 
+  {
+    return (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0));
+  }
+
+
+  static decodeTransferString(data, field_length)
+  {
+    let _json_string = null;
+    if (data === null || typeof data === 'undefined' || data === "") _json_string = "";
+    else _json_string = data.returnstring;
+
+    let _json_array = _json_string.split(";");
+    let _no_of_channels = (_json_array.length - 1) / 2;
+    let _channel_string = "";
+    let _channel_data = "";
+    let _channel_data_array = _channel_data.split(",");
+    let _timestamp_matrix = [];
+    let _value_matrix = [];
+    let _bytestring_matrix = [];
+
+    if (typeof field_length === 'undefined') field_length = 4;
+    for (let _channel_index = 0; _channel_index < _no_of_channels; _channel_index++) 
+    {
+      _channel_string = _json_array[_channel_index*2];
+      _channel_data = _json_array[_channel_index*2 + 1];
+      _channel_data_array = _channel_data.split(",");
+      let _field_data_array_length = (_channel_data_array.length - 1)/field_length - 0 ;
+    
+      let _timestamp_array = [];
+      let _value_array = [];
+      let _subsamples_string_array = [];
+      let _base64_string_array = [];
+      for (let _sample_index = 0; _sample_index < _field_data_array_length ; _sample_index++) 
+      {
+        _timestamp_array[_sample_index] = parseInt( _channel_data_array[_sample_index*4+0] );
+        _value_array[_sample_index] = parseFloat(_channel_data_array[_sample_index*4+1]);
+        _base64_string_array[_sample_index] = _channel_data_array[_sample_index*4+3];
+      }
+      _timestamp_matrix.push(_timestamp_array);
+      let _channel_int = parseInt(_channel_string);
+      _value_matrix.push([_channel_int, _value_array]);
+      _bytestring_matrix.push(_base64_string_array);
+    }
+    return [_timestamp_matrix, _value_matrix, _bytestring_matrix] ;
+  }
+
+}
+
+
+
 class Disp
 {
 
@@ -436,7 +540,7 @@ class App
     } ) ;
   }
 
-  decodeTransferString(data)
+  decodeTransferString(data, field_length)
   {
     let _latest_time_array = [];
     let _json_string = data.returnstring;
@@ -448,12 +552,14 @@ class App
     let _timestamp_matrix = [];
     let _value_matrix = [];
     let _bytestring_matrix = [];
+
+    if (typeof field_length === 'undefined') field_length = 4;
     for (let _channel_index = 0; _channel_index < _no_of_channels; _channel_index++) 
     {
       _channel_string = _json_array[_channel_index*2];
       _channel_data = _json_array[_channel_index*2 + 1];
       _channel_data_array = _channel_data.split(",");
-      let _field_data_array_length = (_channel_data_array.length - 1)/4 - 0 ;
+      let _field_data_array_length = (_channel_data_array.length - 1)/field_length - 0 ;
     
       let _timestamp_array = [];
       let _value_array = [];
@@ -481,6 +587,15 @@ class AisData
   {
     this.MMSI_ARRAY = [];
     this.POS_ARRAY = [];
+    this.ALL_POS_ARRAY = [];
+    this.ALL_TIME_ARRAY = [];
+    this.ALL_MMSI_ARRAY = [];
     this.MARKER_ARRAY = [];
+    this.WIND_DIR_ARRAY = [];
+    this.WIND_SPEED_ARRAY = [];
+    this.SPEED_ARRAY = [];
+    this.COURSE_ARRAY = [];
+    this.TEXT_ARRAY = [];
+    this.TIME_ARRAY = [];
   }
 }
