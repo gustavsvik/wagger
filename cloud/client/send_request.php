@@ -1,19 +1,22 @@
 <?php
 
 
+include("../header.php");
 include("../db_ini.php");
 include("../utils.php");
+include("../database.php");
 include("header.php");
 
 
 if ($data_end > 0)
 {
-
+/*
   $conn = mysqli_init();
-
   if (!$conn) die('mysqli_init failed');
   if (!$conn->options(MYSQLI_OPT_CONNECT_TIMEOUT, 5)) die('Setting MYSQLI_OPT_CONNECT_TIMEOUT failed');
   if (!$conn->real_connect($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME)) die('Connect Error (' . mysqli_connect_errno() . ') ' . mysqli_connect_error());
+*/
+  $conn = db_get_connection($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME);
 
   if ($start_time == -9999)
   {
@@ -43,21 +46,25 @@ if ($data_end > 0)
 
     if (in_array($channel, $ACCESSIBLE_CHANNELS, TRUE))
     {
-      $sql_delete = "DELETE FROM " . $ACQUIRED_DATA_TABLE_NAME . " WHERE CHANNEL_INDEX=" . $channel_string . " AND TIMEDIFF(SYSDATE(), ADDED_TIMESTAMP)>" . strval($delete_horizon) . " AND STATUS IN (-1,0)";
 
-      $conn->autocommit(FALSE);
-      $conn->begin_transaction();
-      $stmt=$conn->prepare($sql_delete);
-      if ($stmt)
+      if (in_array($channel, $CLEAR_REQUESTED_CHANNELS, TRUE))
       {
-        if(!$stmt->execute())
+        $sql_delete = "DELETE FROM " . $ACQUIRED_DATA_TABLE_NAME . " WHERE CHANNEL_INDEX=" . $channel_string . " AND TIMEDIFF(SYSDATE(), ADDED_TIMESTAMP)>" . strval($delete_horizon) . " AND STATUS IN (" . strval($STATUS_REQUESTED) . "," . strval($STATUS_FULFILLED) . ")";
+
+        $conn->autocommit(FALSE);
+        $conn->begin_transaction();
+        $stmt=$conn->prepare($sql_delete);
+        if ($stmt)
         {
-          $conn->rollback();
-          die();
+          if(!$stmt->execute())
+          {
+            $conn->rollback();
+            die();
+          }
+          $stmt->close();
         }
-        $stmt->close();
+        $conn->commit();
       }
-      $conn->commit();
 
       $existing_points_array = array();
       $sql_get_existing_points = "SELECT DISTINCT AD.ACQUIRED_TIME FROM " . $ACQUIRED_DATA_TABLE_NAME . " AD WHERE AD.CHANNEL_INDEX=" . $channel_string . " AND AD.ACQUIRED_TIME IN" . $points_range_string;
@@ -119,3 +126,4 @@ if ($data_end > 0)
   $conn->close();
 
 }
+
