@@ -14,255 +14,36 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <title>Särskilda hinder för sjöfart - Test Site Bothnia</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<script type="text/javascript" src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-<script language="javascript" type="text/javascript" src="leaflet.boatmarker.js"></script>
-<script language="javascript" type="text/javascript" src="leaflet.rotatedMarker.js"></script>
+<script language="javascript" type="text/javascript" src="libraries/leaflet/leaflet.js"></script>
+<script language="javascript" type="text/javascript" src="libraries/leaflet/leaflet.boatmarker.js"></script>
+<script language="javascript" type="text/javascript" src="libraries/leaflet/leaflet.rotatedMarker.js"></script>
 <script language="javascript" type="text/javascript" src="utils.js"></script>
-<link rel="stylesheet" type="text/css" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css">
-<style id="compiled-css" type="text/css"> #map { height: 400px; } /* EOS */ </style>
+<link rel="stylesheet" type="text/css" href="libraries/leaflet/leaflet.css">
+<style>
+    .leaflet-fade-anim .leaflet-tile { will-change: auto !important; }
+    .leaflet-zoom-anim .leaflet-zoom-animated { will-change: auto !important; } 
+</style>
+<style>
+body 
+{
+  padding: 0;
+  margin: 0;
+}
+html, body, #map 
+{
+  height: 100%;
+  width: 100%;
+}
+</style>
+
+
 </head>
 
 <body>
 
 <div id="map"></div>
 
-<script type="text/javascript">
-
-let A = new App();
-let Ais = new AisData();
-
-var CustomIcon = L.Icon.extend(
-{
-    options: 
-    {
-        //shadowUrl: 'leaf-shadow.png',
-        //shadowSize:   [50, 64],
-        //shadowAnchor: [4, 62],
-        iconSize:     [16,16],
-        iconAnchor:   [8,8],
-        popupAnchor:  [8,8]
-    }
-});
-var shore_icon = new CustomIcon({iconUrl: 'icons/building_symbol.png', iconSize: [32,48]}),
-    sea_mobile_icon = new CustomIcon({iconUrl: 'icons/ship_symbollllll.png', iconSize: [16,24],iconAnchor: [8,12]}),
-    sea_stationary_icon = new CustomIcon({iconUrl: 'icons/ship_stationary_symbol.png'}),
-    land_mobile_icon = new CustomIcon({iconUrl: 'icons/land_vehicle_symbol.png'}),
-    redIcon = new CustomIcon({iconUrl: 'icons/ais_aton_special_mark.png'}),
-    orangeIcon = new CustomIcon({iconUrl: 'icons/ais_aton_special_mark_virtual.png'});
-
-// center of the map
-var center = [62.826, 17.879];
-var shore = [62.8315, 17.8705];
-var sea_mobile = [62.827, 17.90];
-var land_mobile = [62.832, 17.88];
-var buoy_1 = [62.8219465526254, 17.878395190126632];
-var buoy_2 = [62.830045904677235, 17.88962710650322];
-var virtual_1 = [62.82410637983922, 17.883320754338765];
-var virtual_2 = [62.8271661350588, 17.887655981226686];
-
-// Create the map
-var map = L.map('map').setView(center, 5);
-// Set up the OSM layer
-L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
-L.control.scale().addTo(map);
-var markersLayer = new L.LayerGroup();// add a marker in the given location
-markersLayer.addTo(map);
-/*
-var shore_marker = L.marker(shore, {icon: shore_icon}).addTo(map).bindPopup("Testledningscentral<br>Tel. 07X-XXXXXXX<br>Passning kanal 16", {closeOnClick: false, autoClose: false});
-var sea_mobile_marker = L.boatMarker(sea_mobile, {icon: sea_mobile_icon, idleCircle: false}).addTo(map).bindPopup("Sjömobil testövervakning<br>Tel. 07X-XXXXXXX<br>Passning kanal 16", {closeOnClick: false, autoClose: false});
-L.marker(land_mobile, {icon: land_mobile_icon}).addTo(map).bindPopup("Landmobil testövervakning<br>Tel. 07X-XXXXXXX<br>Passning kanal 16", {closeOnClick: false, autoClose: false});
-var buoy_2_marker = L.marker(buoy_2, {icon: redIcon}).addTo(map).bindPopup("Håll avstånd!<br>Mätboj", {closeOnClick: false, autoClose: false});
-var buoy_1_marker = L.boatMarker(buoy_1, {icon: sea_mobile_icon, idleCircle: true}).addTo(map).bindPopup("Mätboj - håll avstånd!", {closeOnClick: false, autoClose: false});
-L.marker(virtual_1, {icon: orangeIcon}).addTo(map).bindPopup("Obehörig trafik förbjuden!<br>Avgränsning testområde", {closeOnClick: false, autoClose: false});
-L.marker(virtual_2, {icon: orangeIcon}).addTo(map).bindPopup("Obehörig trafik förbjuden!<br>Avgränsning testområde", {closeOnClick: false, autoClose: false});
-*/
-
-var myInterval = setInterval
-(
-  function() 
-  {
-    markersLayer.clearLayers();
-    /*
-    var random_one_sided = Math.random();
-    var random_two_sided = (Math.random()*(1 - (-1)) + (-1));
-    buoy_1_marker.getPopup().setContent("Håll avstånd!<br>Sjömobil mätstation<br>Vindhastighet: " + (random_two_sided * 2 + 5).toString().substring(0,5) + " kts");
-    buoy_1_marker.getPopup().update();
-    sea_mobile_marker.setLatLng([sea_mobile[0]+random_one_sided/5000, sea_mobile[1]+random_one_sided/5000]);
-    */
-    for (let _pos_counter = 0; _pos_counter < Ais.ALL_POS_ARRAY.length; _pos_counter++)
-    {
-      let latitude = Ais.ALL_POS_ARRAY[_pos_counter][1];
-      let longitude = Ais.ALL_POS_ARRAY[_pos_counter][0];
-      let age = Ais.ALL_AGE_ARRAY[_pos_counter];
-      /*
-      if (typeof latitude !== 'undefined' && typeof longitude !== 'undefined')
-      {
-        let marker_2 = L.circleMarker([ latitude, longitude ], {opacity: 0.5, color: "#000"}).addTo(map);
-        let marker_3 = L.circleMarker([ latitude, longitude ], {opacity: 0.1, color: "#000"}).addTo(map);
-        let marker_radius = 5 - 6 * age/1800;
-        if (marker_radius < 0)
-        {
-          marker_radius = 0;
-          marker_3.setRadius(marker_radius);
-          markersLayer.addLayer(marker_3);
-        }
-        else 
-        {
-          marker_2.setRadius(marker_radius);
-          markersLayer.addLayer(marker_2);
-        }
-      }
-      */
-      if (typeof latitude !== 'undefined' && typeof longitude !== 'undefined')
-      {
-        let marker_2 = L.circleMarker([ latitude, longitude ], {opacity: 0.5, color: "#000"}).addTo(map);
-        marker_2.setRadius(5 - 5 * age/900);
-        markersLayer.addLayer(marker_2);
-      }
-    }
-
-    for (let _mmsi_counter = 0; _mmsi_counter < Ais.MMSI_ARRAY.length; _mmsi_counter++)
-    {
-      let latitude = Ais.POS_ARRAY[_mmsi_counter][1];
-      let longitude = Ais.POS_ARRAY[_mmsi_counter][0];
-	  let wind_speed = Ais.WIND_SPEED_ARRAY[_mmsi_counter];
-	  let wind_dir = Ais.WIND_DIR_ARRAY[_mmsi_counter];
-	  let speed = Ais.SPEED_ARRAY[_mmsi_counter];
-	  let course = Ais.COURSE_ARRAY[_mmsi_counter];
-      let content = Ais.TEXT_ARRAY[_mmsi_counter];
-
-      if (typeof latitude !== 'undefined' && typeof longitude !== 'undefined')
-      {
-        let marker = L.marker([ latitude, longitude ]).addTo(map);
-		marker.setIcon(sea_stationary_icon);
-        if (speed > 0) marker.setIcon(sea_mobile_icon);
-        marker.setOpacity(1.0);
-        marker.setRotationOrigin("center");
-        marker.setRotationAngle(course);
-        //let marker = L.boatMarker([ latitude, longitude ], {icon: sea_mobile_icon, idleCircle: true}).addTo(map) //.bindPopup("", {closeOnClick: false, autoClose: false}) ;
-        //if (typeof course !== 'undefined') marker.setHeading(course) ;
-        //if (typeof speed !== 'undefined') marker.setSpeed(speed) ;
-        //if (typeof wind_speed !== 'undefined' && typeof wind_dir !== 'undefined') marker.setHeadingWind( 0, wind_speed, wind_dir ) ;
-        if (typeof content !== 'undefined') 
-        {
-          let content_json = JSON.parse(content);
-          if (!Disp.isTouchDevice()) marker.bindTooltip(Disp.jsonToTable(content_json));
-          else marker.bindPopup(Disp.jsonToTable(content_json), {closeOnClick: false, autoClose: false}) ;
-        }
-        //marker.on('mouseover', function (e) {
-        //    this.openPopup();
-        //});
-        //marker.on('mouseout', function (e) {
-        //    this.closePopup();
-        //});
-        markersLayer.addLayer(marker);
-        //Ais.MARKER_ARRAY.push(L.boatMarker([ latitude, longitude ], {icon: sea_mobile_icon, idleCircle: true}).addTo(map).bindPopup("", {closeOnClick: false, autoClose: false}) );
-      }
-    }
-    //console.log(Ais.MARKER_ARRAY);
-  }, 5000
-);
-
-
-const static_url = 'http://labremote.net/client/get_static_records.php?web_api_table_label=host' ; //'http://labremote.net/client/get_static_records.php?web_api_table=host&web_api_column=host_description' ;
-const position_url = 'http://labremote.net/client/get_ais_data_records.php';
-
-//let firstTime = true;
-
-async function getISS() 
-{
-  const response = await fetch(static_url);
-  const data = await response.json();
-  let data_array = A.decodeTransferString(data)
-  let data_string_array = data_array[2][0];
-  for (let _ais_string_counter = 0; _ais_string_counter < data_string_array.length; _ais_string_counter++)
-  {
-    let ais_string = data_string_array[_ais_string_counter]
-    if (ais_string.length > 0)
-    {
-      const regex_comma = /\|/g;
-      const regex_semicolon = /\~/g;
-      let ais_json_string = ais_string.replace(regex_semicolon, ";").replace(regex_comma, ",");
-      //console.log(ais_json_string);
-	  try 
-	  {
-        let ais_json = JSON.parse(ais_json_string); //[0];
-        let mmsi_index = Ais.MMSI_ARRAY.indexOf(ais_json["host_hardware_id"]);
-        if (mmsi_index === -1)
-        {
-          Ais.MMSI_ARRAY.push( ais_json["host_hardware_id"] ) ;
-          Ais.POS_ARRAY.push( [ ais_json["lon"], ais_json["lat"] ] ) ;
-          Ais.WIND_DIR_ARRAY.push( ais_json["wdir"] );
-          Ais.WIND_SPEED_ARRAY.push( ais_json["wspeed"] );
-          Ais.SPEED_ARRAY.push( ais_json["speed"] );
-          Ais.COURSE_ARRAY.push( ais_json["course"] );
-          Ais.TEXT_ARRAY.push( ais_json_string );
-          Ais.VALID_ARRAY.push( true );
-        }
-        else
-        {
-          if (typeof ais_json["lon"] !== 'undefined' && typeof ais_json["lat"] !== 'undefined') Ais.POS_ARRAY[mmsi_index] = [ ais_json["lon"], ais_json["lat"] ] ;
-          if (typeof ais_json["wdir"] !== 'undefined') Ais.WIND_DIR_ARRAY[mmsi_index] = ais_json["wdir"];
-          if (typeof ais_json["wspeed"] !== 'undefined') Ais.WIND_SPEED_ARRAY[mmsi_index] = ais_json["wspeed"];
-          if (typeof ais_json["speed"] !== 'undefined') Ais.SPEED_ARRAY[mmsi_index] = ais_json["speed"];
-          if (typeof ais_json["course"] !== 'undefined') Ais.COURSE_ARRAY[mmsi_index] = ais_json["course"];
-          if (typeof ais_json_string !== 'undefined') Ais.TEXT_ARRAY[mmsi_index] = ais_json_string;
-          //Ais.VALID_ARRAY[mmsi_index] = true;
-        }
-      }
-      catch(e)
-      {
-      }
-    }
-  }
-
-  const position_response = await fetch(position_url);
-  const position_data = await position_response.json();
-  let position_data_array = A.decodeTransferString(position_data);
-  let position_data_string_array = position_data_array[2][0];
-  let position_timestamp_array = position_data_array[0][0];
-  Ais.ALL_POS_ARRAY = [];
-  Ais.ALL_AGE_ARRAY = [];
-  let current_timestamp = parseInt((new Date().valueOf()) / 1000);
-  for (let _position_string_counter = 0; _position_string_counter < position_data_string_array.length; _position_string_counter++)
-  {
-    let position_string = position_data_string_array[_position_string_counter]
-    if (position_string.length > 0)
-    {
-      const regex_comma = /\|/g;
-      const regex_semicolon = /\~/g;
-      let position_json_string = position_string.replace(regex_semicolon, ";").replace(regex_comma, ",");
-	  try 
-	  {
-        let position_json = JSON.parse(position_json_string); //[0];
-        Ais.ALL_POS_ARRAY.push( [ position_json["lon"], position_json["lat"] ] ) ;
-        position_age = current_timestamp - parseInt(position_timestamp_array[_position_string_counter]);
-        Ais.ALL_AGE_ARRAY.push( position_age ) ;
-      }
-      catch(e)
-      {
-      }
-    }
-  }
-
-
-  //const { latitude, longitude } = data;
-  //marker.setLatLng([latitude, longitude]);
-  //if (firstTime) 
-  //{
-  //  mymap.setView([latitude, longitude], 2);
-  //  firstTime = false;
-  //}
-  //document.getElementById('lat').textContent = latitude.toFixed(2);
-  //document.getElementById('lon').textContent = longitude.toFixed(2);
-}
-
-getISS();
-
-setInterval(getISS, 2000);
-
-
-</script>
+<script language="javascript" type="text/javascript" src="maps.js"></script>
 
 </body>
 
