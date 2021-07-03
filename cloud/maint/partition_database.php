@@ -3,20 +3,23 @@
 
 include("../db_ini.php");
 include("../utils.php");
+include("../database.php");
 
 
-$new_partition_name_date = NULL ;
+//$new_partition_name_date = NULL ;
 $new_partition_name_date = strval(getPost('new_partition_name_date', '19700101')) ;
-$new_partition_timestamp = NULL ;
+//$new_partition_timestamp = NULL ;
 $new_partition_timestamp = intval(getPost('new_partition_timestamp', 0)) ;
-$oldest_kept_partition_name_date = NULL ;
+//$oldest_kept_partition_name_date = NULL ;
 $oldest_kept_partition_name_date = strval(getPost('oldest_kept_partition_name_date', '19700101')) ;
 
+/*
 $conn = mysqli_init();
-
 if (!$conn) die('mysqli_init failed');
 if (!$conn->options(MYSQLI_OPT_CONNECT_TIMEOUT, 5)) die('Setting MYSQLI_OPT_CONNECT_TIMEOUT failed');
 if (!$conn->real_connect($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME)) die('Connect Error (' . mysqli_connect_errno() . ') ' . mysqli_connect_error());
+*/
+$conn = db_get_connection($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME);
 
 $sql_reorganize_partitions = "ALTER TABLE " . $DBNAME . "." . $ACQUIRED_DATA_TABLE_NAME . " REORGANIZE PARTITION acquired_time_max INTO ( PARTITION acquired_time_" . $new_partition_name_date . " VALUES LESS THAN (" . strval($new_partition_timestamp) . "), PARTITION acquired_time_max VALUES LESS THAN (MAXVALUE) )" ;
 
