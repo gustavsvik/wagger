@@ -21,7 +21,7 @@ function is_iterable($var)
 
 function debug_log($log_label, $log_var = "")
 {
-  $logged_scripts = [];  // 'db.php', 'get_static_data.php', 'get_ais_data_records_string.php', 'get_static_records.php', 'update_static_data.php', 'update_devices.php', 'get_uploaded.php', 'server_time.php', 'network_time.php'
+  $logged_scripts = ['update_static_data_client.php'];  // 'send_request.php', 'set_requested.php', 'database.php', 'get_static_data.php', 'get_static_records_string.php', 'get_ais_data_records.php', 'update_static_data.php', 'update_devices.php', 'get_uploaded.php', 'server_time.php', 'network_time.php', 'update_static_data_client.php'
   if (count($logged_scripts) > 0)
   {
     $logfile = '/srv/wagger/cloud/client/images/debug.log';
@@ -148,4 +148,65 @@ function ais_armor_string($ais_string)
   $ais_string = str_replace(";", "~", $ais_string) ;
 
   return $ais_string;
+}
+
+
+function http_get_client_id_string($exclude_keys)
+{
+  $exclude_keys_array = [];
+  if (!is_null($exclude_keys)) $exclude_keys_array = $exclude_keys ;
+  $client_id_string = "";
+  foreach ($_SERVER as $server_key => $server_value) 
+  {
+    if ( !( in_array($server_key, $exclude_keys_array) ) ) $client_id_string .= $server_key . ' ' . $server_value . ' ';
+  }
+  return $client_id_string;
+}
+
+
+function http_get_client_ip()
+{
+  $ip = NULL;
+  if (!empty($_SERVER['HTTP_CLIENT_IP'])) 
+  {
+    $ip = $_SERVER['HTTP_CLIENT_IP'];
+  } 
+  elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) 
+  {
+    $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+  }
+  else 
+  {
+    $ip = $_SERVER['REMOTE_ADDR'];
+  }
+  return $ip;
+}
+
+
+function get_bytes_from_hex_string($hexdata)
+{
+  for ($count = 0; $count < strlen($hexdata); $count += 2) $bytes[] = chr(hexdec(substr($hexdata, $count, 2)));
+  return implode($bytes);
+}
+
+
+function get_image_mime_type($imagedata)
+{
+  $imagemimetypes = array( 
+    "jpg" => "FFD8", 
+    "png" => "89504E470D0A1A0A", 
+    "gif" => "474946",
+    "bmp" => "424D", 
+    "tiff" => "4949",
+    "tiff" => "4D4D"
+  );
+
+  foreach ($imagemimetypes as $mime => $hexbytes)
+  {
+    $bytes = get_bytes_from_hex_string($hexbytes);
+    if (substr($imagedata, 0, strlen($bytes)) == $bytes)
+      return $mime;
+  }
+
+  return NULL;
 }
