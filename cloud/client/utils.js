@@ -10,6 +10,12 @@ class Help
   }
 
 
+  static set_properties(elem, prop_object)
+  {
+    for (let _prop in prop_object) elem[_prop] = prop_object[_prop];
+  }
+
+
   static safe_get(obj, key, def = null)
   {
     let val = def;
@@ -58,6 +64,51 @@ class Help
   static isTouchDevice() 
   {
     return (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0));
+  }
+
+
+  static set_cookie(name, val = null, days = null, path = '/') 
+  {
+    let setval = "";
+    if (val !== null) setval = val;
+    let expires = new Date(0).toUTCString();
+    if (days !== null) expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = name + '=' + encodeURIComponent(setval) + '; expires=' + expires + '; path=' + path + '; SameSite=Strict' ;
+  }
+
+
+  static get_cookie(name)
+  {
+    const cookie_parts = document.cookie.split('; ');
+    let all_keys_array = [];
+    let all_values_array = [];
+    for (let pair_counter = 0; pair_counter < cookie_parts.length; pair_counter++)
+    {
+      const key_value_pair = cookie_parts[pair_counter].split('=');
+      all_keys_array.push(key_value_pair[0]);
+      all_values_array.push(key_value_pair[1]);
+    }
+    const name_index = all_keys_array.indexOf(name);
+    if (name_index > -1) return all_values_array[name_index];
+    else return null;
+  }
+
+
+  static rgba_array_from_literal(color)
+  {
+    let rgb = [];;
+    if (color.search(/rgb/) !== -1) rgb = color.match(/([0-9]+\.?[0-9]*)/g);
+    if (rgb.length === 3) rgb.push(1);
+    for (let i = 0; i < rgb.length; i++) rgb[i] = parseInt(rgb[i], 10);
+    rgb[3] *= 255;
+  
+    return rgb;
+  }
+
+
+  static rgba_literal_from_array( rgba_array )
+  {
+    return "rgba(" + rgba_array[0].toString() + "," + rgba_array[1].toString() + "," + rgba_array[2].toString() + "," + (rgba_array[3]/255).toString() + ")";
   }
 
 
@@ -349,7 +400,7 @@ class App
     this.NTP_SYNC_INTERVAL = 60 ;
     this.TIME_ZONE = "UTC";
     this.BROWSER_URL = window.location.hostname;
-    this.CLIENT_URL = "http://" + this.BROWSER_URL  + "/client/";
+    this.CLIENT_URL = "https://" + this.BROWSER_URL  + "/client/";
     this.FILES_DIR = "images/";
     this.FILES_URL = this.CLIENT_URL + this.FILES_DIR;
     this.WAIT_MESSAGE = "Retrieving data...";
@@ -585,6 +636,17 @@ class AisData
 {
   constructor()
   {
+    this.OWN_POSITION_AVAILABLE = false;
+    this.OWN_LOCATION_COORDS = {};
+    this.OWN_LOCATION_POS = [];
+    this.OWN_LOCATION_ACCURACY = null;
+    this.OWN_LOCATION_ALTITUDE = null;
+    this.OWN_LOCATION_ALTITUDE_ACCURACY = null;
+    this.OWN_LOCATION_SPEED = null;
+    this.OWN_LOCATION_HEADING = null;
+    this.OWN_USER_ID = null;
+    this.OWN_DATA_CHANNEL = null;
+    this.OWN_DATA_IMAGE_BYTES = null;
     this.MMSI_ARRAY = [];
     this.POS_ARRAY = [];
     this.ALL_POS_ARRAY = [];
