@@ -7,6 +7,11 @@ include("../utils.php");
 include("../database.php");
 include("header.php");
 
+debug_log('$channels: ', $channels);
+debug_log('$start_time: ', $start_time);
+debug_log('$end_time: ', $end_time);
+debug_log('$duration: ', $duration);
+debug_log('$unit: ', $unit);
 
 if ($data_end > 0)
 {
@@ -44,7 +49,7 @@ if ($data_end > 0)
     $channel_string = mb_substr($channels, $channel_start, $channel_end-$channel_start);
     $channel = intval($channel_string);
 
-    if (in_array($channel, $ACCESSIBLE_CHANNELS, TRUE))
+    if ( in_array($channel, $ACCESSIBLE_CHANNELS, TRUE) || $channel >= $ACCESSIBLE_CHANNELS_FROM )
     {
 
       if (in_array($channel, $CLEAR_REQUESTED_CHANNELS, TRUE))
@@ -126,4 +131,3 @@ if ($data_end > 0)
   $conn->close();
 
 }
-
