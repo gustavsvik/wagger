@@ -8,6 +8,9 @@ include("../database.php");
 include("header.php");
 
 
+//$client_id = http_get_client_id_string();
+//debug_log('md5($client_id): ', md5($client_id));
+
 $api_table_label = strtolower(strval($web_api_table_label));
 $table_name_string = "t_" . $api_table_label ;
 $column_label_string = strtoupper(strval($web_api_table_label));
@@ -27,9 +30,9 @@ $conn = db_get_connection($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME);
 
 if (!is_null($conn)) 
 {
-  $conn->autocommit(FALSE);
+  //$conn->autocommit(FALSE);
   $return_data_array = db_get_static_by_time_interval_status($conn, $web_api_table_label, $start_time, $duration, $unit, $end_time, $lowest_status, $STATUS_STORED);
-  debug_log('$return_data_array: ', $return_data_array);
+  //debug_log('$return_data_array: ', $return_data_array);
 
 /*
 $select_all = FALSE;
@@ -101,9 +104,9 @@ if ($available_values)
   $return_string .= $dummy_channel_string . ";";
 
   $times = safe_get($return_data_array, 'times');
-  debug_log('$count($times): ', count($times));
+  //debug_log('$count($times): ', count($times));
   $descriptions = safe_get($return_data_array, 'descriptions');
-  debug_log('$count($descriptions): ', count($descriptions));
+  //debug_log('$count($descriptions): ', count($descriptions));
 
   if (is_iterable($times) && is_iterable($descriptions))
   {
@@ -129,7 +132,7 @@ if ($available_values)
 
 }
 
-debug_log('$return_string: ', $return_string);
+//debug_log('$return_string: ', $return_string);
 
 header("Content-type: application/json");
 $json_array = array('returnstring' => $return_string) ; //, 'receivetime' => $receive_timestamp, 'transmittime' => $transmit_timestamp);
