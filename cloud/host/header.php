@@ -41,3 +41,4 @@ $channel_hardware_id = strval(getPost('channel_hardware_id', NULL));
 $channel_text_id = strval(getPost('channel_text_id', NULL));
 $common_address = strval(getPost('common_address', NULL));
 $common_description = strval(getPost('common_description', NULL));
+
