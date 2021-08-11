@@ -65,6 +65,30 @@ function db_get_new_index($connection, $table_name)
   return $new_index;
 }
 
+/*
+function db_reserve_new_index($connection, $table_label)
+{
+  $table_name_string = "t_" . strtolower(strval($table_label)) ;
+  $column_name_string = strtoupper(strval($table_label)) . "_UNIQUE_INDEX";
+
+  $new_index = db_get_new_index($connection, $table_name_string);
+
+  $connection->autocommit(FALSE);
+  $connection->begin_transaction();
+  $stmt = NULL;
+  $stmt_string = "INSERT INTO " . $table_name_string . " (" . $column_name_string . ", " . $column_label_string . "_HARDWARE_ID, " . $column_label_string . "_TEXT_ID, " . $column_label_string . "_ADDRESS, " . $column_label_string . "_DESCRIPTION, " . $column_label_string . "_TIME, " . $column_label_string . "_STATUS) VALUES (?,?,?,?,?,UNIX_TIMESTAMP(CURRENT_TIMESTAMP()),0)
+    $stmt = $connection->prepare($stmt_string);
+    $stmt->bind_param('sssss', $new_index, $hardware_id, $text_id, $address, $description);
+    if(!$stmt->execute())
+    {
+      $connection->rollback();
+      die();
+    }
+    $stmt->close();
+    $connection->commit();
+
+}
+*/
 
 function db_get_full_rows($connection, $table_name, $index_array) //db_get_all_data_by_index_list
 {
@@ -142,12 +166,40 @@ function db_get_static_by_id($connection, $table_label, $hardware_id, $text_id)
 }
 
 
+function db_update_single_by_index($connection, $table_label, $unique_index, $column_name, $column_value)
+{
+  $table_name_string = "t_" . strtolower(strval($table_label)) ;
+
+  if ($unique_index > -1)
+  {
+    $connection->autocommit(FALSE);
+    $connection->begin_transaction();
+    $stmt = NULL;
+    $stmt_string = "UPDATE " . $table_name_string . " SET " . $column_name . "=? WHERE " . $table_label . "_UNIQUE_INDEX=?";
+
+    $stmt = $connection->prepare($stmt_string);
+    $stmt->bind_param('ss', $column_value, $unique_index);
+
+    if(!$stmt->execute())
+    {
+      $connection->rollback();
+      die();
+    }
+    $stmt->close();
+    $connection->commit();
+  }
+}
+
+
 function db_update_static_by_index($connection, $table_label, $unique_index, $hardware_id, $text_id, $address, $description)
 {
+  debug_log('$unique_index: ', $unique_index, '$hardware_id: ', $hardware_id, '$text_id: ', $text_id, '$address: ', $address, '$description: ', $description );
   $table_name_string = "t_" . strtolower(strval($table_label)) ;
   $column_label_string = strtoupper(strval($table_label));
 
-  if ($unique_index > 0)
+  $new_index = -1;
+
+  if ($unique_index > -1)
   {
     $connection->autocommit(FALSE);
     $connection->begin_transaction();
@@ -167,33 +219,45 @@ function db_update_static_by_index($connection, $table_label, $unique_index, $ha
   }
   else
   {
-    $new_index = db_get_new_index($connection, $table_name_string);
+    $stmt_string = "INSERT INTO " . $table_name_string . " (";
+    if (!is_null($unique_index)) $stmt_string .= $column_label_string . "_UNIQUE_INDEX, ";
+    $stmt_string .= $column_label_string . "_HARDWARE_ID, " . $column_label_string . "_TEXT_ID, " . $column_label_string . "_ADDRESS, " . $column_label_string . "_DESCRIPTION, " . $column_label_string . "_TIME, " . $column_label_string . "_STATUS) ";
+    if (!is_null($unique_index)) $stmt_string .= "VALUES (?,?,?,?,?,UNIX_TIMESTAMP(CURRENT_TIMESTAMP()),0) ";
+    else $stmt_string .= "VALUES (?,?,?,?,UNIX_TIMESTAMP(CURRENT_TIMESTAMP()),0) ";
+    $stmt_string .= "ON DUPLICATE KEY UPDATE " . $column_label_string . "_TEXT_ID = VALUES(" . $column_label_string . "_TEXT_ID), " . $column_label_string . "_ADDRESS = VALUES(" . $column_label_string . "_ADDRESS), " . $column_label_string . "_DESCRIPTION = VALUES(" . $column_label_string . "_DESCRIPTION), " . $column_label_string . "_TIME = VALUES(" . $column_label_string . "_TIME), " . $column_label_string . "_STATUS = VALUES(" . $column_label_string . "_STATUS)";
+    debug_log('$stmt_string: ', $stmt_string);
+
+    if (!is_null($unique_index)) $new_index = db_get_new_index($connection, $table_name_string);
 
     $connection->autocommit(FALSE);
     $connection->begin_transaction();
     $stmt = NULL;
-    $stmt_string = "INSERT INTO " . $table_name_string . " (" . $column_label_string . "_UNIQUE_INDEX, " . $column_label_string . "_HARDWARE_ID, " . $column_label_string . "_TEXT_ID, " . $column_label_string . "_ADDRESS, " . $column_label_string . "_DESCRIPTION, " . $column_label_string . "_TIME, " . $column_label_string . "_STATUS) VALUES (?,?,?,?,?,UNIX_TIMESTAMP(CURRENT_TIMESTAMP()),0) ON DUPLICATE KEY UPDATE " . $column_label_string . "_TEXT_ID = VALUES(" . $column_label_string . "_TEXT_ID), " . $column_label_string . "_ADDRESS = VALUES(" . $column_label_string . "_ADDRESS), " . $column_label_string . "_DESCRIPTION = VALUES(" . $column_label_string . "_DESCRIPTION), " . $column_label_string . "_TIME = VALUES(" . $column_label_string . "_TIME), " . $column_label_string . "_STATUS = VALUES(" . $column_label_string . "_STATUS)";
-    //debug_log('$stmt_string: ', $stmt_string);
     $stmt = $connection->prepare($stmt_string);
-    $stmt->bind_param('sssss', $new_index, $hardware_id, $text_id, $address, $description);
+
+    if (!is_null($unique_index)) $stmt->bind_param('sssss', $new_index, $hardware_id, $text_id, $address, $description);
+    else $stmt->bind_param('ssss', $hardware_id, $text_id, $address, $description);
+
     if(!$stmt->execute())
     {
       $connection->rollback();
       die();
     }
+    if ($connection->insert_id > 0) $new_index = $connection->insert_id;
     $stmt->close();
     $connection->commit();
   }
+  return $new_index;
 }
 
 
 function db_get_static_by_time_interval_status($connection, $table_label, $start_time = -9999, $duration = -9999, $unit = 1, $end_time = -9999, $lowest_status = 0, $highest_status = 1)
 {
+/*
   debug_log('$start_time: ', $start_time);
   debug_log('$duration: ', $duration);
   debug_log('$unit: ', $unit);
   debug_log('$end_time: ', $end_time);
-
+*/
   $table_name_string = "t_" . strtolower(strval($table_label)) ;
   $column_label_string = strtoupper(strval($table_label));
 
@@ -219,9 +283,10 @@ function db_get_static_by_time_interval_status($connection, $table_label, $start
     $start_time = $end_time ;
     if (!$select_all) $start_time -= $duration*$unit; 
   }
+/*
   debug_log('$start_time: ', $start_time);
   debug_log('$end_time: ', $end_time);
-
+*/
   $dummy_channel_string = "1";
   $dummy_channel = intval($dummy_channel_string);
 
@@ -229,9 +294,9 @@ function db_get_static_by_time_interval_status($connection, $table_label, $start
   $sql_get_records = $sql_get_all_available_values ;
   if (!$select_all) $sql_get_records .= " WHERE T." . $column_label_string . "_TIME BETWEEN " . strval($start_time) . " AND ". strval($end_time);
   $sql_get_records .= " AND T." . $column_label_string . "_STATUS >= " . strval($lowest_status) . " AND T." . $column_label_string . "_STATUS < " . strval($highest_status) . " ORDER BY T." . $column_label_string . "_TIME DESC";
-  debug_log('$sql_get_records: ', $sql_get_records);
+  //debug_log('$sql_get_records: ', $sql_get_records);
   $records = $connection->query($sql_get_records);
-  debug_log('$records->num_rows: ', $records->num_rows);
+  //debug_log('$records->num_rows: ', $records->num_rows);
   if (!is_object($records) || $records->num_rows <= 0)
   {
     $sql_get_stored_archived_values = $sql_get_all_available_values . " AND T." . $column_label_string . "_STATUS >= " . strval($highest_status) . " ORDER BY T." . $column_label_string . "_TIME DESC";
@@ -255,4 +320,65 @@ function db_get_static_by_time_interval_status($connection, $table_label, $start
 
 function db_get_data_by_time_interval_status($connection, $channels = [], $start_time = -9999, $duration = -9999, $unit = 1, $end_time = -9999, $lowest_status = 0, $highest_status = 1)
 {
+}
+
+
+function db_get_ais_records($connection, $channels = [], $start_time = -9999, $duration = -9999, $unit = 1, $end_time = -9999, $lowest_status = 0, $highest_status = 1)
+{
+  $select_all = FALSE;
+  if ($duration === -9999) $select_all = TRUE;
+
+  $ais_message_json_array = [];
+
+  if ($start_time === -9999)
+  {
+    if ($end_time === -9999)
+    {
+      $latest_point_time = time(); 
+      if (!is_null($latest_point_time)) $end_time = $latest_point_time;
+    }
+    $start_time = $end_time ;
+    if (!$select_all) $start_time -= $duration*$unit; 
+  }
+
+  foreach ($channels as $channel)
+  {									   
+    $channel_string = strval($channel);
+
+    $sql_get_all_available_values = "SELECT T.ACQUIRED_TIME,T.ACQUIRED_BYTES FROM t_acquired_data T";
+    $sql_get_available_values = $sql_get_all_available_values ;
+    if (!$select_all) $sql_get_available_values .= " WHERE T.CHANNEL_INDEX=" . $channel_string . " AND T.ACQUIRED_TIME BETWEEN " . strval($start_time) . " AND ". strval($end_time);
+    $sql_get_available_values .= " AND T.STATUS >= " . strval($lowest_status) . " AND T.STATUS < " . strval($highest_status) . " AND T.STATUS < " . strval($STATUS_STORED) . " ORDER BY T.ACQUIRED_TIME DESC";
+    //debug_log('$sql_get_available_values: ', $sql_get_available_values);
+    $available_values = $conn->query($sql_get_available_values);
+
+    if ($available_values)
+    {
+      if ($available_values->num_rows <= 0) 
+      {
+        $sql_get_stored_archived_values = $sql_get_all_available_values . " AND T.STATUS >= " . strval($STATUS_STORED) . " ORDER BY T.ACQUIRED_TIME DESC";
+        //debug_log('$sql_get_stored_archived_values: ', $sql_get_stored_archived_values);
+        $available_values = $conn->query($sql_get_stored_archived_values);
+      }
+      if ($available_values->num_rows > 0) 
+      {
+        while ($value_row = $available_values->fetch_array(MYSQLI_NUM)) 
+        {
+          $time_string = "";
+          if (!is_null($value_row[0])) $time_string = strval($value_row[0]);
+          if (!is_null($value_row[1])) $bytes_string_json = strval($value_row[1]);
+          $bytes_string_json_array = json_decode($bytes_string_json, true);
+          if (is_iterable($bytes_string_json_array))
+          {
+            foreach ($bytes_string_json_array as $bytes_string_json)
+            {
+              $ais_message_json = $bytes_string_json[3];
+              $ais_message_json_array[] = $ais_message_json;
+            }
+		  }
+        }
+      }
+    }
+  }
+  return $ais_message_json_array;
 }
