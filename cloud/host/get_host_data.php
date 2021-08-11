@@ -76,3 +76,4 @@ $common_description = safe_get($return_data_array, 'description');
 header("Content-type: application/json");
 $json_array = array('host_unique_index' => $host_unique_index, 'host_hardware_id' => $host_hardware_id, 'host_text_id' => $host_text_id, 'common_address' => $common_address, 'common_description' => $common_description);
 echo json_encode($json_array);
+
