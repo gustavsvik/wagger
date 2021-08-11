@@ -63,14 +63,20 @@ while ($channel_start < $data_end)
     {
       if ($WRITE_IMAGE_FILES == TRUE)
       {
+        $top_base64_bytes = mb_substr($base64_string, 0, 100);
+        debug_log('$top_base64_bytes: ' . $top_base64_bytes);
+        $image_bytes = base64_decode($base64_string);
+        $image_filetype = get_image_mime_type($image_bytes);
+        if (!is_null($image_filetype))
+        {
         if(!in_array($channel, $file_channels)) $file_channels[] = $channel ;
-        $image_filename = $IMAGE_DIR . "/" . $channel_string . "_" . $timestamp_string . ".jpg";
-        debug_log('$image_filename: ' . mb_substr($image_filename, 0, 100));
+        $image_filename = $IMAGE_DIR . "/" . $channel_string . "_" . $timestamp_string . '.' . $image_filetype;
+        debug_log('$image_filename: ' . $image_filename);
         $ifp = fopen($image_filename, 'wb'); 
-        debug_log('$base64_string: ' . mb_substr($base64_string, 0, 100));
-        fwrite($ifp, base64_decode($base64_string) );
+        fwrite($ifp, $image_bytes );
         fclose($ifp);
-        copy($image_filename, $IMAGE_DIR . "/" . $channel_string . ".jpg");
+        copy($image_filename, $IMAGE_DIR . "/" . $channel_string . '.' . $image_filetype);
+        }
       }
     }
     if ($value_string !== "-9999")
