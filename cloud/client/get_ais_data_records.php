@@ -72,7 +72,7 @@ foreach ($channel_array as $channel)
         $time_string = "";
         if (!is_null($value_row[0])) $time_string = strval($value_row[0]);
         $return_string .= $time_string . ",,," ; 
-        $bytes_string = "";
+        $all_bytes_string = "[";
         if (!is_null($value_row[1])) $bytes_string_json = strval($value_row[1]);
         $bytes_string_json_array = json_decode($bytes_string_json, true);
         if (is_iterable($bytes_string_json_array))
@@ -82,20 +82,15 @@ foreach ($channel_array as $channel)
             $ais_message_json = $bytes_string_json[3];
             $lon = safe_get($ais_message_json, "lon");
             $lat = safe_get($ais_message_json, "lat");
+            $bytes_string = "";
             if ( is_numeric($lon) && is_numeric($lat) )
             {
               $bytes_string = json_encode( array( "type" => safe_get($ais_message_json, "type"), "mmsi" => safe_get($ais_message_json, "mmsi"), "lon" => $lon, "lat" => $lat) );
             }
+            if (strlen($bytes_string) > 0) $all_bytes_string .= $bytes_string . ',' ;
           }
-          if (strlen($bytes_string) > 0) $return_string .= ais_armor_string($bytes_string) ;
-          //{
-          //  if (in_array($channel, $ARMORED_BYTE_STRING_CHANNELS, TRUE)) 
-          //  {
-          //    $bytes_string = str_replace(",", "|", $bytes_string) ;
-          //    $bytes_string = str_replace(";", "~", $bytes_string) ;
-          //    $return_string .= $bytes_string ;
-          //  }
-          //}
+          $last_comma_pos = strrpos($all_bytes_string, ',');
+          $return_string .= ais_armor_string( substr( $all_bytes_string, 0, $last_comma_pos ) . "]" );
         }
         $return_string .= "," ;
       }
