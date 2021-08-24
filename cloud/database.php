@@ -29,7 +29,7 @@ function db_get_index($connection, $table_label, $column_label, $select_value)
       if (!is_null($row[0])) $existing_indices[] = $row[0];
     }
   }
-  $unique_index = 0;
+  $unique_index = -1;
   if (count($existing_indices) > 0)
   {
     $unique_index = $existing_indices[0];
@@ -60,8 +60,8 @@ function db_get_new_index($connection, $table_name)
   $table_label = mb_substr(strtoupper($table_name), 2);
   $column_name = $table_label . "_UNIQUE_INDEX";
   $max_index = db_get_max_value($connection, $table_name, $column_name);
-  $new_index = $max_index + 1;
-  //debug_log('$new_index: ', strval($new_index));
+  $new_index = NULL;
+  if (!is_null($max_index)) $new_index = $max_index + 1;
   return $new_index;
 }
 
@@ -199,7 +199,7 @@ function db_update_static_by_index($connection, $table_label, $unique_index, $ha
 
   $new_index = -1;
 
-  if ($unique_index > -1)
+  if (!is_null($unique_index) && $unique_index > -1)
   {
     $connection->autocommit(FALSE);
     $connection->begin_transaction();
@@ -227,6 +227,7 @@ function db_update_static_by_index($connection, $table_label, $unique_index, $ha
     $stmt_string .= "ON DUPLICATE KEY UPDATE " . $column_label_string . "_TEXT_ID = VALUES(" . $column_label_string . "_TEXT_ID), " . $column_label_string . "_ADDRESS = VALUES(" . $column_label_string . "_ADDRESS), " . $column_label_string . "_DESCRIPTION = VALUES(" . $column_label_string . "_DESCRIPTION), " . $column_label_string . "_TIME = VALUES(" . $column_label_string . "_TIME), " . $column_label_string . "_STATUS = VALUES(" . $column_label_string . "_STATUS)";
     debug_log('$stmt_string: ', $stmt_string);
 
+    $new_index = NULL;
     if (!is_null($unique_index)) $new_index = db_get_new_index($connection, $table_name_string);
 
     $connection->autocommit(FALSE);
@@ -234,7 +235,7 @@ function db_update_static_by_index($connection, $table_label, $unique_index, $ha
     $stmt = NULL;
     $stmt = $connection->prepare($stmt_string);
 
-    if (!is_null($unique_index)) $stmt->bind_param('sssss', $new_index, $hardware_id, $text_id, $address, $description);
+    if (!is_null($new_index) && $new_index > -1) $stmt->bind_param('sssss', $new_index, $hardware_id, $text_id, $address, $description);
     else $stmt->bind_param('ssss', $hardware_id, $text_id, $address, $description);
 
     if(!$stmt->execute())
