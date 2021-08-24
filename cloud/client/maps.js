@@ -78,9 +78,9 @@ L.control.scale().addTo(map);
 let markersLayer = new L.LayerGroup();// add a marker in the given location
 markersLayer.addTo(map);
 
-const static_url = 'https://labremote.net/client/get_static_records_string.php?web_api_table_label=host' ; //'http://labremote.net/client/get_static_records.php?web_api_table=host&web_api_column=host_description' ;
-const position_url = 'https://labremote.net/client/get_ais_data_records.php';
-const own_position_url = 'https://labremote.net/client/get_own_pos_records.php';
+const static_url = 'https://' + window.location.hostname + '/client/get_static_records_string.php?web_api_table_label=host' ; //'http://labremote.net/client/get_static_records.php?web_api_table=host&web_api_column=host_description' ;
+const position_url = 'https://' + window.location.hostname + '/client/get_ais_data_records.php';
+const own_position_url = 'https://' + window.location.hostname + '/client/get_own_pos_records.php';
 
 let own_location_marker = null;
 let own_accuracy_circle = null;
@@ -224,7 +224,7 @@ function create_id_input()
 
   let description_div = document.createElement("DIV");
   Help.set_properties( description_div.style, {"position": "relative"} );
-  description_div.innerHTML = '<br>Please enter a specific user ID (up to 10 characters will be displayed):'; //'<br>Welcome to the MarIEX position reporting tool of Test Site Bothnia! We try to take all precautions possible to keep our test sites safe and secure, and your help is greatly appreciated. By adding a user ID to identify your position marker on the chart (either an arbitrary one of your choice or your name, ship name, call sign, MMSI, or other presumably unique identifier) when present in or near one of our test areas, you can improve your visibility not only to our test management team but to your fellow sea and land travellers as well. Please note that only the first 10 characters of your ID will be shown on screen.';
+  description_div.innerHTML = '<br>Please enter a specific user ID (up to 10 characters will be displayed):'; //'<br>Welcome to the MarIEx position reporting tool of Test Site Bothnia! We try to take all precautions possible to keep our test sites safe and secure, and your help is greatly appreciated. By adding a user ID to identify your position marker on the chart (either an arbitrary one of your choice or your name, ship name, call sign, MMSI, or other presumably unique identifier) when present in or near one of our test areas, you can improve your visibility not only to our test management team but to your fellow sea and land travellers as well. Please note that only the first 10 characters of your ID will be shown on screen.';
   dialog_div.appendChild(description_div);
 
   let id_input = document.createElement("INPUT");
@@ -328,12 +328,12 @@ function create_id_input()
 
   function id_info()
   {
-    window.alert('Welcome to the MarIEX position reporting tool of Test Site Bothnia! We try to take all precautions possible to keep our test sites safe and secure, and your help is greatly appreciated. By adding a user ID to identify your position marker on the chart (either an arbitrary one of your choice or your name, ship name, call sign, MMSI, or other presumably unique identifier) when present in or near one of our test areas, you can improve your visibility not only to our test management team but to your fellow seafarers and land travellers as well. Please note that only the first 10 characters of your ID will be shown on screen.')
+    window.alert('Welcome to the MarIEx position reporting tool of Test Site Bothnia! We try to take all precautions possible to keep our test sites safe and secure, and your help is greatly appreciated. By adding a user ID to identify your position marker on the chart (either an arbitrary one of your choice or your name, ship name, call sign, MMSI, or other presumably unique identifier) when present in or near one of our test areas, you can improve your visibility not only to our test management team but to your fellow seafarers and land travellers as well. Please consider when choosing your ID that it will be sent back (securely) to Test Site Bothnia and stored (securely) in our database before being publicly shared in this application, and take note that your ID may be shortened to its first 10 characters when displayed.')
   }
 
   function cookie_info()
   {
-    window.alert('To be able to link your device to your position unambiguously for the benefit of the Test Site Bothnia team and your fellow seafarers and land travellers, the MariEX app has to set a single cookie containing your user ID only (which is non-shareable with other sites). If you uncheck the box no new cookie will be set on the device and any cookies previously set will be removed.')
+    window.alert('To be able to link your device to your position unambiguously for the benefit of the Test Site Bothnia team and your fellow seafarers and land travellers, you can permit the MarIEx app to set a single cookie containing your user ID only (which is non-shareable with other sites). If you uncheck the box no new cookie will be set on the device and any cookies previously set by MarIEx will be removed.')
   }
 
 }
@@ -349,7 +349,7 @@ function create_image_input()
 
   let description_div = document.createElement("DIV");
   Help.set_properties( description_div.style, {"position": "relative"} );
-  description_div.innerHTML = '<br>Use the text field below to describe (anonymously if you prefer) your finds and/or hit the button to attach related media files:' //'<br>Welcome to the MarIEX environmental reporting tool of Test Site Bothnia! We try to take all precautions possible to keep our test sites safe and secure, and your help is greatly appreciated. Here you can report occurrences in or near test site areas of e g:<ul><li>Severe winds, waves, thunderstorms, precipitation, flooding, ice formation and other sudden weather changes for the worse and potentially hazardous natural phenomena</li><li>Divers, swimmers, water skiers, jet ski riders, kayakers and other unprotected personnel</li><li>Seals and other vulnerable aquatic mammals or other kinds of species</li><li>Algae blooms or infestations of jellyfish or other invasive or harmful species</li><li>Natural objects (e g logs) or man-made equipment (e g buoys or vehicles) adrift, stranded or abandoned</li><li>Refuse, oil spills or other kinds of man-made pollution</li><li>Containers of harmful substances or other hazardous items like mines or other kinds of unexploded munitions</li><li>Other harmful activity in progress, such as pollution, vandalism, theft or reckless or unsafe behaviour</li><li>Unidentifiable or evasive vessels (e g submarines) or other suspicious equipment or personnel (e g divers)</li></ul>Use the text field below to describe (anonymously if you prefer) your finds and/or hit the button to attach related media files:';
+  description_div.innerHTML = '<br>Use the text field below to describe (anonymously if you prefer) your finds and/or hit the button to attach related media files:' //'<br>Welcome to the MarIEx environmental reporting tool of Test Site Bothnia! We try to take all precautions possible to keep our test sites safe and secure, and your help is greatly appreciated. Here you can report occurrences in or near test site areas of e g:<ul><li>Severe winds, waves, thunderstorms, precipitation, flooding, ice formation and other sudden weather changes for the worse and potentially hazardous natural phenomena</li><li>Divers, swimmers, water skiers, jet ski riders, kayakers and other unprotected personnel</li><li>Seals and other vulnerable aquatic mammals or other kinds of species</li><li>Algae blooms or infestations of jellyfish or other invasive or harmful species</li><li>Natural objects (e g logs) or man-made equipment (e g buoys or vehicles) adrift, stranded or abandoned</li><li>Refuse, oil spills or other kinds of man-made pollution</li><li>Containers of harmful substances or other hazardous items like mines or other kinds of unexploded munitions</li><li>Other harmful activity in progress, such as pollution, vandalism, theft or reckless or unsafe behaviour</li><li>Unidentifiable or evasive vessels (e g submarines) or other suspicious equipment or personnel (e g divers)</li></ul>Use the text field below to describe (anonymously if you prefer) your finds and/or hit the button to attach related media files:';
   dialog_div.appendChild(description_div);
 
   let attach_button = document.createElement("BUTTON");
@@ -404,7 +404,7 @@ function create_image_input()
 
   function share_info()
   {
-    window.alert('Welcome to the MarIEX environmental reporting tool of Test Site Bothnia! We try to take all precautions possible to keep our test sites safe and secure, and your help is greatly appreciated. Here you can report occurrences in or near test site areas of e g:\n\n- Severe winds, waves, thunderstorms, precipitation, flooding, ice formation and other sudden weather changes for the worse and potentially hazardous natural phenomena\n- Divers, swimmers, water skiers, jet ski riders, kayakers and other unprotected personnel\n- Seals and other vulnerable aquatic mammals or other kinds of species\n- Algae blooms or infestations of jellyfish or other invasive or harmful species\n- Natural objects (e g logs) or man-made equipment (e g buoys or vehicles) adrift, stranded or abandoned\n- Refuse, oil spills or other kinds of man-made pollution\n- Containers of harmful substances or other hazardous items like mines or other kinds of unexploded munitions\n- Other harmful activity in progress, such as pollution, vandalism, theft or reckless or unsafe behaviour\n- Unidentifiable or evasive vessels (e g submarines) or other suspicious equipment or personnel (e g divers)')
+    window.alert('Welcome to the MarIEx environmental reporting tool of Test Site Bothnia! We try to take all precautions possible to keep our test sites safe and secure, and your help is greatly appreciated. Here you can report occurrences in or near test site areas of e g:\n\n- Severe winds, waves, thunderstorms, precipitation, flooding, ice formation and other sudden weather changes for the worse and potentially hazardous natural phenomena\n- Divers, swimmers, water skiers, jet ski riders, kayakers and other unprotected personnel\n- Seals and other vulnerable aquatic mammals or other kinds of species\n- Algae blooms or infestations of jellyfish or other invasive or harmful species\n- Natural objects (e g logs) or man-made equipment (e g buoys or vehicles) adrift, stranded or abandoned\n- Refuse, oil spills or other kinds of man-made pollution\n- Containers of harmful substances or other hazardous items like mines or other kinds of unexploded munitions\n- Other harmful activity in progress, such as pollution, vandalism, theft or reckless or unsafe behaviour\n- Unidentifiable or evasive vessels (e g submarines) or other suspicious equipment or personnel (e g divers)')
   }
 
   function submit_data()
@@ -560,17 +560,17 @@ function refresh_display()
   }
 
   //console.log("Ais.MMSI_ARRAY.length", Ais.MMSI_ARRAY.length);
-  for (let _mmsi_counter = 0; _mmsi_counter < Ais.MMSI_ARRAY.length; _mmsi_counter++)
+  for (let _id_counter = 0; _id_counter < Ais.ID_ARRAY.length; _id_counter++)
   {
-    const mmsi = Ais.MMSI_ARRAY[_mmsi_counter];
-    const lat = Ais.POS_ARRAY[_mmsi_counter][1];
-    const lon = Ais.POS_ARRAY[_mmsi_counter][0];
-	const wspeed = Ais.WIND_SPEED_ARRAY[_mmsi_counter];
-	const wdir = Ais.WIND_DIR_ARRAY[_mmsi_counter];
-	const speed = Ais.SPEED_ARRAY[_mmsi_counter];
-	const course = Ais.COURSE_ARRAY[_mmsi_counter];
-    const content = Ais.TEXT_ARRAY[_mmsi_counter];
-    const age = current_timestamp - Ais.TIME_ARRAY[_mmsi_counter];
+    const id = Ais.ID_ARRAY[_id_counter];
+    const lat = Ais.POS_ARRAY[_id_counter][1];
+    const lon = Ais.POS_ARRAY[_id_counter][0];
+	const wspeed = Ais.WIND_SPEED_ARRAY[_id_counter];
+	const wdir = Ais.WIND_DIR_ARRAY[_id_counter];
+	const speed = Ais.SPEED_ARRAY[_id_counter];
+	const course = Ais.COURSE_ARRAY[_id_counter];
+    const content = Ais.TEXT_ARRAY[_id_counter];
+    const age = current_timestamp - Ais.TIME_ARRAY[_id_counter];
 
     if (lat !== null && lon !== null)
     {
@@ -614,7 +614,7 @@ function refresh_display()
           html_string += 'Wind speed: ' + wspeed.toString().substring(0,3) + ' kt.' + '<br>';
           }
           if (wdir !== null) html_string += 'Wind direction: ' + wdir.toString().substring(0,3) + ' deg.' + '<br>';
-          if (mmsi !== null) html_string += 'ID: ' + mmsi.toString();
+          if (id !== null) html_string += 'ID: ' + id.toString();
         }
         else
         {
@@ -641,7 +641,7 @@ function refresh_display()
             const imo = Help.safe_get(content_json, "imo");
             if (imo !== null) html_string += 'IMO: ' + imo.toString() + '<br>' ;
           }
-          if (mmsi !== null) html_string += 'ID: ' + mmsi.toString() + '<br>' ;
+          if (id !== null) html_string += 'ID: ' + id.toString() + '<br>' ;
           if (lat !== null) html_string += 'Lat: ' + lat.toString() + ' deg.' + '<br>' ;
           if (lon !== null) html_string += 'Lon: ' + lon.toString() + ' deg.' ;  //Disp.jsonToTable(content_json, {});  
 
@@ -673,16 +673,16 @@ function refresh_display()
   {
     const lat = Ais.ALL_POS_ARRAY[_pos_counter][1];
     const lon = Ais.ALL_POS_ARRAY[_pos_counter][0];
-    const mmsi = Ais.ALL_MMSI_ARRAY[_pos_counter];
+    const id = Ais.ALL_ID_ARRAY[_pos_counter];
     //console.log("mmsi", mmsi);
     const age = current_timestamp - parseInt(Ais.ALL_TIME_ARRAY[_pos_counter]);
     if (lat !== null && lon !== null )
     {
       let marker_2 = L.circleMarker([ lat, lon ], {opacity: 0.5, color: "#00c600"});
-      if (mmsi === "99999") marker_2 = L.circleMarker([ lat, lon ], {opacity: 0.5, color: "#ff0000"});
+      if (id === "99999") marker_2 = L.circleMarker([ lat, lon ], {opacity: 0.5, color: "#ff0000"});
       marker_2.setRadius(4 - 4 * age/900);
       markersLayer.addLayer(marker_2);
-      let html_string = '<div style="font-size:10px;line-height:100%;">' + (age/60).toString().substring(0,3)  + ' min. ago' + '<br>' + 'ID: ' + mmsi.toString() + '<br>' + 'Lat: ' + lat.toString() + '<br>' + 'Lon: ' + lon.toString() + '</div>';
+      let html_string = '<div style="font-size:10px;line-height:100%;">' + (age/60).toString().substring(0,3)  + ' min. ago' + '<br>' + 'ID: ' + id.toString() + '<br>' + 'Lat: ' + lat.toString() + '<br>' + 'Lon: ' + lon.toString() + '</div>';
       if (!is_touch_device) marker_2.bindTooltip(html_string);
       else marker_2.bindPopup(html_string, {closeOnClick: true, autoClose: false});
     }
@@ -734,11 +734,11 @@ async function refresh_data()
         const course = Help.safe_get(ais_json, "course");
         const id = Help.safe_get(ais_json, "host_hardware_id");
 
-        const mmsi_index = Ais.MMSI_ARRAY.indexOf(id);
+        const id_index = Ais.ID_ARRAY.indexOf(id);
 
-        if (mmsi_index === -1)
+        if (id_index === -1)
         {
-          Ais.MMSI_ARRAY.push( id ) ;
+          Ais.ID_ARRAY.push( id ) ;
           Ais.POS_ARRAY.push( [ lon, lat ] ) ;
           Ais.WIND_DIR_ARRAY.push( wdir );
           Ais.WIND_SPEED_ARRAY.push( wspeed );
@@ -749,13 +749,13 @@ async function refresh_data()
         }
         else
         {
-          if (lon !== null && lat !== null) Ais.POS_ARRAY[mmsi_index] = [ lon, lat ] ;
-          if (wdir !== null) Ais.WIND_DIR_ARRAY[mmsi_index] = wdir;
-          if (wspeed !== null) Ais.WIND_SPEED_ARRAY[mmsi_index] = wspeed;
-          if (speed !== null) Ais.SPEED_ARRAY[mmsi_index] = speed;
-          if (course !== null) Ais.COURSE_ARRAY[mmsi_index] = course;
-          Ais.TEXT_ARRAY[mmsi_index] = ais_json_string;
-          Ais.TIME_ARRAY[mmsi_index] = time;
+          if (lon !== null && lat !== null) Ais.POS_ARRAY[id_index] = [ lon, lat ] ;
+          if (wdir !== null) Ais.WIND_DIR_ARRAY[id_index] = wdir;
+          if (wspeed !== null) Ais.WIND_SPEED_ARRAY[id_index] = wspeed;
+          if (speed !== null) Ais.SPEED_ARRAY[id_index] = speed;
+          if (course !== null) Ais.COURSE_ARRAY[id_index] = course;
+          Ais.TEXT_ARRAY[id_index] = ais_json_string;
+          Ais.TIME_ARRAY[id_index] = time;
         }
       //}
       //catch(e)
@@ -766,7 +766,7 @@ async function refresh_data()
 
   let position_string_array = []
 
-  const position_response = await fetch(position_url);
+  const position_response = await fetch(position_url, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '148;'}) });
   let position_data = null;
   try
   {
@@ -777,15 +777,11 @@ async function refresh_data()
   }
   position_string_array[0] = position_data
 
-  //const own_position_response = await fetch(own_position_url);
   const own_position_response = await fetch( own_position_url, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '99999;'}) } );
-  //body: "channels=" + encodeURIComponent("99999;") } );
-
   let own_position_data = null;
   try
   {
     own_position_data = await own_position_response.json();
-    //for (let pair of own_position_response.headers.entries()) console.log(pair[0]+ ': '+ pair[1]);
   }
   catch(e)
   {
@@ -795,7 +791,7 @@ async function refresh_data()
   let current_timestamp = parseInt((new Date().valueOf()) / 1000);
   Ais.ALL_POS_ARRAY = [];
   Ais.ALL_TIME_ARRAY = [];
-  Ais.ALL_MMSI_ARRAY = [];
+  Ais.ALL_ID_ARRAY = [];
 
   for (let _position_data_counter = 0; _position_data_counter < position_string_array.length; _position_data_counter++)
   {
@@ -824,7 +820,7 @@ async function refresh_data()
           if ( [1,2,3,18,9].includes(parseInt(type)) ) 
           {
             Ais.ALL_POS_ARRAY.push( [ Help.safe_get(position_json[_position_json_counter], "lon"), Help.safe_get(position_json[_position_json_counter], "lat") ] ) ;
-            Ais.ALL_MMSI_ARRAY.push( Help.safe_get(position_json[_position_json_counter], "mmsi") );
+            Ais.ALL_ID_ARRAY.push( Help.safe_get(position_json[_position_json_counter], "mmsi") );
           }
           const position_time = parseInt(position_timestamp_array[_position_string_counter]);
           Ais.ALL_TIME_ARRAY.push( position_time ) ;
@@ -847,7 +843,7 @@ async function refresh_data()
     if (user_id === null) user_id = "99999";
     own_position_json_string = '[[null, null, ' + '"' + user_id + '"' + ', ' + own_position_json_string + ']]' ;
 
-    const new_channel_response = await fetch( 'https://labremote.net/client/update_static_data_client.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'common_description': own_position_json_string, 'module_address': Ais.OWN_USER_ID}) } );
+    const new_channel_response = await fetch( 'https://' + window.location.hostname + '/client/update_static_data_client.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'common_description': own_position_json_string, 'module_address': Ais.OWN_USER_ID}) } );
     //body: "common_description=" + encodeURIComponent(own_position_json_string) } );
     let new_channel_data = null;
     try
@@ -862,26 +858,26 @@ async function refresh_data()
 
     own_position_json_string = own_position_json_string.replace(regex_tilde, '~');
     own_position_json_string = own_position_json_string.replace(regex_pipe, '|');
-    const own_position_upload_request = await fetch( 'https://labremote.net/client/send_request.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '99999;;'}) } );
+    const own_position_upload_request = await fetch( 'https://' + window.location.hostname + '/client/send_request.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '99999;;'}) } );
     //body: "channels=" + encodeURIComponent("99999;;") } );
     const own_position_transfer_string = "99999;" + current_timestamp.toString() + ",-9999.0,," + own_position_json_string + ",;" ;
     //console.log("own_position_transfer_string", own_position_transfer_string);
-    const own_position_set_requested = await fetch( 'https://labremote.net/host/set_requested.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'returnstring': own_position_transfer_string}) } );
+    const own_position_set_requested = await fetch( 'https://' + window.location.hostname + '/host/set_requested.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'returnstring': own_position_transfer_string}) } );
     //body: "returnstring=" + encodeURIComponent(own_position_transfer_string) } );
   }
 
-  if (Ais.OWN_DATA_IMAGE_BYTES !== null) //Ais.OWN_DATA_CHANNEL !== null && 
+  if (Ais.OWN_DATA_CHANNEL !== null && Ais.OWN_DATA_IMAGE_BYTES !== null)  
   {
-    const own_data_channel_string = "99999"; //(Ais.OWN_DATA_CHANNEL).toString();
+    const own_data_channel_string = (Ais.OWN_DATA_CHANNEL).toString(); //"99999";
     const own_data_image_bytes = Ais.OWN_DATA_IMAGE_BYTES;
     Ais.OWN_DATA_IMAGE_BYTES = null;
     //console.log("own_data_channel_string", own_data_channel_string);
     //console.log("own_data_image_bytes", own_data_image_bytes);
-    const own_image_upload_request = await fetch( 'https://labremote.net/client/send_request.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': own_data_channel_string + ';;'}) } );
+    const own_image_upload_request = await fetch( 'https://' + window.location.hostname + '/client/send_request.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': own_data_channel_string + ';;'}) } );
     //body: "channels=" + encodeURIComponent( own_data_channel_string + ";;") } );
     const own_image_transfer_string = own_data_channel_string + ";" + current_timestamp.toString() + ",-9999.0,," + own_data_image_bytes + ",;" ;
     //console.log("own_image_transfer_string", own_image_transfer_string);
-    const own_image_set_requested = await fetch( 'https://labremote.net/host/set_requested.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'returnstring': own_image_transfer_string}) } );
+    const own_image_set_requested = await fetch( 'https://' + window.location.hostname + '/host/set_requested.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'returnstring': own_image_transfer_string}) } );
     //body: "returnstring=" + encodeURIComponent(own_image_transfer_string) } );
   }
 
