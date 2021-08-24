@@ -30,7 +30,12 @@ if ($data_end > 0)
   $return_string = "";
   $base64_string = "";
 
-  while ($channel_start < $data_end)
+  $channel_end = strpos($channels, ';', $channel_start);
+  $channel_string = mb_substr($channels, $channel_start, $channel_end-$channel_start);
+  $valid_channel_data = FALSE;
+  if (is_numeric($channel_string)) $valid_channel_data = TRUE;
+
+  while ($valid_channel_data && $channel_start < $data_end)
   {
     $channel_end = strpos($channels, ';', $channel_start);
     $channel_string = mb_substr($channels, $channel_start, $channel_end-$channel_start);
@@ -47,7 +52,7 @@ if ($data_end > 0)
         $sql_latest_available .= " AND AD.STATUS>=" . strval($lowest_status);
 
         $latest_available = $conn->query($sql_latest_available);
-        if ($latest_available->num_rows > 0) 
+        if (!is_null($latest_available) && $latest_available->num_rows > 0) 
         {
           if ($latest_row = $latest_available->fetch_array(MYSQLI_NUM)) 
           {
