@@ -21,7 +21,7 @@ function is_iterable($var)
 
 function debug_log($log_label, $log_var = "")
 {
-  $logged_scripts = ['update_static_data_client.php'];  // 'send_request.php', 'set_requested.php', 'database.php', 'get_static_data.php', 'get_static_records_string.php', 'get_ais_data_records.php', 'update_static_data.php', 'update_devices.php', 'get_uploaded.php', 'server_time.php', 'network_time.php', 'update_static_data_client.php'
+  $logged_scripts = [];  // 'send_request.php', 'set_requested.php', 'database.php', 'get_static_data.php', 'get_static_records_string.php', 'get_ais_data_records.php', 'update_static_data.php', 'update_devices.php', 'get_uploaded.php', 'server_time.php', 'network_time.php', 'update_static_data_client.php', 'contributed.php'
   if (count($logged_scripts) > 0)
   {
     $logfile = '/srv/wagger/cloud/client/images/debug.log';
