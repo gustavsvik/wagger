@@ -647,7 +647,7 @@ class AisData
     this.OWN_USER_ID = null;
     this.OWN_DATA_CHANNEL = null;
     this.OWN_DATA_IMAGE_BYTES = null;
-    this.MMSI_ARRAY = [];
+    this.ID_ARRAY = [];
     this.POS_ARRAY = [];
     this.ALL_POS_ARRAY = [];
     this.ALL_TIME_ARRAY = [];
