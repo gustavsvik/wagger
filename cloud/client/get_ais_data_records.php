@@ -7,7 +7,7 @@ include("../utils.php");
 include("../database.php");
 include("header.php");
 
-$channels = "148;";
+//$channels = "148;";
 
 $start_time = -9999 ;
 $end_time = -9999 ;
