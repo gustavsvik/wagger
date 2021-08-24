@@ -18,6 +18,7 @@ $device_hardware_id = NULL;
 $device_text_id = NULL;
 $module_hardware_id = NULL;
 $module_text_id = NULL;
+$module_address = NULL;
 $channel_hardware_id = NULL;
 $channel_text_id = NULL;
 $common_address = NULL;
@@ -37,8 +38,8 @@ $device_hardware_id = strval(getPost('device_hardware_id', NULL));
 $device_text_id = strval(getPost('device_text_id', NULL));
 $module_hardware_id = strval(getPost('module_hardware_id', NULL));
 $module_text_id = strval(getPost('module_text_id', NULL));
+$module_address = strval(getPost('module_address', NULL));
 $channel_hardware_id = strval(getPost('channel_hardware_id', NULL));
 $channel_text_id = strval(getPost('channel_text_id', NULL));
 $common_address = strval(getPost('common_address', NULL));
 $common_description = strval(getPost('common_description', NULL));
-
