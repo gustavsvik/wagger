@@ -27,9 +27,15 @@ $data_start = 0;
 $data_end = strlen($return_string);
 $channel_start = $data_start;
 
-while ($channel_start < $data_end)
+$channel_end = strpos($return_string, ';', $channel_start);
+$channel_string = mb_substr($return_string, $channel_start, $channel_end-$channel_start);
+$valid_channel_data = FALSE;
+if (is_numeric($channel_string)) $valid_channel_data = TRUE;
+
+while ($valid_channel_data && $channel_start < $data_end)
 {
   $channel_end = strpos($return_string, ';', $channel_start);
+  debug_log( '$channel_start: ' . strval($channel_start) . ' $channel_end: ' . strval($channel_end));
   $channel_string = mb_substr($return_string, $channel_start, $channel_end-$channel_start);
   $channel = intval($channel_string);
 
