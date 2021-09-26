@@ -41,11 +41,11 @@ class Help
   }
 
 
-  static jsonToTable(json, labels) 
+  static jsonToTable(json, labels)
   {
     let json_table = '' ; //'<div style="font-size:10px;line-height:100%;">';
     //for (let i = 0; i < json.length; i++) json[i]
-    for(let key in json) 
+    for(let key in json)
     {
       //labels(key)
       try
@@ -61,13 +61,13 @@ class Help
   }
 
 
-  static isTouchDevice() 
+  static isTouchDevice()
   {
     return (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0));
   }
 
 
-  static set_cookie(name, val = null, days = null, path = '/') 
+  static set_cookie(name, val = null, days = null, path = '/')
   {
     let setval = "";
     if (val !== null) setval = val;
@@ -101,7 +101,7 @@ class Help
     if (rgb.length === 3) rgb.push(1);
     for (let i = 0; i < rgb.length; i++) rgb[i] = parseInt(rgb[i], 10);
     rgb[3] *= 255;
-  
+
     return rgb;
   }
 
@@ -128,18 +128,18 @@ class Help
     let _bytestring_matrix = [];
 
     if (typeof field_length === 'undefined') field_length = 4;
-    for (let _channel_index = 0; _channel_index < _no_of_channels; _channel_index++) 
+    for (let _channel_index = 0; _channel_index < _no_of_channels; _channel_index++)
     {
       _channel_string = _json_array[_channel_index*2];
       _channel_data = _json_array[_channel_index*2 + 1];
       _channel_data_array = _channel_data.split(",");
       let _field_data_array_length = (_channel_data_array.length - 1)/field_length - 0 ;
-    
+
       let _timestamp_array = [];
       let _value_array = [];
       let _subsamples_string_array = [];
       let _base64_string_array = [];
-      for (let _sample_index = 0; _sample_index < _field_data_array_length ; _sample_index++) 
+      for (let _sample_index = 0; _sample_index < _field_data_array_length ; _sample_index++)
       {
         _timestamp_array[_sample_index] = parseInt( _channel_data_array[_sample_index*4+0] );
         _value_array[_sample_index] = parseFloat(_channel_data_array[_sample_index*4+1]);
@@ -173,7 +173,7 @@ class Disp
     if (rgb.length === 3) rgb.push(1);
     for (let i = 0; i < rgb.length; i++) rgb[i] = parseInt(rgb[i], 10);
     rgb[3] *= 255;
-  
+
     return rgb;
   }
 
@@ -211,7 +211,7 @@ class Disp
       let _name = _dot_parts[0];
       let _arg_string = "url(." + font_path + _filename + ") format('" + _filetype + "')";
       let _font = new FontFace( _name, _arg_string ); //, {style: 'normal', unicodeRange: 'U+000-5FF', weight: '500'} );
-      _font.load().then(function() {document.fonts.add(_font); } ).catch(e => console.error(e.message)); 
+      _font.load().then(function() {document.fonts.add(_font); } ).catch(e => console.error(e.message));
       _font_families += "'" + _name + "'";
       if (_i < font_filenames.length - 1) _font_families += ", ";
     }
@@ -255,7 +255,7 @@ class Disp
 
 
   static removeAllElements(container, tag_name_array)
-  {  
+  {
     for (let _i = 0, _len = tag_name_array.length; _i != _len; ++_i)
     {
       let _all_tag_elements = container.getElementsByTagName(tag_name_array[_i]);
@@ -286,14 +286,14 @@ class Disp
     return _lag_text;
   }
 
-  
+
   setDisplayTextProperties(display_index, hovered_touched_element, time_adjust_microsecs, full_no_of_digits, text_alpha, hovered_touched_text_alpha)
   {
     this.setAllTextAlpha(display_index, text_alpha);
     if (typeof this.data[display_index] !== 'undefined')
     {
       let _screen = this.data[display_index].screens[0];
-    
+
       let _hovered_tag = "";
       let _hovered_index = "";
 
@@ -305,7 +305,7 @@ class Disp
         let _time_label = Disp.getChannelElement( [ "timelabel", null ] );
         _time_label.innerHTML = _time.str_val + _time.padding;
         if ( _hovered_tag === "timebkg" ) _time_label.innerHTML = _time.str_val + _time.info + ( - time_adjust_microsecs / 1000000 ).toString().substring(0,7) + " s";
-      }      
+      }
       for (let _i = 0; _i < _screen.channels.length; _i++)
       {
         let _channel = _screen.channels[_i];
@@ -330,7 +330,7 @@ class Disp
         {
           let _setval = Disp.getChannelElement( [ "setval", _index_str ] );
           _setval.innerHTML = _ctrl.str_val + _ctrl.padding;
-          if ( _hovered_index === _index_str ) 
+          if ( _hovered_index === _index_str )
           {
             _setval.innerHTML = _ctrl.str_val + _ctrl.info;
             let _slider = Disp.getChannelElement (["slider", _index_str]);
@@ -344,7 +344,7 @@ class Disp
 
   setAllTextAlpha(display_index, text_alpha)
   {
-    if (typeof this.data[display_index] !== 'undefined') 
+    if (typeof this.data[display_index] !== 'undefined')
     {
       let _screen = this.data[display_index].screens[0];
 
@@ -405,14 +405,14 @@ class App
     this.FILES_URL = this.CLIENT_URL + this.FILES_DIR;
     this.WAIT_MESSAGE = "Retrieving data...";
     this.last_get = 5;
-    this.last_request = 0; 
-    this.last_time_sync = 0; 
+    this.last_request = 0;
+    this.last_time_sync = 0;
     this.display_index = 0;
     this.display_timeout = 900 ;
     this.display_browser_viewport = false;
     this.display_viewport = {} ;
     this.display_viewport.w = 853 ;
-    this.display_viewport.h = 480 ; 
+    this.display_viewport.h = 480 ;
     this.display_img_scale = 1.0 ;
     this.display_kiosk_interval = 0 ;
     this.display_kiosk_adjust = {} ;
@@ -434,12 +434,12 @@ class App
     this.img = {};
     this.test_img = {};
     this.img_height = this.STD_SCALE_HEIGHT;
-    this.img_width = 4/3 * this.img_height; 
+    this.img_width = 4/3 * this.img_height;
     this.start_time = -9999;
     this.end_time = -9999;
-    this.time_bins = 10; 
+    this.time_bins = 10;
     this.time_bin_size = 1;
-    this.data_time_string = ""; 
+    this.data_time_string = "";
     this.data_timestamp = 0 ;
     this.server_time_string = this.WAIT_MESSAGE ;
     this.server_timestamp = 0 ;
@@ -485,9 +485,9 @@ class App
   static isValidDate(d)
   {
     let _date_valid = false;
-    if (Object.prototype.toString.call(d) === "[object Date]") 
+    if (Object.prototype.toString.call(d) === "[object Date]")
     {
-      if (isNaN(d.getTime())) {} 
+      if (isNaN(d.getTime())) {}
       else { _date_valid = true; }
     }
     else {}
@@ -506,7 +506,7 @@ class App
     let _a_max = App.maxOfArray(a);
     if (a.length - down_from_max < 1) down_from_max += a.length - down_from_max - 1;
     if ( down_from_max < 0 ) down_from_max = 0;
-    for (let _i = 0; _i < down_from_max; _i += 1) 
+    for (let _i = 0; _i < down_from_max; _i += 1)
     {
       let _index = a.indexOf(_a_max);
       if (_index > -1) a.splice(_index, 1);
@@ -516,13 +516,13 @@ class App
   }
 
 
-  static findWithAttr(arr, attr, val) 
+  static findWithAttr(arr, attr, val)
   {
     for(let _i = 0; _i < arr.length; _i += 1) if (arr[_i][attr] === val) { return _i; }
     return -1;
   }
 
-  
+
   setCanvasAutoScaleCenter(imgs, current_imgs)
   {
     let _no_of_imgs = imgs.length;
@@ -530,15 +530,15 @@ class App
     {
       for (let _i = 0; _i < _no_of_imgs; _i++)
       {
-        let _width = current_imgs[_i].width ; 
-        let _height =  current_imgs[_i].height ; 
+        let _width = current_imgs[_i].width ;
+        let _height =  current_imgs[_i].height ;
         let _img = imgs[_i];
         if (_img.dim === "source" && _width > 1 && _height > 1)
         {
           if (this.display_kiosk_height > 0) _img.disp.h = this.display_kiosk_height ;
           let _img_disp_scale = _height / _img.disp.h ;
           this.display_img_scale = _img.disp.h / this.STD_SCALE_HEIGHT ;
-          this.img_height = _height / _img_disp_scale; 
+          this.img_height = _height / _img_disp_scale;
           this.img_width = _width / _img_disp_scale;
         }
         if (_img.disp.pos === "center")
@@ -562,14 +562,14 @@ class App
         {
           let _element = screen_elements[_i];
           if (_element !== null)
-          {  
+          {
             let _disp = _element.disp;
             if (typeof _element.index === 'undefined') _element.index = null;
             let _html_element = Disp.getChannelElement([element_tag, _element.index]);
             if (_html_element !== null)
-            { 
-              Disp.setProperties( _html_element.style, 
-              { 
+            {
+              Disp.setProperties( _html_element.style,
+              {
                 fontSize: (parseInt(_disp.size * this.display_img_scale/this.display_img_scale)).toString() + "px",
                 left: (parseInt(_disp.pos.x * this.display_img_scale + this.CANVAS_POS_X + this.canvas_shift_x - _disp.size/2 + x_shift)).toString() + "px",
                 top: (parseInt(_disp.pos.y * this.display_img_scale + this.CANVAS_POS_Y + this.canvas_shift_y - _disp.size + x_shift)).toString() + "px"
@@ -583,11 +583,11 @@ class App
 
   placeAndSizeCanvasText(text_html_element, font_size, x_font_scale, x_shift)
   {
-    Disp.setProperties( text_html_element.style, 
-    { 
+    Disp.setProperties( text_html_element.style,
+    {
       fontSize: (parseInt(font_size * A.display_img_scale/A.display_img_scale)).toString() + "px",
-      left: (parseInt(A.CANVAS_POS_X + A.canvas_shift_x + Math.max(A.img_width/2 - font_size*x_font_scale + x_shift, 0))).toString() + "px", 
-      top: (parseInt(A.CANVAS_POS_Y + A.canvas_shift_y + A.img_height/2 - font_size/2)).toString() + "px", 
+      left: (parseInt(A.CANVAS_POS_X + A.canvas_shift_x + Math.max(A.img_width/2 - font_size*x_font_scale + x_shift, 0))).toString() + "px",
+      top: (parseInt(A.CANVAS_POS_Y + A.canvas_shift_y + A.img_height/2 - font_size/2)).toString() + "px",
     } ) ;
   }
 
@@ -605,18 +605,18 @@ class App
     let _bytestring_matrix = [];
 
     if (typeof field_length === 'undefined') field_length = 4;
-    for (let _channel_index = 0; _channel_index < _no_of_channels; _channel_index++) 
+    for (let _channel_index = 0; _channel_index < _no_of_channels; _channel_index++)
     {
       _channel_string = _json_array[_channel_index*2];
       _channel_data = _json_array[_channel_index*2 + 1];
       _channel_data_array = _channel_data.split(",");
       let _field_data_array_length = (_channel_data_array.length - 1)/field_length - 0 ;
-    
+
       let _timestamp_array = [];
       let _value_array = [];
       let _subsamples_string_array = [];
       let _base64_string_array = [];
-      for (let _sample_index = 0; _sample_index < _field_data_array_length ; _sample_index++) 
+      for (let _sample_index = 0; _sample_index < _field_data_array_length ; _sample_index++)
       {
         _timestamp_array[_sample_index] = parseInt( _channel_data_array[_sample_index*4+0] );
         _value_array[_sample_index] = parseFloat(_channel_data_array[_sample_index*4+1]);
@@ -637,6 +637,7 @@ class AisData
   constructor()
   {
     this.OWN_POSITION_AVAILABLE = false;
+    this.OWN_POSITION_FOLLOW = false;
     this.OWN_LOCATION_COORDS = {};
     this.OWN_LOCATION_POS = [];
     this.OWN_LOCATION_ACCURACY = null;

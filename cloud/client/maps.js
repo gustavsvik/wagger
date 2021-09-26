@@ -4,18 +4,18 @@
 //const uuid = uuidv4();
 //console.log("uuid", uuid);
 
-const width  = window.innerWidth || document.documentElement.clientWidth || 
+const width  = window.innerWidth || document.documentElement.clientWidth ||
 document.body.clientWidth;
-const height = window.innerHeight|| document.documentElement.clientHeight|| 
+const height = window.innerHeight|| document.documentElement.clientHeight||
 document.body.clientHeight;
 //console.log(width, height);
 
 let geolocation_available = false;
-if('geolocation' in navigator) 
+if('geolocation' in navigator)
 {
   geolocation_available = true;
-} 
-else 
+}
+else
 {
   /* geolocation IS NOT available */
 }
@@ -25,7 +25,7 @@ let Ais = new AisData();
 const CustomIcon = L.Icon.extend
 (
 {
-  options: 
+  options:
   {
     //shadowUrl: 'leaf-shadow.png',
     //shadowSize:   [50, 64],
@@ -106,7 +106,7 @@ let danger_html_string = '<div style="font-size:10px;line-height:100%;">';
 //danger_html_string += 'VARNING! DRIVANDE MINA!<br>Ungefärlig position:' + '<br>' ;
 danger_html_string += 'Drivande mina röjd 210617<br>Ungefärlig position:' + '<br>' ;
 danger_html_string += 'Lat: ' + danger_pos_01[0].toString() + ' deg.' + '<br>' ;
-danger_html_string += 'Lon: ' + danger_pos_01[1].toString() + ' deg.' ;  //Disp.jsonToTable(content_json, {}); 
+danger_html_string += 'Lon: ' + danger_pos_01[1].toString() + ' deg.' ;  //Disp.jsonToTable(content_json, {});
 const danger_image_url = 'images/leaflet/' + 'danger_01_image.png' ;
 danger_html_string += '<br><br>' + '<img src="' + danger_image_url + '"/>';
 if (!is_touch_device) danger_marker_01.bindTooltip(danger_html_string);
@@ -121,7 +121,7 @@ shore_marker_01.setRotationAngle(0);
 let shore_01_html_string = '<div style="font-size:10px;line-height:100%;">';
 shore_01_html_string += 'Västby Hamnförening<br>Web site: <a href="https://www.vastbyhamn.com">https://www.vastbyhamn.com</a><br>Position:' + '<br>' ;
 shore_01_html_string += 'Lat: ' + shore_pos_01[0].toString() + ' deg.' + '<br>' ;
-shore_01_html_string += 'Lon: ' + shore_pos_01[1].toString() + ' deg.' ;  //Disp.jsonToTable(content_json, {}); 
+shore_01_html_string += 'Lon: ' + shore_pos_01[1].toString() + ' deg.' ;  //Disp.jsonToTable(content_json, {});
 const shore_01_image_url = 'images/leaflet/' + 'shore_01_image.png' ;
 shore_01_html_string += '<br><br>' + '<img src="' + shore_01_image_url + '"/>';
 if (!is_touch_device) shore_marker_01.bindTooltip(shore_01_html_string);
@@ -136,7 +136,7 @@ shore_marker_02.setRotationAngle(0);
 let shore_02_html_string = '<div style="font-size:10px;line-height:100%;">';
 shore_02_html_string += 'Höga Kusten Varvet<br>Web site: <a href="https://www.hagakustenvarvet.se">https://www.hagakustenvarvet.se</a><br>Position:' + '<br>' ;
 shore_02_html_string += 'Lat: ' + shore_pos_02[0].toString() + ' deg.' + '<br>' ;
-shore_02_html_string += 'Lon: ' + shore_pos_02[1].toString() + ' deg.' ;  //Disp.jsonToTable(content_json, {}); 
+shore_02_html_string += 'Lon: ' + shore_pos_02[1].toString() + ' deg.' ;  //Disp.jsonToTable(content_json, {});
 const shore_02_image_url = 'images/leaflet/' + 'shore_02_image.png' ;
 shore_02_html_string += '<br><br>' + '<img src="' + shore_02_image_url + '"/>';
 if (!is_touch_device) shore_marker_02.bindTooltip(shore_02_html_string);
@@ -159,12 +159,12 @@ share_button.appendChild(share_button_text);
 let cookie_value = Help.get_cookie("mariex_user_id");
 Ais.OWN_USER_ID = cookie_value;
 
-if (Ais.OWN_POSITION_AVAILABLE && cookie_value !== null) 
+if (Ais.OWN_POSITION_AVAILABLE && cookie_value !== null)
 {
   share_button.innerText = "Identified as " + Ais.OWN_USER_ID;
   Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([127,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,0,63]) } ) ;
 }
-else if (Ais.OWN_LOCATION_POS.length === 2) 
+else if (Ais.OWN_LOCATION_POS.length === 2)
 {
   share_button.innerText = "Sharing position anonymously" ;
   Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } );
@@ -201,6 +201,17 @@ const tsb_01_image_url = 'images/leaflet/' + 'tsb_01_image.png' ;
 tsb_button.innerHTML = '<img src="' + tsb_01_image_url + '"/>';
 tsb_button.addEventListener("click", open_tsb_website);
 
+let center_div = document.createElement("DIV");
+document.body.appendChild(center_div);
+Help.set_properties( center_div.style, { "position": "relative" } );
+let center_button = document.createElement("BUTTON");
+center_div.appendChild(center_button);
+center_button.id = "center_button";
+Help.set_properties( center_button.style, { "position": "absolute", "width": "45px", "bottom": "0px", "right": "235px", "padding": "0px", "z-index": "400" , "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } ) ;
+const center_01_image_url = 'images/leaflet/' + 'crosshair.png' ;
+center_button.innerHTML = '<img src="' + center_01_image_url + '"/>';
+center_button.addEventListener("click", follow_position);
+
 
 function open_guab_website()
 {
@@ -211,6 +222,21 @@ function open_guab_website()
 function open_tsb_website()
 {
   window.open('https://testsitebothnia.eu')
+}
+
+
+function follow_position()
+{
+  if (!Ais.OWN_POSITION_FOLLOW)
+  {
+    Ais.OWN_POSITION_FOLLOW = true;
+    Help.set_properties( center_button.style, { "color": Help.rgba_literal_from_array([0,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([0,127,0,63]) } ) ;
+  }
+  else
+  {
+    Ais.OWN_POSITION_FOLLOW = false;
+    Help.set_properties( center_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } ) ;
+  }
 }
 
 
@@ -274,7 +300,7 @@ function create_id_input()
   cookie_info_button.appendChild(cookie_info_button_text);
   dialog_div.appendChild(id_button_div);
 
-  Help.set_properties( dialog_div.style, {"position": "relative", "top": "-25px"} ); //"overflow-y": "auto", 
+  Help.set_properties( dialog_div.style, {"position": "relative", "top": "-25px"} ); //"overflow-y": "auto",
 
   id_dialog.showModal();
 
@@ -290,15 +316,15 @@ function create_id_input()
       Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } );
     }
     //else if (Ais.OWN_USER_ID === "99999") share_button.innerText = "Sharing position anonymously";
-    if ( Ais.OWN_POSITION_AVAILABLE && !store_cookie_check.checked && Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "" ) 
+    if ( Ais.OWN_POSITION_AVAILABLE && !store_cookie_check.checked && Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "" )
     {
       share_button.innerText = "Identified as " + Ais.OWN_USER_ID;
       Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([127,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,0,63]) } ) ;
     }
-    if (store_cookie_check.checked && Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "") 
+    if (store_cookie_check.checked && Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "")
     {
       Help.set_cookie("mariex_user_id", id_input.value, 1000);
-      if (Ais.OWN_POSITION_AVAILABLE) 
+      if (Ais.OWN_POSITION_AVAILABLE)
       {
         share_button.innerText = "Device recognized as " + Ais.OWN_USER_ID;
         Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([0,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([0,127,0,63]) } ) ;
@@ -396,7 +422,7 @@ function create_image_input()
   cancel_button.appendChild(cancel_button_text);
   dialog_div.appendChild(share_button_div);
 
-  Help.set_properties( dialog_div.style, {"position": "relative", "top": "-25px"} ); //"overflow-y": "auto", 
+  Help.set_properties( dialog_div.style, {"position": "relative", "top": "-25px"} ); //"overflow-y": "auto",
 
   image_dialog.showModal();
 
@@ -428,13 +454,13 @@ function get_image()
   image_input.addEventListener("change", get_image_file);
   image_div.appendChild(image_input);
 
-  Help.set_properties( image_input, {"id": "image_input", "type": "file", "accept": "image/*", "style": "display:none"} );   //"capture": "user" //force camera input only
+  Help.set_properties( image_input, {"id": "image_input", "type": "file", "accept": "image/*", "style": "display:none"} );   // ,audio/*,video/* "capture": "user" //force camera input only
 
   image_input.click();
 
   function get_image_file(event)
   {
-    const image = document.createElement("IMG"); 
+    const image = document.createElement("IMG");
     const image_file = event.target.files[0];
     const reader = new FileReader();
     reader.addEventListener('load', image_reader)
@@ -451,7 +477,7 @@ function get_image()
 /*
 let image_div = document.createElement("DIV");
 document.body.appendChild(image_div);
-if ('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices) 
+if ('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices)
 {
 const video = document.createElement('video');
 video.muted = true;
@@ -481,7 +507,7 @@ camera_button.addEventListener('click', event => {
 */
 
 
-function handle_geolocation_success(position) 
+function handle_geolocation_success(position)
 {
   //console.log("position", position)
   const own_coords = position.coords;
@@ -490,13 +516,13 @@ function handle_geolocation_success(position)
   share_button.innerText = "Sharing position anonymously";
   Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } );
   cookie_value = Help.get_cookie("mariex_user_id");
-  if (cookie_value !== null && Ais.OWN_USER_ID !== "" && Ais.OWN_USER_ID !== null) 
+  if (cookie_value !== null && Ais.OWN_USER_ID !== "" && Ais.OWN_USER_ID !== null)
   {
     Ais.OWN_USER_ID = cookie_value;
     share_button.innerText = "Device recognized as " + Ais.OWN_USER_ID;
     Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([0,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([0,127,0,63]) } ) ;
   }
-  if (cookie_value === null && Ais.OWN_USER_ID !== "" && Ais.OWN_USER_ID !== null) 
+  if (cookie_value === null && Ais.OWN_USER_ID !== "" && Ais.OWN_USER_ID !== null)
   {
     share_button.innerText = "Identified as " + Ais.OWN_USER_ID;
     Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([127,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,0,63]) } ) ;
@@ -514,13 +540,13 @@ function handle_geolocation_success(position)
 }
 
 
-function handle_geolocation_error() 
+function handle_geolocation_error()
 {
   Ais.OWN_POSITION_AVAILABLE = false;
 }
 
 
-function refresh_display() 
+function refresh_display()
 {
 
   markersLayer.clearLayers();
@@ -544,7 +570,7 @@ function refresh_display()
     }
     if (Ais.OWN_LOCATION_ALTITUDE !== null) own_location_html_string += '<br>Altitude: ' + Ais.OWN_LOCATION_ALTITUDE.toString().substring(0,6) + ' m' ;
     if (Ais.OWN_LOCATION_ALTITUDE_ACCURACY !== null) own_location_html_string += '<br>Altitude: ' + Ais.OWN_LOCATION_ALTITUDE_ACCURACY.toString().substring(0,6) + ' m' ;
-    if (Ais.OWN_LOCATION_SPEED !== null) 
+    if (Ais.OWN_LOCATION_SPEED !== null)
     {
       own_location_html_string += '<br>Speed: ' + Ais.OWN_LOCATION_SPEED.toString().substring(0,6) + ' m/s' ;
       if (Ais.OWN_LOCATION_SPEED > 0) own_location_marker.setIcon(own_location_mobile_icon);
@@ -557,6 +583,18 @@ function refresh_display()
     }
     if (!is_touch_device) own_location_marker.bindTooltip(own_location_html_string);
     else own_location_marker.bindPopup(own_location_html_string, {closeOnClick: true, autoClose: false});
+
+    const centerLatLng = map.getCenter(); // get map center
+    const pointC = map.latLngToContainerPoint(centerLatLng); // convert to containerpoint (pixels)
+    const pointX = [pointC.x + 10, pointC.y]; // add one pixel to x
+    const pointY = [pointC.x, pointC.y + 10]; // add one pixel to y
+    // convert containerpoints to latlng's
+    const latLngC = map.containerPointToLatLng(pointC);
+    const latLngX = map.containerPointToLatLng(pointX);
+    const latLngY = map.containerPointToLatLng(pointY);
+    const distanceX = latLngC.distanceTo(latLngX); // calculate distance between c and x (latitude)
+    const distanceY = latLngC.distanceTo(latLngY); // calculate distance between c and y (longitude)
+    console.log("distanceX", distanceX, "distanceY", distanceY);
   }
 
   //console.log("Ais.MMSI_ARRAY.length", Ais.MMSI_ARRAY.length);
@@ -587,7 +625,7 @@ function refresh_display()
       marker.setRotationAngle(course);
       //console.log(wind_speed);
       const content_json = Help.json_safe_parse(content);
-      if (content_json !== null) 
+      if (content_json !== null)
       {
         let type = Help.safe_get(content_json, "type");
         if ( type !== null) type = parseInt(type);
@@ -595,7 +633,7 @@ function refresh_display()
         let html_string = '<div style="font-size:10px;line-height:100%;">';
         html_string += (age/60).toString().substring(0,3) + ' min. ago' + '<br>';
 
-        if (type === 8) 
+        if (type === 8)
         {
           marker.setIcon(wind_000_kt_icon);
           if (wspeed !== null)
@@ -643,7 +681,7 @@ function refresh_display()
           }
           if (id !== null) html_string += 'ID: ' + id.toString() + '<br>' ;
           if (lat !== null) html_string += 'Lat: ' + lat.toString() + ' deg.' + '<br>' ;
-          if (lon !== null) html_string += 'Lon: ' + lon.toString() + ' deg.' ;  //Disp.jsonToTable(content_json, {});  
+          if (lon !== null) html_string += 'Lon: ' + lon.toString() + ' deg.' ;  //Disp.jsonToTable(content_json, {});
 
           const icon_filename = Help.safe_get(content_json, "icon_filename");
           if (icon_filename !== null)
@@ -692,7 +730,7 @@ function refresh_display()
 
 //let firstTime = true;
 
-async function refresh_data() 
+async function refresh_data()
 {
   const response = await fetch(static_url);
   let data = "";
@@ -722,7 +760,7 @@ async function refresh_data()
       let ais_json_string = ais_string.replace(regex_semicolon, ";");
       ais_json_string = ais_json_string.replace(regex_comma, ",");
       //console.log("ais_json_string", ais_json_string);
-	  //try 
+	  //try
 	  //{
         const ais_json = Help.json_safe_parse(ais_json_string); //[0];
         //console.log("ais_json", ais_json);
@@ -777,7 +815,7 @@ async function refresh_data()
   }
   position_string_array[0] = position_data
 
-  const own_position_response = await fetch( own_position_url, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '99999;'}) } );
+  const own_position_response = await fetch( own_position_url, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '99999;', 'duration': '300'}) } );
   let own_position_data = null;
   try
   {
@@ -817,7 +855,7 @@ async function refresh_data()
         for (let _position_json_counter = 0; _position_json_counter < position_json.length; _position_json_counter++)
         {
           const type = Help.safe_get(position_json[_position_json_counter], "type");
-          if ( [1,2,3,18,9].includes(parseInt(type)) ) 
+          if ( [1,2,3,18,9].includes(parseInt(type)) )
           {
             Ais.ALL_POS_ARRAY.push( [ Help.safe_get(position_json[_position_json_counter], "lon"), Help.safe_get(position_json[_position_json_counter], "lat") ] ) ;
             Ais.ALL_ID_ARRAY.push( Help.safe_get(position_json[_position_json_counter], "mmsi") );
@@ -866,7 +904,7 @@ async function refresh_data()
     //body: "returnstring=" + encodeURIComponent(own_position_transfer_string) } );
   }
 
-  if (Ais.OWN_DATA_CHANNEL !== null && Ais.OWN_DATA_IMAGE_BYTES !== null)  
+  if (Ais.OWN_DATA_CHANNEL !== null && Ais.OWN_DATA_IMAGE_BYTES !== null)
   {
     const own_data_channel_string = (Ais.OWN_DATA_CHANNEL).toString(); //"99999";
     const own_data_image_bytes = Ais.OWN_DATA_IMAGE_BYTES;
