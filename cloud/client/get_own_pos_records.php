@@ -10,14 +10,17 @@ include("header.php");
 //$channels = "99999;";
 debug_log('$channels: ', $channels);
 debug_log('$device_hardware_id: ', $device_hardware_id);
+debug_log('$duration: ', $duration);
+debug_log('$sql_like_condition: ', $sql_like_condition);
+
 $start_time = -9999 ;
 $end_time = -9999 ;
-$duration = 300 ;
+//$duration = 300 ;
 $unit = 1 ;
 $lowest_status = 0 ;
 
-$select_all = FALSE;
-if ($duration === -9999) $select_all = TRUE;
+$select_all_in_channel = FALSE;
+if ($duration === -9999) $select_all_in_channel = TRUE;
 
 $conn = db_get_connection($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME);
 //$conn->autocommit(FALSE);
@@ -30,11 +33,11 @@ if ($start_time === -9999)
   {
     //$table_name_string = "t_acquired_data";
     //$column_name_string = "ACQUIRED_TIME";
-    $latest_point_time = time(); //db_get_max_value($conn, $table_name_string, $column_name_string); 
+    $latest_point_time = time(); //db_get_max_value($conn, $table_name_string, $column_name_string);
     if (!is_null($latest_point_time)) $end_time = $latest_point_time;
   }
   $start_time = $end_time ;
-  if (!$select_all) $start_time -= $duration*$unit; 
+  if (!$select_all_in_channel) $start_time -= $duration*$unit;
 }
 
 $channel_array = array();
@@ -52,27 +55,28 @@ foreach ($channel_array as $channel)
   $return_string .= $channel_string . ";";
 
   $sql_get_all_available_values = "SELECT T.ACQUIRED_TIME,T.ACQUIRED_BYTES FROM t_acquired_data T";
-  $sql_get_available_values = $sql_get_all_available_values ;
-  if (!$select_all) $sql_get_available_values .= " WHERE T.CHANNEL_INDEX=" . $channel_string . " AND T.ACQUIRED_TIME BETWEEN " . strval($start_time) . " AND ". strval($end_time);
-  $sql_get_available_values .= " AND T.STATUS >= " . strval($lowest_status) . " AND T.STATUS < " . strval($STATUS_STORED) . " ORDER BY T.ACQUIRED_TIME DESC";
+  $sql_get_available_values = $sql_get_all_available_values . " WHERE " ;
+  $sql_get_available_values .= "T.CHANNEL_INDEX=" . $channel_string . " AND ";
+  if (!$select_all_in_channel) $sql_get_available_values .= "T.ACQUIRED_TIME BETWEEN " . strval($start_time) . " AND ". strval($end_time) . " AND ";
+  $sql_get_available_values .= "T.STATUS >= " . strval($lowest_status) . " AND T.STATUS < " . strval($STATUS_ARCHIVED) . " ORDER BY T.ACQUIRED_TIME DESC";
   debug_log('$sql_get_available_values: ', $sql_get_available_values);
   $available_values = $conn->query($sql_get_available_values);
 
   if (is_object($available_values))
   {
-    if ($available_values->num_rows <= 0) 
+    if ($available_values->num_rows <= 0)
     {
-      $sql_get_stored_archived_values = $sql_get_all_available_values . " AND T.STATUS >= " . strval($STATUS_STORED) . " ORDER BY T.ACQUIRED_TIME DESC";
+        $sql_get_stored_archived_values = $sql_get_all_available_values . " AND T.STATUS >= " . strval($STATUS_ARCHIVED) . " ORDER BY T.ACQUIRED_TIME DESC";
       debug_log('$sql_get_stored_archived_values: ', $sql_get_stored_archived_values);
       $available_values = $conn->query($sql_get_stored_archived_values);
     }
-    if ($available_values->num_rows > 0) 
+    if ($available_values->num_rows > 0)
     {
-      while ($value_row = $available_values->fetch_array(MYSQLI_NUM)) 
+      while ($value_row = $available_values->fetch_array(MYSQLI_NUM))
       {
         $time_string = "";
         if (!is_null($value_row[0])) $time_string = strval($value_row[0]);
-        $return_string .= $time_string . ",,," ; 
+        $return_string .= $time_string . ",,," ;
         $all_bytes_string = "[";
         if (!is_null($value_row[1])) $bytes_string_json = strval($value_row[1]);
         $bytes_string_json_array = json_decode($bytes_string_json, true);
@@ -81,13 +85,15 @@ foreach ($channel_array as $channel)
           foreach ($bytes_string_json_array as $bytes_string_json)
           {
             $ais_message_json = $bytes_string_json[3];
-            $lon = safe_get($ais_message_json, "lon");
-            $lat = safe_get($ais_message_json, "lat");
+            $lon = number_format((float)safe_get($ais_message_json, "lon"), 4, '.', '');
+            $lat = number_format((float)safe_get($ais_message_json, "lat"), 4, '.', '');
+            $speed = number_format((float)safe_get($ais_message_json, "speed"), 1, '.', '');
+            $heading = number_format((float)safe_get($ais_message_json, "heading"), 1, '.', '');
             $mmsi = $bytes_string_json[2];
             $bytes_string = "";
             if ( is_numeric($lon) && is_numeric($lat) )
             {
-              $bytes_string = json_encode( array( "type" => 1, "mmsi" => $mmsi, "lon" => $lon, "lat" => $lat) );
+                $bytes_string = json_encode( array( "type" => 1, "mmsi" => $mmsi, "lon" => $lon, "lat" => $lat, "speed" => $speed, "heading" => $heading) );
             }
             if (strlen($bytes_string) > 0) $all_bytes_string .= $bytes_string . ',' ;
           }
@@ -97,11 +103,11 @@ foreach ($channel_array as $channel)
         $return_string .= "," ;
       }
     }
-    else 
+    else
     {
     }
 
-    $return_string .= ";"; 
+    $return_string .= ";";
 
   }
 }
