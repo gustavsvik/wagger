@@ -7,6 +7,7 @@ include("../utils.php");
 include("../database.php");
 include("header.php");
 
+debug_log('Function start');
 
 if ($web_api_channel > 0) $channels = strval($web_api_channel) . ';' ;
 
@@ -30,19 +31,26 @@ if ($data_end > 0)
   $return_string = "";
   $base64_string = "";
 
-  $channel_end = strpos($channels, ';', $channel_start);
-  $channel_string = mb_substr($channels, $channel_start, $channel_end-$channel_start);
-  $valid_channel_data = FALSE;
-  if (is_numeric($channel_string)) $valid_channel_data = TRUE;
+  debug_log('$channels: ' . $channels);
 
-  while ($valid_channel_data && $channel_start < $data_end)
+  $channel_end = strpos($channels, ';', $channel_start);
+  debug_log('$channel_end: ' . $channel_end);
+  $channel_string = mb_substr($channels, $channel_start, $channel_end-$channel_start);
+
+  //$valid_channel_data = is_numeric($channel_string);
+
+  while ($channel_start < $data_end)
   {
     $channel_end = strpos($channels, ';', $channel_start);
+    debug_log('$channel_end: ' . $channel_end);
     $channel_string = mb_substr($channels, $channel_start, $channel_end-$channel_start);
+    //$valid_channel_data = is_numeric($channel_string);
     $channel = intval($channel_string);
-
+    debug_log('$channel_string: ' . $channel_string);
     $found_archived_records = FALSE ;
     $archived_record_files = [] ;
+    debug_log('$start_time: ' . $start_time);
+    debug_log('$end_time: ' . $end_time);
 
     if ($start_time === -9999)
     {
@@ -50,29 +58,31 @@ if ($data_end > 0)
       {
         $sql_latest_available = "SELECT MAX(AD.ACQUIRED_TIME) FROM " . $ACQUIRED_DATA_TABLE_NAME . " AD WHERE AD.CHANNEL_INDEX = " . $channel_string;
         $sql_latest_available .= " AND AD.STATUS>=" . strval($lowest_status);
-
+        debug_log('$sql_latest_available: ' . $sql_latest_available);
         $latest_available = $conn->query($sql_latest_available);
-        if (!is_null($latest_available) && $latest_available->num_rows > 0) 
+        if (!is_null($latest_available) && $latest_available->num_rows > 0)
         {
-          if ($latest_row = $latest_available->fetch_array(MYSQLI_NUM)) 
+          if ($latest_row = $latest_available->fetch_array(MYSQLI_NUM))
           {
             if (!is_null($latest_row[0])) $latest_point_time = intval($latest_row[0]);
           }
-        } 
-        else 
-        {                 
         }
+        else
+        {
+        }
+        debug_log('$end_time: ' . $end_time);
+        debug_log('gettype($latest_point_time): ' . gettype($latest_point_time));
         if (!is_null($latest_point_time)) $end_time = $latest_point_time;
+        debug_log('$end_time: ' . $end_time);
       }
       $start_time = $end_time ;
-      if (!$select_all) $start_time -= $duration*$unit; 
+      if (!$select_all) $start_time -= $duration*$unit;
     }
-
     $points_range = range($start_time, $end_time, $unit);
 
     $points_range_string = "(" . get_separated_string_range_string($points_range, ",") . ")";
 
-    //foreach ($points_range as $point) 
+    //foreach ($points_range as $point)
     //{
     //  $points_range_string .= "'" . strval($point) . "'";
     //  if ($point < $end_time) $points_range_string .= ",";
@@ -85,20 +95,20 @@ if ($data_end > 0)
     $sql_get_available_values = $sql_get_all_available_values ;
     if (!$select_all) $sql_get_available_values .= " AND AD.ACQUIRED_TIME IN " . $points_range_string ;
     $sql_get_available_values .= " AND AD.STATUS >= " . strval($lowest_status) . " AND AD.STATUS < " . strval($STATUS_STORED) ;
-
+    debug_log('$sql_get_available_values: ' . $sql_get_available_values);
     $available_values = $conn->query($sql_get_available_values);
 
 	if ($available_values)
 	{
-      if ($available_values->num_rows <= 0) 
+      if ($available_values->num_rows <= 0)
       {
         $sql_get_stored_archived_values = $sql_get_all_available_values . " AND AD.STATUS >= " . strval($STATUS_STORED) ;
         $available_values = $conn->query($sql_get_stored_archived_values);
         if ($available_values->num_rows > 0) $found_archived_records = TRUE ;
       }
-      if ($available_values->num_rows > 0) 
+      if ($available_values->num_rows > 0)
       {
-        while ($value_row = $available_values->fetch_array(MYSQLI_NUM)) 
+        while ($value_row = $available_values->fetch_array(MYSQLI_NUM))
         {
           $time_string = "";
           if (!is_null($value_row[0])) $time_string = strval($value_row[0]);
@@ -111,7 +121,7 @@ if ($data_end > 0)
           $return_string .= $time_string . "," . $value_string . "," . $subsample_string . "," ;
           if (strlen($base64_string) > 0)
           {
-            if (in_array($channel, $ARMORED_BYTE_STRING_CHANNELS, TRUE)) 
+            if (in_array($channel, $ARMORED_BYTE_STRING_CHANNELS, TRUE))
             {
               $base64_string = str_replace(",", "|", $base64_string) ;
               $base64_string = str_replace(";", "~", $base64_string) ;
@@ -127,7 +137,7 @@ if ($data_end > 0)
             if ($found_archived_records) $archived_record_files[] = $image_filename ;
             if ($WRITE_IMAGE_FILES == TRUE)
             {
-              $ifp = fopen($image_filename, 'wb'); 
+              $ifp = fopen($image_filename, 'wb');
               fwrite($ifp, base64_decode($base64_string) );
               fclose($ifp);
               copy($image_filename, $IMAGE_DIR . "/" . $channel_string . ".jpg");
@@ -139,7 +149,7 @@ if ($data_end > 0)
             if ($found_archived_records) $archived_record_files[] = $text_filename ;
             if ($WRITE_VALUE_FILES == TRUE)
             {
-              $ifp = fopen($text_filename, 'wb'); 
+              $ifp = fopen($text_filename, 'wb');
               fwrite($ifp, $return_string );
               fclose($ifp);
               copy($text_filename, $IMAGE_DIR . "/" . $channel_string . ".txt");
@@ -148,7 +158,7 @@ if ($data_end > 0)
         }
       }
     }
-    else 
+    else
     {
     }
 
@@ -163,7 +173,7 @@ if ($data_end > 0)
     foreach($files as $file)
     {
       $complete_filename = $file ;
-      if ( is_file($complete_filename) && $num_files > $MAX_FILES_PER_CHANNEL && !in_array($complete_filename, $archived_record_files) ) 
+      if ( is_file($complete_filename) && $num_files > $MAX_FILES_PER_CHANNEL && $channel < $UNRESTRICTED_CHANNELS_FROM && !in_array($complete_filename, $archived_record_files) )
       {
         unlink($complete_filename);
         --$num_files;
@@ -179,3 +189,6 @@ if ($data_end > 0)
 header("Content-type: application/json");
 $json_array = array('returnstring' => $return_string) ; //, 'receivetime' => $receive_timestamp, 'transmittime' => $transmit_timestamp);
 echo json_encode($json_array);
+
+debug_log('$return_string' . $return_string);
+

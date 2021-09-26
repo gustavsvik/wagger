@@ -9,7 +9,7 @@
 "disp_kiosk_override_height": 525,
 
 
-"displays": 
+"displays":
 
 [
 
@@ -20,7 +20,7 @@
     [
       {
         "label": "View",
-        "imgs": 
+        "imgs":
         [
           { "file": "11.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
@@ -38,7 +38,7 @@
     [
       {
         "label": "View",
-        "imgs": 
+        "imgs":
         [
           { "file": "4.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
@@ -59,7 +59,7 @@
     [
       {
         "label": "View",
-        "imgs": 
+        "imgs":
         [
           { "file": "9.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
@@ -95,7 +95,7 @@
     [
       {
         "label": "View",
-        "imgs": 
+        "imgs":
         [
           { "file": "12.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
@@ -113,7 +113,7 @@
     [
       {
         "label": "View",
-        "imgs": 
+        "imgs":
         [
           { "file": "1.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
@@ -134,7 +134,7 @@
     [
       {
         "label": "View",
-        "imgs": 
+        "imgs":
         [
           { "file": "13.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
@@ -152,7 +152,7 @@
     [
       {
         "label": "View",
-        "imgs": 
+        "imgs":
         [
           { "file": "14.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
@@ -188,7 +188,7 @@
     [
       {
         "label": "View",
-        "imgs": 
+        "imgs":
         [
           { "file": "15.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
@@ -224,7 +224,7 @@
     [
       {
         "label": "View",
-        "imgs": 
+        "imgs":
         [
           { "file": "16.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
@@ -260,7 +260,7 @@
     [
       {
         "label": "View",
-        "imgs": 
+        "imgs":
         [
           { "file": "17.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
@@ -296,7 +296,7 @@
     [
       {
         "label": "View",
-        "imgs": 
+        "imgs":
         [
           { "file": "10.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],
@@ -314,7 +314,7 @@
     [
       {
         "label": "View",
-        "imgs": 
+        "imgs":
         [
           { "file": "18.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
         ],

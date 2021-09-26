@@ -19,28 +19,28 @@ if (mysqli_connect_errno())
 
 $sql_request_channels = "SELECT DISTINCT AD.CHANNEL_INDEX FROM " . $ACQUIRED_DATA_TABLE_NAME . " AD WHERE AD.CHANNEL_INDEX IN (" . $channels_list . ") AND AD.STATUS = -1";
 $channels_requested = $conn->query($sql_request_channels);
-if ($channels_requested->num_rows > 0) 
+if ($channels_requested->num_rows > 0)
 {
-  while ($channel_row = $channels_requested->fetch_assoc()) 
+  while ($channel_row = $channels_requested->fetch_assoc())
   {
     $return_string .= $channel_row["CHANNEL_INDEX"] . ";";
     $sql_get_channel_points = "SELECT ACQUIRED_TIME,ACQUIRED_VALUE FROM " . $ACQUIRED_DATA_TABLE_NAME . " AD WHERE AD.STATUS = -1 AND AD.CHANNEL_INDEX = " . $channel_row["CHANNEL_INDEX"] . " LIMIT 1000";
     $channel_points = $conn->query($sql_get_channel_points);
-    if ($channel_points->num_rows > 0) 
+    if ($channel_points->num_rows > 0)
     {
-      while ($point_row = $channel_points->fetch_assoc()) 
+      while ($point_row = $channel_points->fetch_assoc())
       {
         $return_string .= $point_row["ACQUIRED_TIME"] . ",";
         $return_string .= $point_row["ACQUIRED_VALUE"] . ",";
       }
-    } 
-    else 
+    }
+    else
     {
     }
     $return_string .= ";";
   }
 }
-else 
+else
 {
 }
 

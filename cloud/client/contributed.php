@@ -22,7 +22,7 @@ foreach($files as $file)
   $initial_char = mb_substr($file, 0, 1);
   $sixth_char = mb_substr($file, 5, 1);
 
-  if ( in_array($initial_char, ["2","3","4","5","6","7","8"])  && $sixth_char === "_" ) 
+  if ( in_array($initial_char, ["2","3","4","5","6","7","8"])  && $sixth_char === "_" )
   {
     $image_names[] = $file ;
 
@@ -42,7 +42,8 @@ foreach($files as $file)
     {
       $imagick = new Imagick();
       $file_handle = fopen($basedir.$file, 'a+');
-      $imagick->readImageFile($file_handle); 
+      $imagick->readImageFile($file_handle);
+      debug_log( '$basedir.$file :', $basedir.$file);
       $imagick->thumbnailImage(100, 0);
       $imagick->setImageFormat($extension);
 
@@ -54,7 +55,7 @@ foreach($files as $file)
 
       $file_data[] = array('image_name' => $file, 'thumb_name' => $thumb_name, 'channel' => $channel_string, 'timestamp' => $timestamp_string);
 
-      $thumbnail = $imagick->getImageBlob();
+      //$thumbnail = $imagick->getImageBlob();
       //echo '<a href="/client/images/' . $file . '">';
       //echo '<img border="20" alt="' . $file . '" src="data:image/jpg;base64,' . base64_encode($thumbnail) . '">';
       //echo '</a>';
@@ -63,6 +64,7 @@ foreach($files as $file)
     catch(Exception $e)
     {
       debug_log( '$e->getMessage(): ', $e->getMessage() );
+      $file_data[] = array('image_name' => $file, 'thumb_name' => "thumb_unknown.png", 'channel' => $channel_string, 'timestamp' => $timestamp_string);
     }
 
   }

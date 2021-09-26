@@ -8,10 +8,13 @@ include("../database.php");
 
 //$new_partition_name_date = NULL ;
 $new_partition_name_date = strval(getPost('new_partition_name_date', '19700101')) ;
+debug_log('$new_partition_name_date: ', $new_partition_name_date);
 //$new_partition_timestamp = NULL ;
 $new_partition_timestamp = intval(getPost('new_partition_timestamp', 0)) ;
+debug_log('$new_partition_timestamp: ', $new_partition_timestamp);
 //$oldest_kept_partition_name_date = NULL ;
 $oldest_kept_partition_name_date = strval(getPost('oldest_kept_partition_name_date', '19700101')) ;
+debug_log('$oldest_kept_partition_name_date: ', $oldest_kept_partition_name_date);
 
 /*
 $conn = mysqli_init();
@@ -26,6 +29,7 @@ $sql_reorganize_partitions = "ALTER TABLE " . $DBNAME . "." . $ACQUIRED_DATA_TAB
 $conn->autocommit(FALSE);
 $conn->begin_transaction();
 
+debug_log('$sql_reorganize_partitions: ', $sql_reorganize_partitions);
 $stmt = $conn->prepare($sql_reorganize_partitions);
 if ($stmt)
 {
@@ -41,6 +45,7 @@ $conn->commit();
 $all_partition_date_strings = array() ;
 $sql_get_all_date_partition_strings = "SELECT PARTITION_NAME FROM INFORMATION_SCHEMA.PARTITIONS WHERE TABLE_SCHEMA='" . $DBNAME . "' AND PARTITION_NAME IS NOT NULL AND LOWER(PARTITION_NAME)<>'acquired_time_max' ORDER BY PARTITION_NAME" ;
 
+debug_log('$sql_get_all_date_partition_strings: ', $sql_get_all_date_partition_strings);
 $results = $conn->query($sql_get_all_date_partition_strings);
 if (is_object($results) && $results->num_rows > 0)
 {
@@ -58,6 +63,8 @@ foreach ($all_partition_date_strings as $partition_date_string)
   if ($partition_date_string < $oldest_kept_partition_name_date)
   {
     $sql_drop_old_partition = "ALTER TABLE " . $DBNAME . "." . $ACQUIRED_DATA_TABLE_NAME . " DROP PARTITION acquired_time_" . $partition_date_string ;
+
+    debug_log('$sql_drop_old_partition: ', $sql_drop_old_partition);
     $stmt = $conn->prepare($sql_drop_old_partition);
     if ($stmt)
     {
@@ -72,5 +79,5 @@ foreach ($all_partition_date_strings as $partition_date_string)
 }
 
 $conn->commit();
-  
+
 $conn->close();

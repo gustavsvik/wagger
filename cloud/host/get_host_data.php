@@ -14,7 +14,7 @@ debug_log('$host_text_id: ', $host_text_id );
 $conn = db_get_connection($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME);
 
 $return_data_array = NULL;
-if (!is_null($conn)) 
+if (!is_null($conn))
 {
   $return_data_array = db_get_static_by_id($conn, "HOST", $host_hardware_id, $host_text_id);
   debug_log('$return_data_array: ', $return_data_array);

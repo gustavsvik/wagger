@@ -29,11 +29,11 @@ if ($start_time === -9999)
   {
     //$table_name_string = "t_acquired_data";
     //$column_name_string = "ACQUIRED_TIME";
-    $latest_point_time = time(); //db_get_max_value($conn, $table_name_string, $column_name_string); 
+    $latest_point_time = time(); //db_get_max_value($conn, $table_name_string, $column_name_string);
     if (!is_null($latest_point_time)) $end_time = $latest_point_time;
   }
   $start_time = $end_time ;
-  if (!$select_all) $start_time -= $duration*$unit; 
+  if (!$select_all) $start_time -= $duration*$unit;
 }
 
 $channel_array = array();
@@ -59,19 +59,19 @@ foreach ($channel_array as $channel)
 
   if ($available_values)
   {
-    if ($available_values->num_rows <= 0) 
+    if ($available_values->num_rows <= 0)
     {
       $sql_get_stored_archived_values = $sql_get_all_available_values . " AND T.STATUS >= " . strval($STATUS_STORED) . " ORDER BY T.ACQUIRED_TIME DESC";
       debug_log('$sql_get_stored_archived_values: ', $sql_get_stored_archived_values);
       $available_values = $conn->query($sql_get_stored_archived_values);
     }
-    if ($available_values->num_rows > 0) 
+    if ($available_values->num_rows > 0)
     {
-      while ($value_row = $available_values->fetch_array(MYSQLI_NUM)) 
+      while ($value_row = $available_values->fetch_array(MYSQLI_NUM))
       {
         $time_string = "";
         if (!is_null($value_row[0])) $time_string = strval($value_row[0]);
-        $return_string .= $time_string . ",,," ; 
+        $return_string .= $time_string . ",,," ;
         $all_bytes_string = "[";
         if (!is_null($value_row[1])) $bytes_string_json = strval($value_row[1]);
         $bytes_string_json_array = json_decode($bytes_string_json, true);
@@ -95,11 +95,11 @@ foreach ($channel_array as $channel)
         $return_string .= "," ;
       }
     }
-    else 
+    else
     {
     }
 
-    $return_string .= ";"; 
+    $return_string .= ";";
 
   }
 }

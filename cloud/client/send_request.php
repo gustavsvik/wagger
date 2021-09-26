@@ -54,7 +54,7 @@ if ($data_end > 0)
     $channel_string = mb_substr($channels, $channel_start, $channel_end-$channel_start);
     $channel = intval($channel_string);
 
-    if ( in_array($channel, $ACCESSIBLE_CHANNELS, TRUE) || $channel >= $ACCESSIBLE_CHANNELS_FROM )
+    if ( in_array($channel, $ACCESSIBLE_CHANNELS, TRUE) || $channel >= $UNRESTRICTED_CHANNELS_FROM )
     {
 
       if (in_array($channel, $CLEAR_REQUESTED_CHANNELS, TRUE))
@@ -132,7 +132,7 @@ if ($data_end > 0)
 
     $channel_start = $channel_end+1;
   }
-  
+
   $conn->close();
 
 }

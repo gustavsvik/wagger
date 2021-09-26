@@ -69,16 +69,16 @@ while ($valid_channel_data && $channel_start < $data_end)
     {
       if ($WRITE_IMAGE_FILES == TRUE)
       {
-        $top_base64_bytes = mb_substr($base64_string, 0, 100);
-        debug_log('$top_base64_bytes: ' . $top_base64_bytes);
+        debug_log('$base64_string: ' . mb_substr($base64_string, 0, 100));
         $image_bytes = base64_decode($base64_string);
         $image_filetype = get_image_mime_type($image_bytes);
+        debug_log('$image_filetype: ', $image_filetype);
         if (!is_null($image_filetype))
         {
         if(!in_array($channel, $file_channels)) $file_channels[] = $channel ;
         $image_filename = $IMAGE_DIR . "/" . $channel_string . "_" . $timestamp_string . '.' . $image_filetype;
         debug_log('$image_filename: ' . $image_filename);
-        $ifp = fopen($image_filename, 'wb'); 
+        $ifp = fopen($image_filename, 'wb');
         fwrite($ifp, $image_bytes );
         fclose($ifp);
         copy($image_filename, $IMAGE_DIR . "/" . $channel_string . '.' . $image_filetype);
@@ -91,7 +91,7 @@ while ($valid_channel_data && $channel_start < $data_end)
       {
         if(!in_array($channel, $file_channels)) $file_channels[] = $channel ;
         $text_filename = $IMAGE_DIR . "/" . $channel_string . "_" . $timestamp_string . ".txt";
-        $ifp = fopen($text_filename, 'wb'); 
+        $ifp = fopen($text_filename, 'wb');
         fwrite($ifp, $return_string );
         fclose($ifp);
         copy($text_filename, $IMAGE_DIR . "/" . $channel_string . ".txt");
@@ -124,9 +124,9 @@ foreach ($file_channels as $file_channel)
   $stored_archived_values = $conn->query($sql_get_stored_archived_values) ;
 
   $stored_archived_timestamps = [] ;
-  if ($stored_archived_values->num_rows > 0) 
+  if ($stored_archived_values->num_rows > 0)
   {
-    while ($value_row = $stored_archived_values->fetch_array(MYSQLI_NUM)) 
+    while ($value_row = $stored_archived_values->fetch_array(MYSQLI_NUM))
     {
       if (!is_null($value_row[0])) $stored_archived_timestamps[] = strval($value_row[0]) ;
     }
@@ -139,7 +139,7 @@ foreach ($file_channels as $file_channel)
   {
     $filename = basename($complete_filename) ;
     $file_timestamp_string = getStringBetween($filename, "_", ".") ;
-    if ( is_file($complete_filename) && $num_files > $MAX_FILES_PER_CHANNEL && !in_array($file_timestamp_string, $stored_archived_timestamps) ) 
+    if ( is_file($complete_filename) && $num_files > $MAX_FILES_PER_CHANNEL && !in_array($file_timestamp_string, $stored_archived_timestamps) )
     {
       unlink($complete_filename) ;
       --$num_files ;

@@ -10,7 +10,7 @@
     $epoch_convert = 2208988800;
     $vn = 3;
 
-    $servers = array('0.se.pool.ntp.org','1.se.pool.ntp.org','2.se.pool.ntp.org','3.se.pool.ntp.org') ; 
+    $servers = array('0.se.pool.ntp.org','1.se.pool.ntp.org','2.se.pool.ntp.org','3.se.pool.ntp.org') ;
     $server_count = count($servers);
 
     //see rfc5905, page 20
@@ -27,17 +27,17 @@
 
     //we'll use a for loop to try additional servers should one fail to respond
     $i = 0;
-    for($i; $i < $server_count; $i++) 
+    for($i; $i < $server_count; $i++)
     {
       debug_log('udp://.$servers[$i]: ' . strval('udp://'.$servers[$i]));
       $socket = @fsockopen('udp://'.$servers[$i], 123, $err_no, $err_str, 1);
 
-      if ($socket) 
+      if ($socket)
       {
         debug_log('$socket create successful');
         //add nulls to position 11 (the transmit timestamp, later to be returned as originate)
         //10 lots of 32 bits
-        for ($j = 1; $j < 40; $j++) 
+        for ($j = 1; $j < 40; $j++)
         {
           $request_packet .= chr(0x0);
         }
@@ -63,7 +63,7 @@
         $request_packet .= $packed_seconds;
         $request_packet .= $packed_fractional;
         debug_log('$request_packet: ' . strval(bin2hex($request_packet)));
-        if (fwrite($socket, $request_packet)) 
+        if (fwrite($socket, $request_packet))
         {
           debug_log('fwrite($socket, $request_packet) successful');
           $data = NULL;
@@ -77,25 +77,25 @@
         }
         fclose($socket);
 
-        if (strlen($response) == 48) 
+        if (strlen($response) == 48)
         {
           //the response was of the right length, assume it's valid and break out of the loop
           break;
         }
-        else 
+        else
         {
           debug_log('$response incorrect length!');
-          if ($i == $server_count - 1) 
+          if ($i == $server_count - 1)
           {
             //this was the last server on the list, so give up
             die('unable to establish a connection');
           }
         }
       }
-      else 
+      else
       {
         debug_log('$socket create unsuccessful');
-        if ($i == $server_count-1) 
+        if ($i == $server_count-1)
         {
           //this was the last server on the list, so give up
           die('unable to establish a connection');
@@ -123,7 +123,7 @@
     $server = $servers[$i];
 
     $ntp_time =  $remote_transmitted - $delay;
-    
+
     return $ntp_time ;
 
   }

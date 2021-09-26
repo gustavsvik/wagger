@@ -8,7 +8,7 @@ function db_get_connection($server_name, $user_name, $password, $db_name)
   if (!$connection) die('mysqli_init failed');
   if (!$connection->options(MYSQLI_OPT_CONNECT_TIMEOUT, 5)) die('Setting MYSQLI_OPT_CONNECT_TIMEOUT failed');
   if (!$connection->real_connect($server_name, $user_name, $password, $db_name)) die('Connect Error (' . mysqli_connect_errno() . ') ' . mysqli_connect_error());
-  
+
   return $connection;
 }
 
@@ -44,9 +44,9 @@ function db_get_max_value($connection, $table_name, $column_name)
   $max_value = NULL;
   $sql_max_value = "SELECT MAX(T." . $column_name . ") FROM " . $table_name . " T";
   $max_value_rows = $connection->query($sql_max_value);
-  if (is_object($max_value_rows) && $max_value_rows->num_rows > 0) 
+  if (is_object($max_value_rows) && $max_value_rows->num_rows > 0)
   {
-    while ($row = $max_value_rows->fetch_array(MYSQLI_NUM)) 
+    while ($row = $max_value_rows->fetch_array(MYSQLI_NUM))
     {
       if (!is_null($row[0])) $max_value = intval($row[0]);
     }
@@ -100,15 +100,15 @@ function db_get_full_rows($connection, $table_name, $index_array) //db_get_all_d
     $sql_get_full_rows .= " T WHERE T." . $table_label . "_UNIQUE_INDEX IN (" . get_separated_value_range_string($index_array, ",") . ")";
   }
   $full_rows = $connection->query($sql_get_full_rows);
-  
-  if ($full_rows->num_rows > 0) 
+
+  if ($full_rows->num_rows > 0)
   {
-    while ($row = $full_rows->fetch_assoc()) 
+    while ($row = $full_rows->fetch_assoc())
     {
       $rows[] = $row;
     }
   }
-  return rows; 
+  return rows;
 }
 
 
@@ -282,7 +282,7 @@ function db_get_static_by_time_interval_status($connection, $table_label, $start
       if (!is_null($latest_point_time)) $end_time = $latest_point_time;
     }
     $start_time = $end_time ;
-    if (!$select_all) $start_time -= $duration*$unit; 
+    if (!$select_all) $start_time -= $duration*$unit;
   }
 /*
   debug_log('$start_time: ', $start_time);
@@ -335,15 +335,15 @@ function db_get_ais_records($connection, $channels = [], $start_time = -9999, $d
   {
     if ($end_time === -9999)
     {
-      $latest_point_time = time(); 
+      $latest_point_time = time();
       if (!is_null($latest_point_time)) $end_time = $latest_point_time;
     }
     $start_time = $end_time ;
-    if (!$select_all) $start_time -= $duration*$unit; 
+    if (!$select_all) $start_time -= $duration*$unit;
   }
 
   foreach ($channels as $channel)
-  {									   
+  {
     $channel_string = strval($channel);
 
     $sql_get_all_available_values = "SELECT T.ACQUIRED_TIME,T.ACQUIRED_BYTES FROM t_acquired_data T";
@@ -355,15 +355,15 @@ function db_get_ais_records($connection, $channels = [], $start_time = -9999, $d
 
     if ($available_values)
     {
-      if ($available_values->num_rows <= 0) 
+      if ($available_values->num_rows <= 0)
       {
         $sql_get_stored_archived_values = $sql_get_all_available_values . " AND T.STATUS >= " . strval($STATUS_STORED) . " ORDER BY T.ACQUIRED_TIME DESC";
         //debug_log('$sql_get_stored_archived_values: ', $sql_get_stored_archived_values);
         $available_values = $conn->query($sql_get_stored_archived_values);
       }
-      if ($available_values->num_rows > 0) 
+      if ($available_values->num_rows > 0)
       {
-        while ($value_row = $available_values->fetch_array(MYSQLI_NUM)) 
+        while ($value_row = $available_values->fetch_array(MYSQLI_NUM))
         {
           $time_string = "";
           if (!is_null($value_row[0])) $time_string = strval($value_row[0]);

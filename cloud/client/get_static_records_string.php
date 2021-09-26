@@ -28,7 +28,7 @@ $return_string = "";
 
 $conn = db_get_connection($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME);
 
-if (!is_null($conn)) 
+if (!is_null($conn))
 {
   //$conn->autocommit(FALSE);
   $return_data_array = db_get_static_by_time_interval_status($conn, $web_api_table_label, $start_time, $duration, $unit, $end_time, $lowest_status, $STATUS_STORED);
@@ -48,7 +48,7 @@ if ($start_time === -9999)
     if (!is_null($latest_point_time)) $end_time = $latest_point_time;
   }
   $start_time = $end_time ;
-  if (!$select_all) $start_time -= $duration*$unit; 
+  if (!$select_all) $start_time -= $duration*$unit;
 }
 
 $dummy_channel_string = "1";
@@ -64,23 +64,23 @@ $available_values = $conn->query($sql_get_available_values);
 
 if ($available_values)
 {
-  if ($available_values->num_rows <= 0) 
+  if ($available_values->num_rows <= 0)
   {
     $sql_get_stored_archived_values = $sql_get_all_available_values . " AND T." . $column_label_string . "_STATUS >= " . strval($STATUS_STORED) . " ORDER BY T." . $column_label_string . "_TIME DESC";
     $available_values = $conn->query($sql_get_stored_archived_values);
   }
-  if ($available_values->num_rows > 0) 
+  if ($available_values->num_rows > 0)
   {
-    while ($value_row = $available_values->fetch_array(MYSQLI_NUM)) 
+    while ($value_row = $available_values->fetch_array(MYSQLI_NUM))
     {
       $time_string = "";
       if (!is_null($value_row[0])) $time_string = strval($value_row[0]);
       $description_string = "";
       if (!is_null($value_row[1])) $description_string = strval($value_row[1]);
-      $return_string .= $time_string . ",,," ; 
+      $return_string .= $time_string . ",,," ;
       if (strlen($description_string) > 0) $return_string .= ais_armor_string($description_string) ;
       //{
-      //  if (in_array($dummy_channel, $ARMORED_BYTE_STRING_CHANNELS, TRUE)) 
+      //  if (in_array($dummy_channel, $ARMORED_BYTE_STRING_CHANNELS, TRUE))
       //  {
       //    $description_string = str_replace(",", "|", $description_string) ;
       //    $description_string = str_replace(";", "~", $description_string) ;
@@ -90,7 +90,7 @@ if ($available_values)
       $return_string .= "," ;
     }
   }
-  else 
+  else
   {
   }
 
@@ -115,9 +115,8 @@ if ($available_values)
       $time_string = "";
       $time = $times[$index];
       if (!is_null($time)) $time_string = strval($time);
-      if (strlen($time_string) > 0) $return_string .= $time_string ; 
-	  
-      $return_string .= ",,,"; 
+      if (strlen($time_string) > 0) $return_string .= $time_string ;
+      $return_string .= ",,,";
 
       $description_string = "";
       $description = $descriptions[$index];
