@@ -17,33 +17,37 @@ $conn = db_get_connection($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME);
 
 $conn->autocommit(TRUE);
 
-$channels_list = getListByIDs($request_string);
+$channels_list = get_sql_list_from_channel_request_string($request_string);
+debug_log('$channels_list: ' . $channels_list);
+
+//$channels_list = getListByIDs($request_string);
+
 $return_string = NULL;
 
 $sql_request_channels = "SELECT DISTINCT AD.CHANNEL_INDEX FROM " . $ACQUIRED_DATA_TABLE_NAME . " AD WHERE AD.CHANNEL_INDEX IN (" . $channels_list . ") AND AD.STATUS = " . strval($STATUS_REQUESTED);
 $channels_requested = $conn->query($sql_request_channels);
 
-if ($channels_requested && $channels_requested->num_rows > 0) 
+if ($channels_requested && $channels_requested->num_rows > 0)
 {
-  while ($channel_row = $channels_requested->fetch_assoc()) 
+  while ($channel_row = $channels_requested->fetch_assoc())
   {
     $sql_get_channel_points = "SELECT DISTINCT ACQUIRED_TIME FROM " . $ACQUIRED_DATA_TABLE_NAME . " AD WHERE AD.STATUS = " . strval($STATUS_REQUESTED) . " AND AD.CHANNEL_INDEX = " . $channel_row["CHANNEL_INDEX"] . " AND AD.ACQUIRED_TIME>" . strval(time()-$duration*$unit) . " ORDER BY ACQUIRED_TIME DESC";
     $channel_points = $conn->query($sql_get_channel_points);
-    if ($channel_points && $channel_points->num_rows > 0) 
+    if ($channel_points && $channel_points->num_rows > 0)
     {
       $return_string .= $channel_row["CHANNEL_INDEX"] . ";";
-      while ($point_row = $channel_points->fetch_assoc()) 
+      while ($point_row = $channel_points->fetch_assoc())
       {
         $return_string .= $point_row["ACQUIRED_TIME"] . ",";
       }
       $return_string .= ";";
-    } 
-    else 
+    }
+    else
     {
     }
   }
 }
-else 
+else
 {
 }
 
