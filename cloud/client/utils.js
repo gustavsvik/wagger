@@ -636,6 +636,7 @@ class AisData
 {
   constructor()
   {
+    this.OWN_ZOOM_LEVEL = null;
     this.OWN_POSITION_AVAILABLE = false;
     this.OWN_POSITION_FOLLOW = false;
     this.OWN_LOCATION_COORDS = {};
