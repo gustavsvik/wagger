@@ -590,35 +590,16 @@ function refresh_display()
     if (Ais.OWN_POSITION_FOLLOW && Ais.OWN_LOCATION_POS.length === 2)
     {
       map.flyTo(Ais.OWN_LOCATION_POS);
-      console.log("Ais.OWN_LOCATION_ACCURACY", Ais.OWN_LOCATION_ACCURACY);
       const center_pos = map.getCenter(); // get map center
-      //console.log("center_pos['lat']", center_pos['lat']);
       const map_bounds = map.getBounds();
-      //console.log("map_bounds.getNorth()", map_bounds.getNorth());
       const map_bound_north = L.latLng(map_bounds.getNorth(), center_pos['lng']);
-      //console.log("map_bound_north", map_bound_north);
       const map_bound_east = L.latLng(center_pos['lat'], map_bounds.getEast());
       const map_distance_north = map_bound_north.distanceTo(center_pos);
       const map_distance_east = map_bound_east.distanceTo(center_pos);
-      console.log("map_distance_north", map_distance_north, "map_distance_east", map_distance_east);
       const margin_factor = Math.min(map_distance_north, map_distance_east) / Ais.OWN_LOCATION_ACCURACY;
-      console.log("margin_factor", margin_factor);
       const zoom_level_adjust = Math.floor(Math.log2(margin_factor));
-      console.log("zoom_level_adjust", zoom_level_adjust);
       const current_zoom_level = map.getZoom();
       if (zoom_level_adjust < 0) map.flyTo(Ais.OWN_LOCATION_POS, current_zoom_level + zoom_level_adjust);
-      /*
-      const pointC = map.latLngToContainerPoint(center_pos); // convert to containerpoint (pixels)
-      const pointX = [pointC.x + 10, pointC.y]; // add 10 pixels to x
-      const pointY = [pointC.x, pointC.y + 10]; // add 10 pixels to y
-      // convert containerpoints to latlng's
-      const latLngC = map.containerPointToLatLng(pointC);
-      const latLngX = map.containerPointToLatLng(pointX);
-      const latLngY = map.containerPointToLatLng(pointY);
-      const distanceX = latLngC.distanceTo(latLngX)/10; // calculate distance per pixel c and x (latitude)
-      const distanceY = latLngC.distanceTo(latLngY)/10; // calculate distance per pixel between c and y (longitude)
-      console.log("distanceX", distanceX, "distanceY", distanceY);
-      */
     }
   }
 
