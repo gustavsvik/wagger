@@ -155,7 +155,9 @@ let share_button = document.createElement("BUTTON");
 share_div.appendChild(share_button);
 share_button.id = "share_button";
 Help.set_properties( share_button.style, { "position": "absolute", "width": "280px", "top": "10px", "right": "5px", "padding": "10px", "z-index": "400" , "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } ) ;
-share_button.addEventListener("click", create_id_input);
+
+const id_input_description = '<br>Please enter a specific user ID (up to 10 characters will be displayed):';
+share_button.addEventListener("click", function(){ IdInput.create(id_input_description, 'Welcome to the MarIEx position reporting tool of Test Site Bothnia! We try to take all precautions possible to keep our test sites safe and secure, and your help is greatly appreciated. By adding a user ID to identify your position marker on the chart (either an arbitrary one of your choice or your name, ship name, call sign, MMSI, or other presumably unique identifier) when present in or near one of our test areas, you can improve your visibility not only to our test management team but to your fellow seafarers and land travellers as well. Please consider when choosing your ID that it will be sent back (securely) to Test Site Bothnia and stored (securely) in our database before being publicly shared in this application, and take note that your ID may be shortened to its first 10 characters when displayed.', 'To be able to link your device to your position unambiguously for the benefit of the Test Site Bothnia team and your fellow seafarers and land travellers, you can permit the MarIEx app to set a single cookie containing your user ID only (which is non-shareable with other sites). If you uncheck the box no new cookie will be set on the device and any cookies previously set by MarIEx will be removed.'); } );
 let share_button_text = document.createTextNode("Share position with Test Site Bothnia");
 share_button.appendChild(share_button_text);
 let cookie_value = Help.get_cookie("mariex_user_id");
@@ -242,7 +244,7 @@ function follow_position()
   }
 }
 
-
+/*
 function create_id_input()
 {
   let id_dialog = document.createElement("DIALOG");
@@ -335,19 +337,6 @@ function create_id_input()
     }
 
     id_dialog.close();
-
-    //async function
-    //const user_id_exists_response = await fetch( 'https://labremote.net/client/user_id_exists.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'module_address': Ais.OWN_USER_ID}) } );
-    //let new_channel_data = null;
-    //try
-    //{
-    //  new_channel_data = await user_id_exists_response.json();
-    //  Ais.OWN_DATA_CHANNEL = new_channel_data["new_channel_index"];
-    //}
-    //catch(e)
-    //{
-    //}
-
   }
 
   function cancel()
@@ -366,6 +355,7 @@ function create_id_input()
   }
 
 }
+*/
 
 
 function create_image_input()
