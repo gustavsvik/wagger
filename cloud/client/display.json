@@ -88,6 +88,42 @@
     ]
   },
   {
+    "title": "Thermal condition monitor 1 (live)",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": [],
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 20}, "col": {"r": 255, "g": 255, "b": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+        "channels": [],
+        "img_channels":
+        [
+          { "index": 200, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 560, "pos": "center"} }
+        ],
+        "ctrl_channels": []
+      }
+    ]
+  },
+  {
+    "title": "Thermal condition monitor 2 (live)",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs": [],
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 20}, "col": {"r": 255, "g": 255, "b": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+        "channels": [],
+        "img_channels":
+        [
+          { "index": 220, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 560, "pos": "center"} }
+        ],
+        "ctrl_channels": []
+      }
+    ]
+  },
+  {
     "title": "Weather station (view)",
     "show": true,
     "screens":
