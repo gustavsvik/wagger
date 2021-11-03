@@ -147,7 +147,7 @@
     ]
   },
   {
-    "title": "Test supervisor display (live)",
+    "title": "Test supervision display (live)",
     "show": true,
     "screens":
     [
@@ -183,7 +183,7 @@
     ]
   },
   {
-    "title": "Navigator display (live)",
+    "title": "Navigation display (live)",
     "show": true,
     "screens":
     [
