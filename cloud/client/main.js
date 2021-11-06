@@ -858,7 +858,7 @@ function display_select_listener()
       _timebkg.title = "";
       Disp.setProperties( _timebkg.style,
       {
-        width: (_time_disp.size * 14.1).toString() + "px",
+        width: (_time_disp.size * 14.3).toString() + "px",
         height: (_time_disp.size * 4.1 + 4).toString() + "px",
         position: "absolute",
         left: (_time_disp.pos.x * A.display_img_scale + A.CANVAS_POS_X + A.canvas_shift_x - _time_disp.size/2 + 1).toString() + "px",
