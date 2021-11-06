@@ -7,12 +7,12 @@ let D = new Disp();
 
 
 
-function setup() 
+function setup()
 {
   frameRate(A.FRAME_RATE);
 
   A.ntp.t1 = parseInt((new Date().valueOf()) * 1000) ;
-  httpGet(A.CLIENT_URL + "server_time.php", "json", {}, handle_server_time); 
+  httpGet(A.CLIENT_URL + "server_time.php", "json", {}, handle_server_time);
 
   document.title = "LabRemote"; // New title :)
   A.CONTAINER = document.getElementById("myContainer");
@@ -23,7 +23,7 @@ function setup()
   A.DISPLAY_SELECT.addEventListener("change", display_select_listener);
   A.DISPLAY_SELECT.options[0] = new Option("Loading displays...", 0);
 
-  Disp.setProperties( A.DISPLAY_SELECT.style, 
+  Disp.setProperties( A.DISPLAY_SELECT.style,
   {
     position: "absolute",
     left: "10px",
@@ -49,14 +49,14 @@ function setup()
 }
 
 
-function draw() 
+function draw()
 {
 
   A.frames_active++;
 
   if (A.frames_active < A.display_timeout * A.FRAME_RATE && typeof A.DISPLAY_SELECT.style !== 'undefined')
   {
-    //A.DISPLAY_SELECT.style.visibility = "visible"; 
+    //A.DISPLAY_SELECT.style.visibility = "visible";
 
     if (A.display_kiosk_interval > 0)
     {
@@ -84,10 +84,10 @@ function draw()
   if ( (frameCount - A.last_time_sync >= A.NTP_SYNC_INTERVAL * A.FRAME_RATE) && A.frames_active < A.display_timeout * A.FRAME_RATE && A.display_is_static === false )
   {
     A.ntp.t1 = parseInt((new Date().valueOf()) * 1000) ;
-    httpGet(A.CLIENT_URL + "server_time.php", "json", {}, handle_server_time); 
+    httpGet(A.CLIENT_URL + "server_time.php", "json", {}, handle_server_time);
     A.last_time_sync = frameCount;
   }
-  
+
   if ( (frameCount - A.last_request >= A.REQUEST_INTERVAL * A.FRAME_RATE) && A.frames_active < A.display_timeout * A.FRAME_RATE && A.display_is_static === false)
   {
     if (A.chan_index_string !== "")
@@ -121,7 +121,7 @@ function draw()
       httpPost(A.CLIENT_URL + "get_uploaded.php", "json", _image_get_params, handle_get_data);
     }
     A.last_get = frameCount;
-  }  
+  }
 /*
   if ( (frameCount - A.last_get >= A.REQUEST_INTERVAL * A.FRAME_RATE) && A.frames_active < A.display_timeout * A.FRAME_RATE)
   {
@@ -131,7 +131,7 @@ function draw()
       httpPost(A.CLIENT_URL + "get_ctrl_state.php", "json", _retrieve_params, handle_get_ctrl);
       //A.last_get_ctrl = frameCount;
     }
-  }  
+  }
 */
   if ( A.pressed_send !== null && A.moved_slider !== null && A.display_is_static === false)
   {
@@ -161,18 +161,18 @@ function draw()
       A.DISPLAY_TIMEOUT_TEXT = document.createElement("DIV");
       A.CONTAINER.appendChild(A.DISPLAY_TIMEOUT_TEXT);
       A.DISPLAY_TIMEOUT_TEXT.innerHTML = "Timeout due to inactivity - please reload page to continue data transfer!";
-      Disp.setProperties( A.DISPLAY_TIMEOUT_TEXT.style, 
-      { 
-        width: (parseInt(A.img_width)).toString() + "px", 
-        height: (parseInt(A.TIMEOUT_FONTSIZE)).toString() + "px", 
-        position: "absolute", 
-        //left: (parseInt(A.CANVAS_POS_X + A.canvas_shift_x + Math.max(A.img_width/2 - A.TIMEOUT_FONTSIZE*23.2 + 135, 0))).toString() + "px", 
-        //top: (parseInt(A.CANVAS_POS_Y + A.canvas_shift_y + A.img_height/2 - A.TIMEOUT_FONTSIZE/2)).toString() + "px", 
-        //fontSize: (parseInt(A.TIMEOUT_FONTSIZE)).toString() + "px", 
-        fontFamily: A.all_font_families, 
+      Disp.setProperties( A.DISPLAY_TIMEOUT_TEXT.style,
+      {
+        width: (parseInt(A.img_width)).toString() + "px",
+        height: (parseInt(A.TIMEOUT_FONTSIZE)).toString() + "px",
+        position: "absolute",
+        //left: (parseInt(A.CANVAS_POS_X + A.canvas_shift_x + Math.max(A.img_width/2 - A.TIMEOUT_FONTSIZE*23.2 + 135, 0))).toString() + "px",
+        //top: (parseInt(A.CANVAS_POS_Y + A.canvas_shift_y + A.img_height/2 - A.TIMEOUT_FONTSIZE/2)).toString() + "px",
+        //fontSize: (parseInt(A.TIMEOUT_FONTSIZE)).toString() + "px",
+        fontFamily: A.all_font_families,
         color: Disp.rGBALiteralFromArray(A.STANDARD_FOREGROUND_COLOR),
-        textAlign: "left", 
-        visibility: "visible" 
+        textAlign: "left",
+        visibility: "visible"
       } ) ;
 
       reset_display_variables();
@@ -186,8 +186,8 @@ function draw()
 
       let _view_lag = A.ntp.timestamp - A.data_timestamp;
       if ( _view_lag > A.time_bins * A.time_bin_size || !navigator.onLine )
-      {          
-        if (!App.isValidNumber(_view_lag) || _view_lag > 10*365*24*60*60 ) 
+      {
+        if (!App.isValidNumber(_view_lag) || _view_lag > 10*365*24*60*60 )
         {
         }
         else if (!A.display_is_static) // display is not static
@@ -197,13 +197,13 @@ function draw()
           if (A.display_image_loading) _status_text = "loading image..." ;
         }
       }
-     
+
       if (!navigator.onLine) _status_text = "no internet connection!";
       if (typeof A.DISPLAY_INFO_TEXT.style !== 'undefined')
       {
         if (A.frames_active % 2 === 0) A.DISPLAY_INFO_TEXT.style.color = Disp.rGBALiteralFromArray([255,0,0,127]); else A.DISPLAY_INFO_TEXT.style.color = Disp.rGBALiteralFromArray([255,255,255,127]) ;
         A.DISPLAY_INFO_TEXT.innerHTML =  _lag_text + _status_text;
-        A.DISPLAY_INFO_TEXT.style.visibility = "visible"; 
+        A.DISPLAY_INFO_TEXT.style.visibility = "visible";
       }
     }
   }
@@ -212,7 +212,7 @@ function draw()
 
 
 function handle_image_loaded()
-{ 
+{
   //console.log(A.data_timestamp);
   A.display_image_loading = false;
 
@@ -229,17 +229,17 @@ function handle_image_loaded()
   //_current_imgs[1] = A.test_img;
 
   let _display = D.data[A.display_index];
-  if (typeof _display !== 'undefined') 
+  if (typeof _display !== 'undefined')
   {
     let _screen = _display.screens[0];
     A.setCanvasAutoScaleCenter(_screen.imgs, _current_imgs);
     A.setCanvasAutoScaleCenter(_screen.img_channels, _current_imgs);
 
     A.show_lag_warning_text = false;
-    
+
     A.placeAndSizeCanvasText(A.DISPLAY_INFO_TEXT, A.WARNING_FONTSIZE, 8.0, 0)
-    Disp.setProperties( A.DISPLAY_INFO_TEXT.style, 
-    { 
+    Disp.setProperties( A.DISPLAY_INFO_TEXT.style,
+    {
       visibility: "hidden"
     } ) ;
 
@@ -249,7 +249,7 @@ function handle_image_loaded()
     A.placeAndSizeCanvasElements(_screen.channels, "chanbkg", 1, 1) ;
     A.placeAndSizeCanvasElements(_screen.ctrl_channels, "ctrlbkg", 7, 14) ;
   }
-  
+
   for (let _i = 0; _i <= 0; _i++)
   {
     //_current_imgs[_i].canvas.style.overflow = "hidden";
@@ -283,7 +283,7 @@ function handle_image_request_data(data)
  * Dissect semicolon/comma separated ASCII based timestamp/float/base64 mixed type custom transfer format.
  */
 function handle_get_data(data)
-{ 
+{
   /* TODO: Call App.decodeTransferString here. */
   let _latest_time_array = [];
   let _json_string = data.returnstring;
@@ -294,18 +294,18 @@ function handle_get_data(data)
   let _channel_data_array = _channel_data.split(",");
   let _timestamp_matrix = [];
   let _value_matrix = [];
-  for (let _channel_index = 0; _channel_index < _no_of_channels; _channel_index++) 
+  for (let _channel_index = 0; _channel_index < _no_of_channels; _channel_index++)
   {
     _channel_string = _json_array[_channel_index*2];
     _channel_data = _json_array[_channel_index*2 + 1];
     _channel_data_array = _channel_data.split(",");
     let _field_data_array_length = (_channel_data_array.length - 1)/4 - 0 ;
-    
+
     let _timestamp_array = [];
     let _value_array = [];
     let _subsamples_string_array = [];
     let _base64_string_array = [];
-    for (let _sample_index = 0; _sample_index < _field_data_array_length ; _sample_index++) 
+    for (let _sample_index = 0; _sample_index < _field_data_array_length ; _sample_index++)
     {
       _timestamp_array[_sample_index] = parseInt( _channel_data_array[_sample_index*4+0] );
       _value_array[_sample_index] = parseFloat(_channel_data_array[_sample_index*4+1]);
@@ -316,14 +316,14 @@ function handle_get_data(data)
     _value_matrix.push([_channel_int, _value_array]);
   }
   populate_display_variables(_timestamp_matrix, _value_matrix);
-  
+
   A.text_element_alpha = 127;
 }
 
 
 function populate_display_variables(timestamp_matrix, value_matrix)
 {
-  let _server_timestamp = A.ntp.timestamp ; 
+  let _server_timestamp = A.ntp.timestamp ;
   if ( App.isValidGT(_server_timestamp, 0) )
   {
     A.server_timestamp = _server_timestamp;
@@ -344,7 +344,7 @@ function populate_display_variables(timestamp_matrix, value_matrix)
       _time.str_val = A.server_time_string;
       _time.val = A.server_timestamp;
     }
-    
+
     let _latest_data_timestamp = App.nthMaxOfArray(timestamp_matrix[0], 0);
     if ( App.isValidGT(_latest_data_timestamp, 0) )
     {
@@ -357,7 +357,7 @@ function populate_display_variables(timestamp_matrix, value_matrix)
         A.data_time_string = (_latest_time_string.substring(0,10)).concat( " ", _latest_time_string.substring(11,19), " ", A.TIME_ZONE );
       }
       else A.data_time_string = A.WAIT_MESSAGE;
-    
+
       for (let _img_channel_index = 0; _img_channel_index < _screen.img_channels.length; _img_channel_index++)
       {
         let _img_channel = _screen.img_channels[_img_channel_index];
@@ -370,12 +370,13 @@ function populate_display_variables(timestamp_matrix, value_matrix)
       {
         let _channel = _screen.channels[_channel_index];
         let _found_values_index = App.findWithAttr(value_matrix, 0, _channel.index);
-        if (_found_values_index > -1) 
+        if (_found_values_index > -1)
         {
           let _channel_values = (value_matrix[_found_values_index])[1];
           let _latest_value = _channel_values[_channel_values.length - 1];
           _channel.val = _latest_value * _channel.scale;
-          if ( App.isValidNumber(_channel.val) ) _channel.str_val = (_channel.val).toString().substring(0,_channel.disp.len) + " " + _channel.unit;
+          if ( App.isValidNumber(_channel.val) ) _channel.str_val = Help.rounded_string(_channel.val, _channel.disp.len) + " " + _channel.unit;
+          //_channel.str_val = (_channel.val).toString().substring(0,_channel.disp.len)
           else _channel.str_val = A.WAIT_MESSAGE;
         }
       }
@@ -383,12 +384,13 @@ function populate_display_variables(timestamp_matrix, value_matrix)
       {
         let _ctrl = _screen.ctrl_channels[_ctrl_index];
         let _found_values_index = App.findWithAttr(value_matrix, 0, _ctrl.index);
-        if (_found_values_index > -1) 
+        if (_found_values_index > -1)
         {
           let _ctrl_values = (value_matrix[_found_values_index])[1];
           let _latest_value = _ctrl_values[_ctrl_values.length - 1];
           _ctrl.val = _latest_value * _ctrl.scale;
-          if ( App.isValidNumber(_ctrl.val) ) _ctrl.str_val = (_ctrl.val).toString().substring(0,_ctrl.disp.len) + " " + _ctrl.unit;
+          if ( App.isValidNumber(_ctrl.val) ) _ctrl.str_val = Help.rounded_string(_ctrl.val, _ctrl.disp.len) + " " + _ctrl.unit;
+          //_ctrl.str_val = (_ctrl.val).toString().substring(0,_ctrl.disp.len)
           else _ctrl.str_val = A.WAIT_MESSAGE;
         }
       }
@@ -429,12 +431,12 @@ function mousePressed()
 
 function circle_button(x, y, d)
 {
-  let _distance = dist(mouseX, mouseY, x, y); 
+  let _distance = dist(mouseX, mouseY, x, y);
   if(_distance < d)
   {
     //isOverCircle = true;
-  } 
-  else 
+  }
+  else
   {
     //isOverCircle = false;
   }
@@ -447,11 +449,11 @@ function circle_button(x, y, d)
   {
     fill(100, 100);
     cursor(HAND);
-  } 
-  else 
+  }
+  else
   {
-    fill(200, 100); 
-    cursor(ARROW); 
+    fill(200, 100);
+    cursor(ARROW);
   }
   */
   stroke(0, 0);
@@ -464,27 +466,27 @@ function circle_button(x, y, d)
  */
 function handle_display_data(data)
 {
-  D.data = data.displays; 
-  
-  if (typeof data.disp_timeout !== 'undefined') A.display_timeout = data.disp_timeout; 
+  D.data = data.displays;
+
+  if (typeof data.disp_timeout !== 'undefined') A.display_timeout = data.disp_timeout;
   if (typeof data.disp_viewport_size !== 'undefined')
   {
     if (data.disp_viewport_size === "browser") A.display_browser_viewport = true;
     else A.display_viewport = data.disp_viewport_size;
-  }  
+  }
   if (typeof data.disp_override_font !== 'undefined') A.display_override_font = data.disp_override_font;
-  
-  if (typeof data.disp_kiosk_interval !== 'undefined') A.display_kiosk_interval = data.disp_kiosk_interval; 
+
+  if (typeof data.disp_kiosk_interval !== 'undefined') A.display_kiosk_interval = data.disp_kiosk_interval;
   if (A.display_kiosk_interval) A.CONTAINER.parentNode.style.overflow = "hidden";
 
-  if (typeof data.disp_kiosk_adjust !== 'undefined') A.display_kiosk_adjust = data.disp_kiosk_adjust; 
-  if (typeof data.disp_kiosk_override_height !== 'undefined') A.display_kiosk_height = data.disp_kiosk_override_height; 
-  
+  if (typeof data.disp_kiosk_adjust !== 'undefined') A.display_kiosk_adjust = data.disp_kiosk_adjust;
+  if (typeof data.disp_kiosk_override_height !== 'undefined') A.display_kiosk_height = data.disp_kiosk_override_height;
+
   A.all_font_families = Disp.addFonts([A.display_override_font.filename], A.display_override_font.path) + ", " + A.STANDARD_FONT_FAMILIES ;
 
   A.DISPLAY_SELECT.options.length = 0 ;
 
-  for (let _current_display = 0; _current_display < (D.data).length; _current_display++) 
+  for (let _current_display = 0; _current_display < (D.data).length; _current_display++)
   {
     A.DISPLAY_SELECT.options[A.DISPLAY_SELECT.options.length] = new Option(D.data[_current_display].title, _current_display);
   }
@@ -516,7 +518,7 @@ function label_listener()
         _time_label.innerHTML = _str_val + ( - A.ntp.adjustment / 1000000 ).toString().substring(0,7) + " s";
       }
     }
-  
+
     let _setval = Disp.getChannelElement (["setval", _index]);
     if (_setval !== null)
     {
@@ -527,10 +529,10 @@ function label_listener()
       let _value_unit_string = "";
       if ( _ctrl_channel.str_val !== "" ) _value_unit_string = _ctrl_channel.str_val;
       else _value_unit_string = (_ctrl_channel.val * _ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
-      let _str_val = _value_unit_string + _ctrl_channel.info;         
+      let _str_val = _value_unit_string + _ctrl_channel.info;
       _setval.innerHTML = _str_val;
       let _slider = Disp.getChannelElement (["slider", _index]);
-      if (_slider !== null) 
+      if (_slider !== null)
       {
         _slider.style.visibility = "visible";
         if (_ctrl_channel.type === "datetime")
@@ -548,13 +550,13 @@ function label_listener()
     let _label = Disp.getChannelElement (["label", _index]);
     if (_label !== null)
     {
-      _label.style.visibility = "visible"; 
+      _label.style.visibility = "visible";
       let _channels = (D.data[A.display_index]).screens[0].channels;
       let _chan_index = App.findWithAttr(_channels, "index", parseInt(_index) );
       let _channel = _channels[_chan_index];
       let _value_unit_string = "";
       //if ( _channel.str_val !== "" ) _value_unit_string = _channel.str_val;
-      //else 
+      //else
       _value_unit_string = (_channel.val).toString().substring(0, A.MAX_DISPLAY_DIGITS) + " " + _channel.unit;  // .substring(0,12)
       let _str_val = _value_unit_string + _channel.info;
       _label.innerHTML = _str_val;
@@ -591,12 +593,13 @@ function display_label(_element)
       let _ctrl_channel = _ctrl_channels[_ctrl_index];
       let _value_unit_string = "";
       if ( _ctrl_channel.str_val !== "" ) _value_unit_string = _ctrl_channel.str_val;
-      else _value_unit_string = (_ctrl_channel.val * _ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
-      let _str_val = _value_unit_string + _ctrl_channel.info;         
+      else _value_unit_string = Help.rounded_string(_ctrl_channel.val * _ctrl_channel.scale, _ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
+      // _value_unit_string = (_ctrl_channel.val * _ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len)
+      let _str_val = _value_unit_string + _ctrl_channel.info;
       _setval.innerHTML = _str_val;
       _setval.style.visibility = "visible";
       let _slider = Disp.getChannelElement (["slider", _index]);
-      if (_slider !== null) 
+      if (_slider !== null)
       {
         _slider.style.visibility = "visible";
         if (_ctrl_channel.type === "datetime")
@@ -614,14 +617,15 @@ function display_label(_element)
     let _label = Disp.getChannelElement (["label", _index]);
     if (_label !== null)
     {
-      _label.style.visibility = "visible"; 
+      _label.style.visibility = "visible";
       let _channels = (D.data[A.display_index]).screens[0].channels;
       let _chan_index = App.findWithAttr(_channels, "index", parseInt(_index) );
       let _channel = _channels[_chan_index];
       let _value_unit_string = "";
       //if ( _channel.str_val !== "" ) _value_unit_string = _channel.str_val;
-      //else 
-      _value_unit_string = (_channel.val).toString().substring(0, A.MAX_DISPLAY_DIGITS) + " " + _channel.unit;  // .substring(0,12)
+      //else
+      _value_unit_string = Help.rounded_string(_channel.val, A.MAX_DISPLAY_DIGITS) + " " + _channel.unit;
+      // (_channel.val).toString().substring(0, A.MAX_DISPLAY_DIGITS)
       let _str_val = _value_unit_string + _channel.info;
       _label.innerHTML = _str_val;
     }
@@ -636,7 +640,7 @@ function outside_label_listener()
     A.hovered_clicked_label = null ;
 
     let [_tag, _index] = Disp.getTagChannelIndex(_element);
-  
+
     if (_tag === "timebkg")
     {
       let _time_label = Disp.getChannelElement (["timelabel", null]);
@@ -644,15 +648,30 @@ function outside_label_listener()
       {
         let _time = (D.data[A.display_index]).screens[0].time;
         let _str_val = _time.str_val ;
-        _time_label.innerHTML = _str_val + Disp.htmlSpaces(0) + "<br>" + Disp.htmlSpaces(10) ; 
+        _time_label.innerHTML = _str_val + Disp.htmlSpaces(0) + "<br>" + Disp.htmlSpaces(10) ;
       }
+      _element.style.visibility = "hidden";
+    }
+
+    if (_tag === "chanbkg")
+    {
+      let _label = Disp.getChannelElement (["label", _index]);
+      let _channels = (D.data[A.display_index]).screens[0].channels;
+      let _chan_index = App.findWithAttr(_channels, "index", parseInt(_index) );
+      let _channel = _channels[_chan_index];
+      let _value_unit_string = "";
+      _value_unit_string = Help.rounded_string(_channel.val, _channel.disp.len) + " " + _channel.unit;  // .substring(0,12)
+      let _str_val = _value_unit_string + ""; //_channel.info;
+      _label.innerHTML = _str_val;
+
+      _element.style.visibility = "hidden";
     }
 
     let _ctrl_channels = (D.data[A.display_index]).screens[0].ctrl_channels;
     let _ctrl_index = App.findWithAttr(_ctrl_channels, "index", parseInt(_index) );
     let _ctrl_channel = _ctrl_channels[_ctrl_index];
 
-    if ( typeof _ctrl_channel !== 'undefined' && !(_ctrl_channel.show == true && _ctrl_channel.lock == true) ) 
+    if ( typeof _ctrl_channel !== 'undefined' && !(_ctrl_channel.show == true && _ctrl_channel.lock == true) )
     {
       let _setval = Disp.getChannelElement (["setval", _index]);
       if (_setval !== null)
@@ -665,8 +684,9 @@ function outside_label_listener()
       }
       let _value_unit_string = "";
       if ( _ctrl_channel.str_val !== "" ) _value_unit_string = _ctrl_channel.str_val;
-      else _value_unit_string = (_ctrl_channel.val  *_ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
-      _setval.innerHTML = _value_unit_string + Disp.htmlSpaces(0) + "<br>" + Disp.htmlSpaces(10) ; 
+      else _value_unit_string = Help.rounded_string(_ctrl_channel.val * _ctrl_channel.scale, _ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
+      // (_ctrl_channel.val  *_ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len)
+      _setval.innerHTML = _value_unit_string + Disp.htmlSpaces(0) + "<br>" + Disp.htmlSpaces(10) ;
 
       let _label = Disp.getChannelElement (["label", _index]);
       if (_label !== null)
@@ -676,8 +696,9 @@ function outside_label_listener()
         let _channel = _channels[_chan_index];
         let _value_unit_string = "";
         if ( _channel.str_val !== "" ) _value_unit_string = _channel.str_val;
-        else _value_unit_string = (_channel.val  *_channel.scale).toString().substring(0,_channel.disp.len) + " " + _channel.unit;
-        _label.innerHTML = _value_unit_string + Disp.htmlSpaces(0) + "<br>" + Disp.htmlSpaces(10) ; 
+        else _value_unit_string = Help.rounded_string(_channel.val * _channel.scale, _channel.disp.len) + " " + _channel.unit;
+        // (_channel.val  *_channel.scale).toString().substring(0,_channel.disp.len)
+        _label.innerHTML = _value_unit_string + Disp.htmlSpaces(0) + "<br>" + Disp.htmlSpaces(10) ;
       }
     }
   }
@@ -711,7 +732,7 @@ function slider_listener()
 
     let _ctrl_channel = [];
     let _ctrl_channels = (D.data[A.display_index]).screens[0].ctrl_channels;
-    for (let _ctrl_channel_counter = 0; _ctrl_channel_counter < _ctrl_channels.length; _ctrl_channel_counter++) 
+    for (let _ctrl_channel_counter = 0; _ctrl_channel_counter < _ctrl_channels.length; _ctrl_channel_counter++)
     {
       if ( _ctrl_channels[_ctrl_channel_counter].index === _slider_index ) _ctrl_channel = _ctrl_channels[_ctrl_channel_counter];
     }
@@ -721,11 +742,11 @@ function slider_listener()
       _value_unit_string = _ctrl_channel.min_str_val;
       if (_slider_value > 0.5) _value_unit_string = _ctrl_channel.max_str_val;
     }
-    else _value_unit_string = (_slider_value  *_ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
+    else _value_unit_string = Help.rounded_string(_slider_value  *_ctrl_channel.scale, _ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
 
     _ctrl_channel.str_val = _value_unit_string;
     _ctrl_channel.val = _slider_value;
-  
+
     _value_unit_string += _ctrl_channel.info;
 
     _setval.innerHTML = _value_unit_string;
@@ -743,7 +764,7 @@ function display_select_listener()
 
     background(255);
     A.saved_frames = 0;
-    if (A.display_kiosk_interval === 0) 
+    if (A.display_kiosk_interval === 0)
     {
       A.frames_active = 0;
     }
@@ -753,7 +774,7 @@ function display_select_listener()
       //window.scrollTo(A.CANVAS_POS_X, A.CANVAS_POS_Y);
       window.scrollTo(A.CANVAS_POS_X + _adjust.x, A.CANVAS_POS_Y + _adjust.y);
     }
-    
+
     A.channel_strings_array = [];
 
     Disp.removeAllElements(A.CONTAINER, ["BUTTON", "DIV", "INPUT", "OUTPUT"]);
@@ -778,14 +799,14 @@ function display_select_listener()
           A.canvas_shift_y = _img.disp.pos.y;
         }
         if (_img.dim !== "source")
-        {  
-          let _width = _img.dim.w ; 
+        {
+          let _width = _img.dim.w ;
           let _height = _img.dim.h ;
           if (A.display_kiosk_height > 0) _img.disp.h = A.display_kiosk_height ;
           let _img_disp_scale = _height / _img.disp.h ;
           A.display_img_scale = _img.disp.h / A.STD_SCALE_HEIGHT ;
           //if (A.display_kiosk_height > 0) _img_disp_scale = _height / A.display_kiosk_height ;
-          A.img_height = _height / _img_disp_scale; 
+          A.img_height = _height / _img_disp_scale;
           A.img_width = _width / _img_disp_scale;
         }
       }
@@ -800,7 +821,7 @@ function display_select_listener()
 
     A.DISPLAY_INFO_TEXT = document.createElement("DIV");
     A.CONTAINER.appendChild(A.DISPLAY_INFO_TEXT);
-    Disp.setProperties( A.DISPLAY_INFO_TEXT.style, 
+    Disp.setProperties( A.DISPLAY_INFO_TEXT.style,
     {
       width: (parseInt(A.img_width)).toString() + "px",
       height: (parseInt(A.WARNING_FONTSIZE)).toString() + "px",
@@ -829,13 +850,13 @@ function display_select_listener()
       A.CONTAINER.appendChild(_timebkg);
       let _time_active_label = document.createElement("BUTTON");
       _timebkg.appendChild(_time_active_label);
-      
+
       _time_active_label.innerHTML = "";
       let _time_active_label_text = document.createTextNode("");
       _time_active_label.appendChild(_time_active_label_text);
-      
-      _timebkg.title = ""; 
-      Disp.setProperties( _timebkg.style, 
+
+      _timebkg.title = "";
+      Disp.setProperties( _timebkg.style,
       {
         width: (_time_disp.size * 14.1).toString() + "px",
         height: (_time_disp.size * 4.1 + 4).toString() + "px",
@@ -849,8 +870,8 @@ function display_select_listener()
         backgroundColor: Disp.rGBALiteralFromArray([_time_bgcol.r,_time_bgcol.g,_time_bgcol.b,_time_bgcol.a])
       } ) ;
 
-      _time_active_label.title = ""; 
-      Disp.setProperties( _time_active_label.style, 
+      _time_active_label.title = "";
+      Disp.setProperties( _time_active_label.style,
       {
         position: "absolute",
         left: (_time_disp.size * 0.33).toString() + "px",
@@ -870,15 +891,15 @@ function display_select_listener()
       _timebkg.addEventListener("mouseover", label_listener);
       _timebkg.addEventListener("mouseleave", outside_label_listener);
 
-      _time.info = Disp.htmlSpaces(0) + "<br>" + "Last server response (NTP)" + "<br>" + "Client time offset: " ;    
-      _time.padding = Disp.htmlSpaces(5) + "<br>" + Disp.htmlSpaces(10);    
+      _time.info = Disp.htmlSpaces(0) + "<br>" + "Last server response (NTP)" + "<br>" + "Client time offset: " ;
+      _time.padding = Disp.htmlSpaces(5) + "<br>" + Disp.htmlSpaces(10);
     }
 
     let _no_of_channels = (_screen.channels).length;
     A.chan_index_string = "";
 
     for (let _i = 0; _i < _no_of_channels; _i++)
-    {  
+    {
       let _channel = _screen.channels[_i];
       let _disp = _channel.disp;
       let _bgcol = _disp.bgcol;
@@ -892,13 +913,13 @@ function display_select_listener()
 
       let _active_label = document.createElement("BUTTON");
       _chanbkg.appendChild(_active_label);
-      
+
       _active_label.innerHTML = "";
       let _active_label_text = document.createTextNode("");
       _active_label.appendChild(_active_label_text);
 
-      _chanbkg.title = ""; 
-      Disp.setProperties( _chanbkg.style, 
+      _chanbkg.title = "";
+      Disp.setProperties( _chanbkg.style,
       {
         width: (_disp.size * 13.9).toString() + "px",
         height: (_disp.size * 4.1 + 4).toString() + "px",
@@ -912,8 +933,8 @@ function display_select_listener()
         backgroundColor: Disp.rGBALiteralFromArray([_bgcol.r,_bgcol.g,_bgcol.b,_bgcol.a])
       } ) ;
 
-      _active_label.title = ""; 
-      Disp.setProperties( _active_label.style, 
+      _active_label.title = "";
+      Disp.setProperties( _active_label.style,
       {
         position: "absolute",
         left: (_disp.size * 0.33).toString() + "px",
@@ -932,11 +953,11 @@ function display_select_listener()
       _active_label.id = "label_" + _chan_index_string;
       _chanbkg.addEventListener("mouseover", label_listener);
       _chanbkg.addEventListener("mouseleave", outside_label_listener);
-      
-      _channel.info = Disp.htmlSpaces(0) + "<br>" + (_channel.label).toString() + "<br>" + "Measurement channel " + _chan_index_string ;    
+
+      _channel.info = Disp.htmlSpaces(0) + "<br>" + (_channel.label).toString() + "<br>" + "Measurement channel " + _chan_index_string ;
       _channel.padding = Disp.htmlSpaces(5) + "<br>" + Disp.htmlSpaces(10);
     }
-    
+
     let _no_of_img_channels = (_screen.img_channels).length;
 
     A.img_chan_index_string = "";
@@ -951,24 +972,24 @@ function display_select_listener()
         A.canvas_shift_y = _img_channel.disp.pos.y;
       }
       if (_img_channel.dim !== "source")
-      {  
-        let _width = _img_channel.dim.w ; 
+      {
+        let _width = _img_channel.dim.w ;
         let _height = _img_channel.dim.h ;
         if (A.display_kiosk_height > 0) _img_channel.disp.h = A.display_kiosk_height ;
         let _img_disp_scale = _height / _img_channel.disp.h ;
         A.display_img_scale = _img_channel.disp.h / A.STD_SCALE_HEIGHT ;
         //if (A.display_kiosk_height > 0) _img_disp_scale = _height / A.display_kiosk_height ;
-        A.img_height = _height / _img_disp_scale; 
+        A.img_height = _height / _img_disp_scale;
         A.img_width = _width / _img_disp_scale;
       }
     }
-      
+
     let _no_of_ctrl_channels = (_screen.ctrl_channels).length;
     A.ctrl_chan_index_string = "";
     for (let _i = 0; _i < _no_of_ctrl_channels; _i++)
     {
       let _ctrl_channel = _screen.ctrl_channels[_i];
-          
+
       let _ctrl_chan_index_string = (_ctrl_channel.index).toString();
       A.ctrl_chan_index_string += _ctrl_chan_index_string + ";";
 
@@ -976,7 +997,7 @@ function display_select_listener()
       let _ctrlbkg = document.createElement("DIV");
 
       A.CONTAINER.appendChild(_ctrlbkg);
-      
+
       let _slider = document.createElement("INPUT");
       let _setval = document.createElement("BUTTON");
       let _send = document.createElement("BUTTON");
@@ -984,7 +1005,7 @@ function display_select_listener()
       _ctrlbkg.appendChild(_slider);
       _ctrlbkg.appendChild(_setval);
       _ctrlbkg.appendChild(_send);
-      
+
       let _textForButton = document.createTextNode("");
       _setval.appendChild(_textForButton);
 
@@ -996,41 +1017,41 @@ function display_select_listener()
       _ctrlbkg.addEventListener("mouseover", label_listener);
       _ctrlbkg.addEventListener("mouseleave", outside_label_listener);
 
-      
+
       let _ctrl_disp = _ctrl_channel.disp;
       let _ctrl_color = _ctrl_disp.col;
       let _ctrl_bgcol = _ctrl_disp.bgcol;
 
-      _ctrlbkg.title = ""; 
-      Disp.setProperties( _ctrlbkg.style, 
+      _ctrlbkg.title = "";
+      Disp.setProperties( _ctrlbkg.style,
       {
         width: (_ctrl_disp.size * 10.8).toString() + "px",
         height: (_ctrl_disp.size * 8.2).toString() + "px",
         position: "absolute",
         left: (_ctrl_disp.pos.x * A.display_img_scale + A.CANVAS_POS_X + A.canvas_shift_x - _ctrl_disp.size/2 + 7).toString() + "px",
-        top: (_ctrl_disp.pos.y * A.display_img_scale + A.CANVAS_POS_Y + A.canvas_shift_y - _ctrl_disp.size + 14).toString() + "px", 
-        visibility: ( (_ctrl_channel.show == true && _ctrl_channel.lock == true) ? "visible" : "hidden" ), 
+        top: (_ctrl_disp.pos.y * A.display_img_scale + A.CANVAS_POS_Y + A.canvas_shift_y - _ctrl_disp.size + 14).toString() + "px",
+        visibility: ( (_ctrl_channel.show == true && _ctrl_channel.lock == true) ? "visible" : "hidden" ),
         fontSize: (parseInt(_ctrl_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
         fontFamily: A.all_font_families,
-        color: Disp.rGBALiteralFromArray([_ctrl_color.r,_ctrl_color.g,_ctrl_color.b,_ctrl_color.a]) , 
+        color: Disp.rGBALiteralFromArray([_ctrl_color.r,_ctrl_color.g,_ctrl_color.b,_ctrl_color.a]) ,
         backgroundColor: Disp.rGBALiteralFromArray([_ctrl_bgcol.r,_ctrl_bgcol.g,_ctrl_bgcol.b,_ctrl_bgcol.a])
       } ) ;
 
       _slider.title = "";
-      Disp.setProperties( _slider.style, 
+      Disp.setProperties( _slider.style,
       {
         width: (_ctrl_disp.size * 9.0).toString() + "px",
         height: (_ctrl_disp.size * 1.8).toString() + "px",
         position: "absolute",
         left: (_ctrl_disp.size * 0.7).toString() + "px",
         top: (_ctrl_disp.size * 0.6).toString() + "px",
-        visibility: ( (_ctrl_channel.show == true && _ctrl_channel.lock == true) ? "visible" : "hidden" ), 
+        visibility: ( (_ctrl_channel.show == true && _ctrl_channel.lock == true) ? "visible" : "hidden" ),
         fontSize: (parseInt(_ctrl_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
         fontFamily: A.all_font_families
       } ) ;
 
-      _setval.title = ""; 
-      Disp.setProperties( _setval.style, 
+      _setval.title = "";
+      Disp.setProperties( _setval.style,
       {
         position: "absolute",
         left: (_ctrl_disp.size * 0.38).toString() + "px",
@@ -1038,8 +1059,8 @@ function display_select_listener()
         visibility: "visible",
         fontSize: (parseInt(_ctrl_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
         fontFamily: A.all_font_families,
-        color: Disp.rGBALiteralFromArray([_ctrl_color.r,_ctrl_color.g,_ctrl_color.b,_ctrl_color.a]) , 
-        backgroundColor: "transparent",    
+        color: Disp.rGBALiteralFromArray([_ctrl_color.r,_ctrl_color.g,_ctrl_color.b,_ctrl_color.a]) ,
+        backgroundColor: "transparent",
         border: "transparent",
         outline: "none",
         textAlign: "left"
@@ -1047,14 +1068,14 @@ function display_select_listener()
 
       _send.title = "";
       _send.disabled = true;
-      Disp.setProperties( _send.style, 
+      Disp.setProperties( _send.style,
       {
         width: (_ctrl_disp.size * 2.7).toString() + "px",
         height: (_ctrl_disp.size * 1.6).toString() + "px",
         position: "absolute",
         left: (_ctrl_disp.size * 7.3).toString() + "px",
         top: (_ctrl_disp.size * 3.1).toString() + "px",
-        visibility: ( (_ctrl_channel.show == true && _ctrl_channel.lock == true) ? "visible" : "hidden" ), 
+        visibility: ( (_ctrl_channel.show == true && _ctrl_channel.lock == true) ? "visible" : "hidden" ),
         fontSize: (parseInt(_ctrl_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
         fontFamily: A.all_font_families,
         borderRadius: "10%",
@@ -1062,7 +1083,7 @@ function display_select_listener()
         textAlign: "center"
       } ) ;
 
-      //_label.style.visibility = "visible"; 
+      //_label.style.visibility = "visible";
       //let _value_unit_string = "";
       //_value_unit_string = (_ctrl_channel.val).toString().substring(0, A.MAX_DISPLAY_DIGITS) + " " + _ctrl_channel.unit;  // .substring(0,12)
       //let _str_val = _value_unit_string + _ctrl_channel.info;
@@ -1073,14 +1094,14 @@ function display_select_listener()
         let _date = new Date();
         let _value = _date.getFullYear().toString() + '-' + (_date.getMonth() + 1).toString().padStart(2, 0) + '-' + _date.getDate().toString().padStart(2, 0);
 
-        Disp.setProperties( _slider, 
+        Disp.setProperties( _slider,
         {
           type: "datetime-local",
-        } ) ;  
+        } ) ;
       }
       else
       {
-        Disp.setProperties( _slider, 
+        Disp.setProperties( _slider,
         {
           type: "range",
           min: _ctrl_channel.min_val,
@@ -1094,7 +1115,7 @@ function display_select_listener()
       let _value_unit_string = "";
       if ( _ctrl_channel.min_str_val !== "" && _ctrl_channel.max_str_val !== "" && _ctrl_channel.str_val !== "" )
       {
-        Disp.setProperties( _slider, 
+        Disp.setProperties( _slider,
         {
           min: 0,
           max: 1,
@@ -1103,14 +1124,14 @@ function display_select_listener()
         } ) ;
         _value_unit_string = _ctrl_channel.min_str_val;
       }
-      else _value_unit_string = (_ctrl_channel.val * _ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
-      
-      Disp.setProperties( _ctrl_channel, 
+      else _value_unit_string = Help.rounded_string(_ctrl_channel.val * _ctrl_channel.scale, _ctrl_channel.disp.len) + " " + _ctrl_channel.unit;
+      // (_ctrl_channel.val * _ctrl_channel.scale).toString().substring(0,_ctrl_channel.disp.len)
+      Disp.setProperties( _ctrl_channel,
       {
         str_val: _value_unit_string,
-        info: Disp.htmlSpaces(0) + "<br>" + Disp.htmlSpaces(10) + "<br>" + (_ctrl_channel.label).toString() + "<br>" + "Control channel " + _ctrl_chan_index_string, 
+        info: Disp.htmlSpaces(0) + "<br>" + Disp.htmlSpaces(10) + "<br>" + (_ctrl_channel.label).toString() + "<br>" + "Control channel " + _ctrl_chan_index_string,
         padding: Disp.htmlSpaces(0) + "<br>" + Disp.htmlSpaces(10) + "<br>" + Disp.htmlSpaces(10)
-      } ) ;      
+      } ) ;
 
       _setval.innerHTML = _value_unit_string + _ctrl_channel.padding; //+ "<br>" + Disp.htmlSpaces(10);
       _send.addEventListener("click", send_listener);
@@ -1125,7 +1146,7 @@ function display_select_listener()
     //  let vid = createVideo( ['http://labremote.net/client/images/labremote_mockup.mp4'] );
     //  vid.loop();
     //}
-    
+
     reset_display_variables();
 
   }

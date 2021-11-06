@@ -153,6 +153,19 @@ class Help
     return [_timestamp_matrix, _value_matrix, _bytestring_matrix] ;
   }
 
+
+  static rounded_string(value, display_length)
+  {
+    if (value === 0.0) value += Number.EPSILON ;
+    const decades = Math.floor( Math.log10( Math.abs(value) ) ) ;
+    let decimal_places = 0;
+    decimal_places = display_length - Math.abs(decades) - 2 ;
+    if (decades < 0) decimal_places += 1 ;
+    if (decimal_places < 0) decimal_places = 0 ;
+    const rounded_value_string = value.toFixed(decimal_places);
+    return rounded_value_string;
+  }
+
 }
 
 
