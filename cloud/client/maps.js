@@ -10,7 +10,9 @@ const height = window.innerHeight|| document.documentElement.clientHeight||
 document.body.clientHeight;
 //console.log(width, height);
 
-let geolocation_available = false;
+let Ais = new AisData();
+
+let geolocation_available = false ;
 if('geolocation' in navigator)
 {
   geolocation_available = true;
@@ -18,9 +20,8 @@ if('geolocation' in navigator)
 else
 {
   /* geolocation IS NOT available */
+  Ais.OWN_POSITION_AVAILABLE = false ;
 }
-
-let Ais = new AisData();
 
 const CustomIcon = L.Icon.extend
 (
@@ -89,7 +90,7 @@ let own_accuracy_circle = null;
 if (geolocation_available)
 {
   const geolocation_options = { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 };
-  const watchID = navigator.geolocation.watchPosition(handle_geolocation_success, handle_geolocation_error, geolocation_options);
+  const watchID = navigator.geolocation.getCurrentPosition(handle_geolocation_success, handle_geolocation_error, geolocation_options);
   own_location_marker = L.marker(center, {icon: own_location_stationary_icon});
   own_location_marker.addTo(map);
   own_accuracy_circle = L.circle(center, {color: 'steelblue', radius: 0, fillColor: 'steelblue', opacity: 0.2});
@@ -147,7 +148,34 @@ else shore_marker_02.bindPopup(shore_02_html_string, {closeOnClick: true, autoCl
 setInterval(refresh_data, 5000);
 setInterval(refresh_display, 2000);
 
+let id_button_text = 'Share position with Test Site Bothnia';
+if (!Ais.OWN_POSITION_AVAILABLE) id_button_text = 'No own position to share';
+const id_input_description = '<br>Please enter a specific user ID (up to 10 characters will be displayed):';
+const id_info_description = 'Welcome to the MarIEx position reporting tool of Test Site Bothnia! We try to take all precautions possible to keep our test sites safe and secure, and your help is greatly appreciated. By adding a user ID to identify your position marker on the chart (either an arbitrary one of your choice or your name, ship name, call sign, MMSI, or other presumably unique identifier) when present in or near one of our test areas, you can improve your visibility not only to our test management team but to your fellow seafarers and land travellers as well. Please consider when choosing your ID that it will be sent back (securely) to Test Site Bothnia and stored (securely) in our database before being publicly shared in this application, and take note that your ID may be shortened to its first 10 characters when displayed.';
+const cookie_info_description = 'To be able to link your device to your position unambiguously for the benefit of the Test Site Bothnia team and your fellow seafarers and land travellers, you can permit the MarIEx app to set a single cookie containing your user ID only (which is non-shareable with other sites). If you uncheck the box no new cookie will be set on the device and any cookies previously set by MarIEx will be removed.';
+const id_is_available = Ais.OWN_POSITION_AVAILABLE ;
+const id_not_available_preamble_text = 'No own position to share';
+const id_not_found_preamble_text = 'Sharing position anonymously'; //'Share position with Test Site Bothnia';
+const id_found_preamble_text = 'Identified as ';
+const id_stored_preamble_text = 'Device recognized as ';
+let id_input = new IdInput({id_button_text: id_button_text, id_input_description: id_input_description, id_info_description: id_info_description, cookie_info_description: cookie_info_description, id_is_available: id_is_available, id_not_available_preamble_text: id_not_available_preamble_text, id_not_found_preamble_text: id_not_found_preamble_text, id_found_preamble_text: id_found_preamble_text, id_stored_preamble_text: id_stored_preamble_text});
+let share_button = id_input.get_share_button();
+let cookie_value = id_input.get_cookie_value();
 
+if (Ais.OWN_POSITION_AVAILABLE && (typeof cookie_value !== 'undefined' && cookie_value !== null && cookie_value !== "") )
+{
+  Ais.OWN_USER_ID = cookie_value;
+  id_input.set_id(cookie_value);
+  share_button.innerText = "Identified as " + Ais.OWN_USER_ID;
+  Help.set_properties( this.share_button.style, { "color": Help.rgba_literal_from_array([127,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,0,63]) } ) ;
+}
+else if (Ais.OWN_LOCATION_POS.length === 2)
+{
+  share_button.innerText = "Sharing position anonymously" ;
+  Help.set_properties( this.share_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } );
+}
+
+/*
 let share_div = document.createElement("DIV");
 document.body.appendChild(share_div);
 //Help.set_properties( share_div.style, { "position": "relative" } );
@@ -173,6 +201,8 @@ else if (Ais.OWN_LOCATION_POS.length === 2)
   share_button.innerText = "Sharing position anonymously" ;
   Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } );
 }
+*/
+
 let camera_div = document.createElement("DIV");
 document.body.appendChild(camera_div);
 let camera_button = document.createElement("BUTTON");
@@ -506,16 +536,19 @@ function handle_geolocation_success(position)
   const own_coords = position.coords;
 
   Ais.OWN_POSITION_AVAILABLE = true;
+  id_input.set_id_is_available(Ais.OWN_POSITION_AVAILABLE);
+  Ais.OWN_USER_ID = id_input.get_id();
+
   share_button.innerText = "Sharing position anonymously";
   Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } );
-  cookie_value = Help.get_cookie("mariex_user_id");
-  if (cookie_value !== null && Ais.OWN_USER_ID !== "" && Ais.OWN_USER_ID !== null)
+  cookie_value = id_input.get_cookie_value();
+  if ( (typeof cookie_value !== 'undefined' && cookie_value !== null && cookie_value !== "") ) // && (typeof Ais.OWN_USER_ID === 'undefined' || Ais.OWN_USER_ID === "" || Ais.OWN_USER_ID === null) )
   {
     Ais.OWN_USER_ID = cookie_value;
     share_button.innerText = "Device recognized as " + Ais.OWN_USER_ID;
     Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([0,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([0,127,0,63]) } ) ;
   }
-  if (cookie_value === null && Ais.OWN_USER_ID !== "" && Ais.OWN_USER_ID !== null)
+  if ( (typeof cookie_value === 'undefined' || cookie_value === null || cookie_value === "") && (typeof Ais.OWN_USER_ID !== 'undefined' && Ais.OWN_USER_ID !== "" && Ais.OWN_USER_ID !== null) )
   {
     share_button.innerText = "Identified as " + Ais.OWN_USER_ID;
     Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([127,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,0,63]) } ) ;
@@ -529,13 +562,15 @@ function handle_geolocation_success(position)
   Ais.OWN_LOCATION_ALTITUDE_ACCURACY = own_coords.altitudeAccuracy;
   Ais.OWN_LOCATION_SPEED = own_coords.speed;
   Ais.OWN_LOCATION_HEADING = own_coords.heading;
-  //console.log("Ais.OWN_LOCATION_ACCURACY", Ais.OWN_LOCATION_ACCURACY);
 }
 
 
 function handle_geolocation_error()
 {
   Ais.OWN_POSITION_AVAILABLE = false;
+  id_input.set_id_is_available(Ais.OWN_POSITION_AVAILABLE);
+  id_input.set_not_available_text();
+  //console.log("id_input.id_input_description", id_input.id_input_description);
 }
 
 
@@ -612,7 +647,10 @@ function refresh_display()
 
       //let marker = L.circleMarker([ latitude, longitude ]).addTo(map);
       //marker.setIcon(sea_stationary_icon);
-      if (speed > 0) marker.setIcon(sea_mobile_icon);
+      if (speed > 0)
+      {
+        marker.setIcon(sea_mobile_icon);
+      }
       let time_opacity = (1200-(age-600))/1200 ;
       if (time_opacity > 1) time_opacity = 1;
       if (time_opacity < 0) time_opacity = 0;
@@ -728,6 +766,9 @@ function refresh_display()
 
 async function refresh_data()
 {
+  const geolocation_options = { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 };
+  const watchID = navigator.geolocation.getCurrentPosition(handle_geolocation_success, handle_geolocation_error, geolocation_options);
+
   const response = await fetch(static_url);
   let data = "";
   try
