@@ -13,9 +13,8 @@ function db_get_connection($server_name, $user_name, $password, $db_name)
 }
 
 
-function db_get_index($connection, $table_label, $column_label, $select_value)
+function db_get_indices($connection, $table_label, $column_label, $select_value)
 {
-  //$table_label = mb_substr(strtoupper($table_name), 2);
   $table_name = "t_" . strtolower($table_label);
   $column_name = strtoupper($table_label)  . "_" . strtoupper($column_label);
 
@@ -29,12 +28,23 @@ function db_get_index($connection, $table_label, $column_label, $select_value)
       if (!is_null($row[0])) $existing_indices[] = $row[0];
     }
   }
+  return $existing_indices;
+}
+
+
+function db_get_static_by_indices($connection, $table_label, $column_label, $select_indices)
+{
+  return NULL;
+}
+
+
+function db_get_index($connection, $table_label, $column_label, $select_value)
+{
+  $existing_indices = db_get_indices($connection, $table_label, $column_label, $select_value);
+
   $unique_index = -1;
-  if (count($existing_indices) > 0)
-  {
-    $unique_index = $existing_indices[0];
-    //debug_log('$unique_index: ', $unique_index);
-  }
+  if (count($existing_indices) > 0) $unique_index = $existing_indices[0];
+
   return $unique_index;
 }
 
