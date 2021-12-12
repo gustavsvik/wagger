@@ -71,17 +71,17 @@ while ($valid_channel_data && $channel_start < $data_end)
       {
         debug_log('$base64_string: ' . mb_substr($base64_string, 0, 100));
         $image_bytes = base64_decode($base64_string);
-        $image_filetype = get_image_mime_type($image_bytes);
+        $image_filetype = Check::image_mime_type($image_bytes);
         debug_log('$image_filetype: ', $image_filetype);
         if (!is_null($image_filetype))
         {
-        if(!in_array($channel, $file_channels)) $file_channels[] = $channel ;
-        $image_filename = $IMAGE_DIR . "/" . $channel_string . "_" . $timestamp_string . '.' . $image_filetype;
-        debug_log('$image_filename: ' . $image_filename);
-        $ifp = fopen($image_filename, 'wb');
-        fwrite($ifp, $image_bytes );
-        fclose($ifp);
-        copy($image_filename, $IMAGE_DIR . "/" . $channel_string . '.' . $image_filetype);
+          if(!in_array($channel, $file_channels)) $file_channels[] = $channel ;
+          $image_filename = $IMAGE_DIR . "/" . $channel_string . "_" . $timestamp_string . '.' . $image_filetype;
+          debug_log('$image_filename: ' . $image_filename);
+          $ifp = fopen($image_filename, 'wb');
+          fwrite($ifp, $image_bytes );
+          fclose($ifp);
+          copy($image_filename, $IMAGE_DIR . "/" . $channel_string . '.' . $image_filetype);
         }
       }
     }
@@ -97,7 +97,25 @@ while ($valid_channel_data && $channel_start < $data_end)
         copy($text_filename, $IMAGE_DIR . "/" . $channel_string . ".txt");
       }
     }
-    debug_log('$timestamp: ' . strval($timestamp) . ' $channel: ' . strval($channel) . ' $base64_string: ' . mb_substr($base64_string, 0, 100));
+    debug_log('$timestamp: ' . strval($timestamp) . ' $channel: ' . strval($channel) . ' $value: ' . strval($value) . ' $subsamples_string: ' . strval($subsamples_string) . ' $base64_string: ' . mb_substr($base64_string, 0, 100));
+    $update_sql = "UPDATE " . $ACQUIRED_DATA_TABLE_NAME . " SET ACQUIRED_VALUE = ?, ACQUIRED_TEXT = ?, ACQUIRED_BYTES = ?, STATUS = " . strval($STATUS_FULFILLED) . " WHERE CHANNEL_INDEX = ? AND ACQUIRED_TIME = ? AND STATUS = " . strval($STATUS_REQUESTED);
+    debug_log( '$update_sql: ' . strval($update_sql) );
+    $stmt = $conn->prepare($update_sql);
+    if ($stmt)
+    {
+      $stmt->bind_param('sssss', $value, $subsamples_string, $base64_string, $channel, $timestamp);
+      if(!$stmt->execute())
+      {
+        $conn->rollback();
+        die();
+      }
+      $stmt->close();
+    }
+    else
+    {
+      debug_log( '$mysqli_error_list($conn): ', mysqli_error_list($conn) );
+    }
+/*  Update CHANNEL_DESCRIPTION with JSON
     $stmt = $conn->prepare("UPDATE " . $ACQUIRED_DATA_TABLE_NAME . " SET ACQUIRED_VALUE = ?, ACQUIRED_TEXT = ?, ACQUIRED_BYTES = ?, STATUS = " . strval($STATUS_FULFILLED) . " WHERE CHANNEL_INDEX = ? AND ACQUIRED_TIME = ? AND STATUS = " . strval($STATUS_REQUESTED));
     $stmt->bind_param('sssss', $value, $subsamples_string, $base64_string, $channel, $timestamp);
     if(!$stmt->execute())
@@ -106,6 +124,7 @@ while ($valid_channel_data && $channel_start < $data_end)
       die();
     }
     $stmt->close();
+*/
     $points_start = $base64_end+1;
   }
 

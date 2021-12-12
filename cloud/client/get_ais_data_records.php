@@ -75,7 +75,7 @@ foreach ($channel_array as $channel)
         $all_bytes_string = "[";
         if (!is_null($value_row[1])) $bytes_string_json = strval($value_row[1]);
         $bytes_string_json_array = json_decode($bytes_string_json, true);
-        if (is_iterable($bytes_string_json_array))
+        if (CheckIf::is_iterable($bytes_string_json_array)) //(is_array($bytes_string_json_array) || $bytes_string_json_array instanceof Traversable)
         {
           foreach ($bytes_string_json_array as $bytes_string_json)
           {

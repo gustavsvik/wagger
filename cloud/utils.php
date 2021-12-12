@@ -1,12 +1,60 @@
 <?php
 
 
+class Check
+{
+
+  public static function image_mime_type($imagedata)
+  {
+    $imagemimetypes = array(
+      "jpg" => "FFD8",
+      "png" => "89504E470D0A1A0A",
+      "gif" => "474946",
+      "bmp" => "424D",
+      "tiff" => "4949",
+      "tiff" => "4D4D",
+      "mp4" => "6674797069736F6D",
+      "3gp" => "000000186674797033677034"
+    );
+
+    foreach ($imagemimetypes as $mime => $hexbytes)
+    {
+      $bytes = get_bytes_from_hex_string($hexbytes);
+      if (substr($imagedata, 0, strlen($bytes)) == $bytes)
+        return $mime;
+    }
+
+    return NULL;
+
+  }
+
+
+}
+
+
+class CheckIf
+{
+
+  public static function is_stringy($val)
+  {
+    return (is_string($val) || is_numeric($val) || (is_object($val) && method_exists($val, '__toString')));
+  }
+
+
+  public static function is_iterable($var)
+  {
+    return (is_array($var) || $var instanceof Traversable);
+  }
+
+}
+
+
 function safe_get($object, $key)
 {
   return !empty($object[$key]) ? $object[$key] : NULL ;
 }
 
-
+/*
 function is_stringy($val)
 {
   return (is_string($val) || is_numeric($val) || (is_object($val) && method_exists($val, '__toString')));
@@ -17,7 +65,7 @@ function is_iterable($var)
 {
   return (is_array($var) || $var instanceof Traversable);
 }
-
+*/
 
 function debug_log($log_label, $log_var = "")
 {
@@ -31,7 +79,7 @@ function debug_log($log_label, $log_var = "")
     {
       $log_var_str = "";
       if (is_array($log_var)) $log_var_str = json_encode($log_var);
-      elseif (is_stringy($log_var)) $log_var_str = strval($log_var);
+      elseif (CheckIf::is_stringy($log_var)) $log_var_str = strval($log_var);
       $log_str = strval( (is_null($log_var_str)) ? "NULL" : $log_var_str );
       if (strpos($caller['file'], $script_name) !== FALSE) error_log(gmdate('YmdHis') . ' ' . $caller['file'] . ', line ' . $caller['line'] . ': ' . $log_label . $log_str . PHP_EOL, 3, $logfile) ;
     }
@@ -201,7 +249,7 @@ function get_bytes_from_hex_string($hexdata)
   return implode($bytes);
 }
 
-
+/*
 function get_image_mime_type($imagedata)
 {
   $imagemimetypes = array(
@@ -224,3 +272,4 @@ function get_image_mime_type($imagedata)
 
   return NULL;
 }
+*/

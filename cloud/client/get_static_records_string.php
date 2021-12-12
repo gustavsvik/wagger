@@ -108,7 +108,7 @@ if ($available_values)
   $descriptions = safe_get($return_data_array, 'descriptions');
   //debug_log('$count($descriptions): ', count($descriptions));
 
-  if (is_iterable($times) && is_iterable($descriptions))
+  if ( CheckIf::is_iterable($times) && CheckIf::is_iterable($descriptions)) // ( (is_array($times) || $times instanceof Traversable) && (is_array($descriptions) || $descriptions instanceof Traversable) )
   {
     foreach ( range( 0, count($times) - 1 ) as $index )
     {
