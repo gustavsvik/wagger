@@ -175,34 +175,6 @@ else if (Ais.OWN_LOCATION_POS.length === 2)
   Help.set_properties( this.share_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } );
 }
 
-/*
-let share_div = document.createElement("DIV");
-document.body.appendChild(share_div);
-//Help.set_properties( share_div.style, { "position": "relative" } );
-let share_button = document.createElement("BUTTON");
-share_div.appendChild(share_button);
-share_button.id = "share_button";
-Help.set_properties( share_button.style, { "position": "absolute", "width": "280px", "top": "10px", "right": "5px", "padding": "10px", "z-index": "400" , "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } ) ;
-
-const id_input_description = '<br>Please enter a specific user ID (up to 10 characters will be displayed):';
-share_button.addEventListener("click", function(){ IdInput.create(id_input_description, 'Welcome to the MarIEx position reporting tool of Test Site Bothnia! We try to take all precautions possible to keep our test sites safe and secure, and your help is greatly appreciated. By adding a user ID to identify your position marker on the chart (either an arbitrary one of your choice or your name, ship name, call sign, MMSI, or other presumably unique identifier) when present in or near one of our test areas, you can improve your visibility not only to our test management team but to your fellow seafarers and land travellers as well. Please consider when choosing your ID that it will be sent back (securely) to Test Site Bothnia and stored (securely) in our database before being publicly shared in this application, and take note that your ID may be shortened to its first 10 characters when displayed.', 'To be able to link your device to your position unambiguously for the benefit of the Test Site Bothnia team and your fellow seafarers and land travellers, you can permit the MarIEx app to set a single cookie containing your user ID only (which is non-shareable with other sites). If you uncheck the box no new cookie will be set on the device and any cookies previously set by MarIEx will be removed.'); } );
-let share_button_text = document.createTextNode("Share position with Test Site Bothnia");
-share_button.appendChild(share_button_text);
-let cookie_value = Help.get_cookie("mariex_user_id");
-Ais.OWN_USER_ID = cookie_value;
-
-if (Ais.OWN_POSITION_AVAILABLE && cookie_value !== null)
-{
-  share_button.innerText = "Identified as " + Ais.OWN_USER_ID;
-  Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([127,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,0,63]) } ) ;
-}
-else if (Ais.OWN_LOCATION_POS.length === 2)
-{
-  share_button.innerText = "Sharing position anonymously" ;
-  Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } );
-}
-*/
-
 let camera_div = document.createElement("DIV");
 document.body.appendChild(camera_div);
 let camera_button = document.createElement("BUTTON");
@@ -273,119 +245,6 @@ function follow_position()
     Help.set_properties( center_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } ) ;
   }
 }
-
-/*
-function create_id_input()
-{
-  let id_dialog = document.createElement("DIALOG");
-  document.body.appendChild(id_dialog);
-  dialogPolyfill.registerDialog(id_dialog);
-  let dialog_div = document.createElement("DIV");
-  id_dialog.appendChild(dialog_div);
-
-  let description_div = document.createElement("DIV");
-  Help.set_properties( description_div.style, {"position": "relative"} );
-  description_div.innerHTML = '<br>Please enter a specific user ID (up to 10 characters will be displayed):'; //'<br>Welcome to the MarIEx position reporting tool of Test Site Bothnia! We try to take all precautions possible to keep our test sites safe and secure, and your help is greatly appreciated. By adding a user ID to identify your position marker on the chart (either an arbitrary one of your choice or your name, ship name, call sign, MMSI, or other presumably unique identifier) when present in or near one of our test areas, you can improve your visibility not only to our test management team but to your fellow sea and land travellers as well. Please note that only the first 10 characters of your ID will be shown on screen.';
-  dialog_div.appendChild(description_div);
-
-  let id_input = document.createElement("INPUT");
-  let id_info_button = document.createElement("BUTTON");
-  let id_div = document.createElement("DIV");
-  Help.set_properties( id_div.style, {"position": "relative", "top": "10px", "width": "100%"} );
-  id_div.appendChild(id_input);
-  Help.set_properties( id_input.style, {} );
-  let cookie_value = Help.get_cookie("mariex_user_id");
-  if (cookie_value !== null) Ais.OWN_USER_ID = cookie_value;
-  if (Ais.OWN_USER_ID === null) Help.set_properties( id_input, {"placeholder": "My user ID"} );
-  else Help.set_properties( id_input, {"value": Ais.OWN_USER_ID} );
-  id_div.appendChild(id_info_button);
-  Help.set_properties( id_info_button.style, {"height": "30px", "width": "30px", "border-radius": "50%", "border": "1px solid #000", "margin-left": "20px", "padding": "0px"} );
-  id_info_button.addEventListener("click", id_info);
-  let id_info_button_text = document.createTextNode("i");
-  id_info_button.appendChild(id_info_button_text);
-  dialog_div.appendChild(id_div);
-
-  let submit_button = document.createElement("BUTTON");
-  let cancel_button = document.createElement("BUTTON");
-  let store_cookie_check = document.createElement("INPUT");
-  let store_cookie_label = document.createElement('LABEL');
-  let cookie_info_button = document.createElement("BUTTON");
-  let id_button_div = document.createElement("DIV");
-  Help.set_properties( id_button_div.style, {"position": "relative", "top": "30px"} );
-  id_button_div.appendChild(submit_button);
-  Help.set_properties( submit_button.style, {"padding": "10px"} );
-  id_button_div.appendChild(cancel_button);
-  Help.set_properties( cancel_button.style, {"padding": "10px", "margin-left": "10px"} );
-  id_button_div.appendChild(store_cookie_check);
-  Help.set_properties( store_cookie_check, {"id": "store_cookie_check", "type": "checkbox", "checked": "true"} );
-  Help.set_properties( store_cookie_check.style, {"padding": "10px", "margin-left": "15px"} );
-  id_button_div.appendChild(store_cookie_label);
-  Help.set_properties( store_cookie_label, {"htmlFor": "store_cookie_check", "innerText": "Set cookie"} );
-  Help.set_properties( store_cookie_label.style, {"margin-left": "5px"} );
-  id_button_div.appendChild(cookie_info_button);
-  Help.set_properties( cookie_info_button.style, {"height": "30px", "width": "30px", "border-radius": "50%", "border": "1px solid #000", "margin-left": "5px", "padding": "0px", "position": "absolute", "top": "50%", "-ms-transform": "translateY(-50%)", "transform": "translateY(-50%)"} );
-  submit_button.addEventListener("click", submit_data);
-  cancel_button.addEventListener("click", cancel);
-  cookie_info_button.addEventListener("click", cookie_info);
-  let submit_button_text = document.createTextNode("Submit");
-  submit_button.appendChild(submit_button_text);
-  let cancel_button_text = document.createTextNode("Cancel");
-  cancel_button.appendChild(cancel_button_text);
-  let cookie_info_button_text = document.createTextNode("i");
-  cookie_info_button.appendChild(cookie_info_button_text);
-  dialog_div.appendChild(id_button_div);
-
-  Help.set_properties( dialog_div.style, {"position": "relative", "top": "-25px"} ); //"overflow-y": "auto",
-
-  id_dialog.showModal();
-
-  window.scrollTo(0, 0);
-
-  function submit_data()
-  {
-    Ais.OWN_USER_ID = id_input.value ;
-    if ( Ais.OWN_POSITION_AVAILABLE && ( !store_cookie_check.checked || Ais.OWN_USER_ID === null || Ais.OWN_USER_ID === "" ) )
-    {
-      Help.set_cookie("mariex_user_id", null, null);
-      share_button.innerText = "Sharing position anonymously";
-      Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } );
-    }
-    //else if (Ais.OWN_USER_ID === "99999") share_button.innerText = "Sharing position anonymously";
-    if ( Ais.OWN_POSITION_AVAILABLE && !store_cookie_check.checked && Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "" )
-    {
-      share_button.innerText = "Identified as " + Ais.OWN_USER_ID;
-      Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([127,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,0,63]) } ) ;
-    }
-    if (store_cookie_check.checked && Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "")
-    {
-      Help.set_cookie("mariex_user_id", id_input.value, 1000);
-      if (Ais.OWN_POSITION_AVAILABLE)
-      {
-        share_button.innerText = "Device recognized as " + Ais.OWN_USER_ID;
-        Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([0,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([0,127,0,63]) } ) ;
-      }
-    }
-
-    id_dialog.close();
-  }
-
-  function cancel()
-  {
-    id_dialog.close();
-  }
-
-  function id_info()
-  {
-    window.alert('Welcome to the MarIEx position reporting tool of Test Site Bothnia! We try to take all precautions possible to keep our test sites safe and secure, and your help is greatly appreciated. By adding a user ID to identify your position marker on the chart (either an arbitrary one of your choice or your name, ship name, call sign, MMSI, or other presumably unique identifier) when present in or near one of our test areas, you can improve your visibility not only to our test management team but to your fellow seafarers and land travellers as well. Please consider when choosing your ID that it will be sent back (securely) to Test Site Bothnia and stored (securely) in our database before being publicly shared in this application, and take note that your ID may be shortened to its first 10 characters when displayed.')
-  }
-
-  function cookie_info()
-  {
-    window.alert('To be able to link your device to your position unambiguously for the benefit of the Test Site Bothnia team and your fellow seafarers and land travellers, you can permit the MarIEx app to set a single cookie containing your user ID only (which is non-shareable with other sites). If you uncheck the box no new cookie will be set on the device and any cookies previously set by MarIEx will be removed.')
-  }
-
-}
-*/
 
 
 function create_image_input()
@@ -911,14 +770,14 @@ async function refresh_data()
   const regex_tilde = new RegExp(';', 'g');
 
   let user_id = null;
-  if (Ais.OWN_POSITION_AVAILABLE && Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "") user_id = Ais.OWN_USER_ID;
+  if (Ais.OWN_POSITION_AVAILABLE && typeof Ais.OWN_USER_ID !== 'undefined' && Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "") user_id = Ais.OWN_USER_ID;
   //console.log('Help.get_cookie("mariex_user_id")', Help.get_cookie("mariex_user_id"))
-  if (user_id !== null || Ais.OWN_LOCATION_POS.length === 2)
+  if (user_id === null) user_id = "99999";
+  if (Ais.OWN_LOCATION_POS.length === 2) // user_id !== null ||
   {
-    if (user_id === null) user_id = "99999";
     own_position_json_string = '[[null, null, ' + '"' + user_id + '"' + ', ' + own_position_json_string + ']]' ;
 
-    const new_channel_response = await fetch( 'https://' + window.location.hostname + '/client/update_static_data_client.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'common_description': own_position_json_string, 'module_address': Ais.OWN_USER_ID}) } );
+    const new_channel_response = await fetch( 'https://' + window.location.hostname + '/client/update_static_data_client.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'common_description': own_position_json_string, 'module_address': user_id}) } );
     //body: "common_description=" + encodeURIComponent(own_position_json_string) } );
     let new_channel_data = null;
     try
