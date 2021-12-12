@@ -413,7 +413,7 @@ class App
     this.NTP_SYNC_INTERVAL = 60 ;
     this.TIME_ZONE = "UTC";
     this.BROWSER_URL = window.location.hostname;
-    this.CLIENT_URL = "https://" + this.BROWSER_URL  + "/client/";
+    this.CLIENT_URL = window.location.protocol + "//" + this.BROWSER_URL  + "/client/";
     this.FILES_DIR = "images/";
     this.FILES_URL = this.CLIENT_URL + this.FILES_DIR;
     this.WAIT_MESSAGE = "Retrieving data...";
