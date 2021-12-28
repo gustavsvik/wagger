@@ -1,6 +1,9 @@
 <?php
 
 
+include_once("../CheckIf.php");
+
+
 function db_get_connection($server_name, $user_name, $password, $db_name)
 {
   $connection = mysqli_init();
@@ -122,13 +125,14 @@ function db_get_full_rows($connection, $table_name, $index_array) //db_get_all_d
 }
 
 
-function db_get_static_by_id($connection, $table_label, $hardware_id, $text_id)
+function db_get_static_by_id($connection, $table_label, $hardware_id = NULL, $text_id = NULL, $unique_index = NULL, $parent_table_label = NULL )
 {
-  //debug_log('hardware_id: ', $hardware_id);
-  //debug_log('text_id: ', $text_id);
+  //debug_log(' $table_label:' . $table_label . ' $hardware_id:' . $hardware_id . ' $text_id:' . $text_id . ' $unique_index:' . strval($unique_index) . ' $parent_table_label:' . $parent_table_label);
 
   $table_name_string = "t_" . strtolower(strval($table_label)) ;
   $column_label_string = strtoupper(strval($table_label));
+  $parent_column_label_string = NULL;
+  if ( !is_null($parent_table_label) ) $parent_column_label_string = strtoupper(strval($parent_table_label));
 
   $unique_indices = array();
   $hardware_ids = array();
@@ -136,14 +140,33 @@ function db_get_static_by_id($connection, $table_label, $hardware_id, $text_id)
   $addresses = array();
   $descriptions = array();
   $times = array();
+  $parent_indices = array();
 
-  $sql_get_records = "SELECT T." . $column_label_string . "_UNIQUE_INDEX, T." . $column_label_string . "_HARDWARE_ID, T." . $column_label_string . "_TEXT_ID, T." . $column_label_string . "_ADDRESS, T." . $column_label_string . "_DESCRIPTION, T." . $column_label_string . "_TIME FROM " . $table_name_string . " T WHERE T." . $column_label_string ;
+  $sql_get_records = "SELECT T." . $column_label_string . "_UNIQUE_INDEX, T." . $column_label_string . "_HARDWARE_ID, T." . $column_label_string . "_TEXT_ID, T." . $column_label_string . "_ADDRESS, T." . $column_label_string . "_DESCRIPTION, T." . $column_label_string . "_TIME ";
+  if ( !is_null($parent_column_label_string) ) $sql_get_records .= ", T." . $parent_column_label_string . "_INDEX ";
+  $sql_get_records .= "FROM " . $table_name_string . " T WHERE T." . $column_label_string ;
   //debug_log('sql_get_records: ', $sql_get_records);
-  $records = $connection->query( $sql_get_records . "_HARDWARE_ID='" . $hardware_id . "'" );
-  if (!is_object($records) || $records->num_rows <= 0)
+  $records = NULL;
+  if (!is_null($hardware_id))
   {
-    $records = $connection->query($sql_get_records . "_TEXT_ID='" . $text_id . "'");
+    $sql_get_records_by_hardware_id = $sql_get_records . "_HARDWARE_ID='" . $hardware_id . "'";
+    //debug_log('$sql_get_records_by_hardware_id: ', $sql_get_records_by_hardware_id);
+    $records = $connection->query( $sql_get_records_by_hardware_id );
+    //debug_log('$records: ', $records);
   }
+  if (!is_null($text_id) && ( !is_object($records) || $records->num_rows <= 0 ) )
+  {
+    $sql_get_records_by_text_id = $sql_get_records . "_TEXT_ID='" . $text_id . "'";
+    //debug_log('$sql_get_records_by_text_id: ', $sql_get_records_by_text_id);
+    $records = $connection->query( $sql_get_records_by_text_id );
+  }
+  if (!is_null($unique_index) && ( !is_object($records) || $records->num_rows <= 0 ) )
+  {
+    $sql_get_records_by_unique_index = $sql_get_records . "_UNIQUE_INDEX=" . strval($unique_index);
+    //debug_log('$sql_get_records_by_unique_index: ', $sql_get_records_by_unique_index);
+    $records = $connection->query( $sql_get_records_by_unique_index );
+  }
+
   if (is_object($records) && $records->num_rows > 0)
   {
     while ($record = $records->fetch_array(MYSQLI_NUM))
@@ -154,6 +177,7 @@ function db_get_static_by_id($connection, $table_label, $hardware_id, $text_id)
       if (!is_null($record[3])) $addresses[] = $record[3];
       if (!is_null($record[4])) $descriptions[] = $record[4];
       if (!is_null($record[5])) $times[] = $record[5];
+      if (!is_null($parent_table_label) && !is_null($record[6])) $parent_indices[] = $record[6];
     }
   }
 
@@ -163,16 +187,38 @@ function db_get_static_by_id($connection, $table_label, $hardware_id, $text_id)
   $address = "";
   $description = "";
   $time = 0;
+  $parent_index = 0;
 
   if (count($unique_indices) > 0) $unique_index = intval($unique_indices[0]);
   if (count($hardware_ids) > 0) $hardware_id = strval($hardware_ids[0]);
   if (count($text_ids) > 0) $text_id = strval($text_ids[0]);
   if (count($addresses) > 0) $address = strval($addresses[0]);
   if (count($descriptions) > 0) $description = strval($descriptions[0]);
-  if (count($times) > 0) $time = strval($times[0]);
+  if (count($times) > 0) $time = intval($times[0]);
+  if (count($parent_indices) > 0) $parent_index = intval($parent_indices[0]);
 
-  return array("unique_index" => $unique_index, "hardware_id" => $hardware_id, "text_id" => $text_id, "address" => $address, "description" => $description, "time" => $time);
+  return array("unique_index" => $unique_index, "hardware_id" => $hardware_id, "text_id" => $text_id, "address" => $address, "description" => $description, "time" => $time, "parent_index" => $parent_index);
 
+}
+
+
+function db_get_parent_index_by_id($connection, $table_label, $hardware_id, $text_id = NULL, $parent_table_label = NULL )
+{
+  $return_data_array = NULL;
+
+  if (!is_null($connection))
+  {
+    debug_log(' $table_label:' . $table_label . ' $hardware_id:' . $hardware_id . ' $text_id:' . $text_id . ' $parent_table_label:' . $parent_table_label);
+    $return_data_array = db_get_static_by_id($connection, $table_label, $hardware_id, $text_id, NULL, $parent_table_label);
+    debug_log('$return_data_array: ', $return_data_array);
+  }
+
+  $parent_index = intval( GetSafe::by_key($return_data_array, 'parent_index') );
+  //debug_log('$parent_index: ', $parent_index);
+
+  //$json_array = array('parent_index' => $parent_index);
+
+  return $parent_index;
 }
 
 
@@ -203,7 +249,7 @@ function db_update_single_by_index($connection, $table_label, $unique_index, $co
 
 function db_update_static_by_index($connection, $table_label, $unique_index, $hardware_id, $text_id, $address, $description)
 {
-  debug_log('$unique_index: ', $unique_index, '$hardware_id: ', $hardware_id, '$text_id: ', $text_id, '$address: ', $address, '$description: ', $description );
+  //debug_log('$unique_index: ', $unique_index, '$hardware_id: ', $hardware_id, '$text_id: ', $text_id, '$address: ', $address, '$description: ', $description );
   $table_name_string = "t_" . strtolower(strval($table_label)) ;
   $column_label_string = strtoupper(strval($table_label));
 
@@ -235,7 +281,7 @@ function db_update_static_by_index($connection, $table_label, $unique_index, $ha
     if (!is_null($unique_index)) $stmt_string .= "VALUES (?,?,?,?,?,UNIX_TIMESTAMP(CURRENT_TIMESTAMP()),0) ";
     else $stmt_string .= "VALUES (?,?,?,?,UNIX_TIMESTAMP(CURRENT_TIMESTAMP()),0) ";
     $stmt_string .= "ON DUPLICATE KEY UPDATE " . $column_label_string . "_TEXT_ID = VALUES(" . $column_label_string . "_TEXT_ID), " . $column_label_string . "_ADDRESS = VALUES(" . $column_label_string . "_ADDRESS), " . $column_label_string . "_DESCRIPTION = VALUES(" . $column_label_string . "_DESCRIPTION), " . $column_label_string . "_TIME = VALUES(" . $column_label_string . "_TIME), " . $column_label_string . "_STATUS = VALUES(" . $column_label_string . "_STATUS)";
-    debug_log('$stmt_string: ', $stmt_string);
+    //debug_log('$stmt_string: ', $stmt_string);
 
     $new_index = NULL;
     if (!is_null($unique_index)) $new_index = db_get_new_index($connection, $table_name_string);
@@ -263,12 +309,11 @@ function db_update_static_by_index($connection, $table_label, $unique_index, $ha
 
 function db_get_static_by_time_interval_status($connection, $table_label, $start_time = -9999, $duration = -9999, $unit = 1, $end_time = -9999, $lowest_status = 0, $highest_status = 1)
 {
-/*
-  debug_log('$start_time: ', $start_time);
-  debug_log('$duration: ', $duration);
-  debug_log('$unit: ', $unit);
-  debug_log('$end_time: ', $end_time);
-*/
+  //debug_log('$start_time: ', $start_time);
+  //debug_log('$duration: ', $duration);
+  //debug_log('$unit: ', $unit);
+  //debug_log('$end_time: ', $end_time);
+
   $table_name_string = "t_" . strtolower(strval($table_label)) ;
   $column_label_string = strtoupper(strval($table_label));
 
@@ -294,10 +339,10 @@ function db_get_static_by_time_interval_status($connection, $table_label, $start
     $start_time = $end_time ;
     if (!$select_all) $start_time -= $duration*$unit;
   }
-/*
-  debug_log('$start_time: ', $start_time);
-  debug_log('$end_time: ', $end_time);
-*/
+
+  //debug_log('$start_time: ', $start_time);
+  //debug_log('$end_time: ', $end_time);
+
   $dummy_channel_string = "1";
   $dummy_channel = intval($dummy_channel_string);
 
