@@ -1,14 +1,15 @@
 <?php
 
 
-include("../db_ini.php");
-include("../utils.php");
-include("../database.php");
+include_once("../db_ini.php");
+include_once("../utils.php");
+include_once("../database.php");
+include_once("header.php");
 
-$id_range = NULL;
-$id_range = strval(getPost("id_range", "NULL"));
-$table_label = NULL;
-$table_label = strval(getPost("table_label", "none"));
+//$id_range = NULL;
+//$id_range = strval(getPost("id_range", "NULL"));
+//$table_label = NULL;
+//$table_label = strval(getPost("table_label", "none"));
 
 $conn = db_get_connection($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME);
 

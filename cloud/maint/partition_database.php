@@ -1,19 +1,20 @@
 <?php
 
 
-include("../db_ini.php");
-include("../utils.php");
-include("../database.php");
+include_once("../db_ini.php");
+include_once("../utils.php");
+include_once("../database.php");
+include_once("header.php");
 
 
 //$new_partition_name_date = NULL ;
-$new_partition_name_date = strval(getPost('new_partition_name_date', '19700101')) ;
+//$new_partition_name_date = strval(getPost('new_partition_name_date', '19700101')) ;
 debug_log('$new_partition_name_date: ', $new_partition_name_date);
 //$new_partition_timestamp = NULL ;
-$new_partition_timestamp = intval(getPost('new_partition_timestamp', 0)) ;
+//$new_partition_timestamp = intval(getPost('new_partition_timestamp', 0)) ;
 debug_log('$new_partition_timestamp: ', $new_partition_timestamp);
 //$oldest_kept_partition_name_date = NULL ;
-$oldest_kept_partition_name_date = strval(getPost('oldest_kept_partition_name_date', '19700101')) ;
+//$oldest_kept_partition_name_date = strval(getPost('oldest_kept_partition_name_date', '19700101')) ;
 debug_log('$oldest_kept_partition_name_date: ', $oldest_kept_partition_name_date);
 
 /*
