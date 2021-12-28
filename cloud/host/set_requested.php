@@ -1,11 +1,11 @@
 <?php
 
-
-include("../header.php");
-include("../db_ini.php");
-include("../utils.php");
-include("../database.php");
-include("header.php");
+include_once("../header.php");
+include_once("../db_ini.php");
+include_once("../Check.php");
+include_once("../utils.php");
+include_once("../database.php");
+include_once("header.php");
 
 /*
 $conn = mysqli_init();

@@ -1,11 +1,13 @@
 <?php
 
 
-include("../header.php");
-include("../db_ini.php");
-include("../utils.php");
-include("../database.php");
-include("header.php");
+include_once("../header.php");
+include_once("../db_ini.php");
+include_once("../CheckIf.php");
+include_once("../GetSafe.php");
+include_once("../utils.php");
+include_once("../database.php");
+include_once("header.php");
 
 //$channels = "148;";
 
@@ -80,12 +82,12 @@ foreach ($channel_array as $channel)
           foreach ($bytes_string_json_array as $bytes_string_json)
           {
             $ais_message_json = $bytes_string_json[3];
-            $lon = safe_get($ais_message_json, "lon");
-            $lat = safe_get($ais_message_json, "lat");
+            $lon = GetSafe::by_key($ais_message_json, "lon");
+            $lat = GetSafe::by_key($ais_message_json, "lat");
             $bytes_string = "";
             if ( is_numeric($lon) && is_numeric($lat) )
             {
-              $bytes_string = json_encode( array( "type" => safe_get($ais_message_json, "type"), "mmsi" => safe_get($ais_message_json, "mmsi"), "lon" => $lon, "lat" => $lat) );
+              $bytes_string = json_encode( array( "type" => GetSafe::by_key($ais_message_json, "type"), "mmsi" => GetSafe::by_key($ais_message_json, "mmsi"), "lon" => $lon, "lat" => $lat) );
             }
             if (strlen($bytes_string) > 0) $all_bytes_string .= $bytes_string . ',' ;
           }

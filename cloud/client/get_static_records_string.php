@@ -1,11 +1,13 @@
 <?php
 
 
-include("../header.php");
-include("../db_ini.php");
-include("../utils.php");
-include("../database.php");
-include("header.php");
+include_once("../header.php");
+include_once("../db_ini.php");
+include_once("../CheckIf.php");
+include_once("../GetSafe.php");
+include_once("../utils.php");
+include_once("../database.php");
+include_once("header.php");
 
 
 //$client_id = http_get_client_id_string();
@@ -103,9 +105,9 @@ if ($available_values)
   $dummy_channel = intval($dummy_channel_string);
   $return_string .= $dummy_channel_string . ";";
 
-  $times = safe_get($return_data_array, 'times');
+  $times = GetSafe::by_key($return_data_array, 'times');
   //debug_log('$count($times): ', count($times));
-  $descriptions = safe_get($return_data_array, 'descriptions');
+  $descriptions = GetSafe::by_key($return_data_array, 'descriptions');
   //debug_log('$count($descriptions): ', count($descriptions));
 
   if ( CheckIf::is_iterable($times) && CheckIf::is_iterable($descriptions)) // ( (is_array($times) || $times instanceof Traversable) && (is_array($descriptions) || $descriptions instanceof Traversable) )

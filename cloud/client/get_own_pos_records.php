@@ -1,11 +1,13 @@
 <?php
 
 
-include("../header.php");
-include("../db_ini.php");
-include("../utils.php");
-include("../database.php");
-include("header.php");
+include_once("../header.php");
+include_once("../db_ini.php");
+include_once("../CheckIf.php");
+include_once("../GetSafe.php");
+include_once("../utils.php");
+include_once("../database.php");
+include_once("header.php");
 
 //$channels = "99999;";
 debug_log('$channels: ', $channels);
@@ -85,10 +87,10 @@ foreach ($channel_array as $channel)
           foreach ($bytes_string_json_array as $bytes_string_json)
           {
             $ais_message_json = $bytes_string_json[3];
-            $lon = number_format((float)safe_get($ais_message_json, "lon"), 5, '.', '');
-            $lat = number_format((float)safe_get($ais_message_json, "lat"), 5, '.', '');
-            $speed = number_format((float)safe_get($ais_message_json, "speed"), 1, '.', '');
-            $heading = number_format((float)safe_get($ais_message_json, "heading"), 1, '.', '');
+            $lon = number_format((float)GetSafe::by_key($ais_message_json, "lon"), 5, '.', '');
+            $lat = number_format((float)GetSafe::by_key($ais_message_json, "lat"), 5, '.', '');
+            $speed = number_format((float)GetSafe::by_key($ais_message_json, "speed"), 1, '.', '');
+            $heading = number_format((float)GetSafe::by_key($ais_message_json, "heading"), 1, '.', '');
             $mmsi = $bytes_string_json[2];
             $bytes_string = "";
             if ( is_numeric($lon) && is_numeric($lat) )

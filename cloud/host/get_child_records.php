@@ -1,16 +1,17 @@
 <?php
 
 
-include("../header.php");
-include("../db_ini.php");
-include("../utils.php");
-include("../database.php");
-include("header.php");
+include_once("../header.php");
+include_once("../db_ini.php");
+include_once("../GetSafe.php");
+include_once("../utils.php");
+include_once("../database.php");
+include_once("header.php");
 
 
 $table_label = "DEVICE";
 $child_table_label = "MODULE";
-$hardware_id = "";
+$hardware_id = "265280000-VDM";
 $text_id = "";
 
 debug_log('$table_label: ', $table_label );
@@ -28,12 +29,12 @@ if (!is_null($conn))
   $conn->close();
 }
 
-$unique_index = safe_get($return_data_array, 'unique_index');
+$unique_index = GetSafe::by_key($return_data_array, 'unique_index');
 
-$module_hardware_id = safe_get($return_data_array, 'hardware_id');
-$module_text_id = safe_get($return_data_array, 'text_id');
-$common_address = safe_get($return_data_array, 'address');
-$common_description = safe_get($return_data_array, 'description');
+$module_hardware_id = GetSafe::by_key($return_data_array, 'hardware_id');
+$module_text_id = GetSafe::by_key($return_data_array, 'text_id');
+$common_address = GetSafe::by_key($return_data_array, 'address');
+$common_description = GetSafe::by_key($return_data_array, 'description');
 
 header("Content-type: application/json");
 $json_array = array('module_unique_index' => $module_unique_index, 'module_hardware_id' => $module_hardware_id, 'module_text_id' => $module_text_id, 'common_address' => $common_address, 'common_description' => $common_description);
