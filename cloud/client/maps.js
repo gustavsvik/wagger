@@ -108,8 +108,8 @@ danger_marker_01.setRotationAngle(0);
 let danger_html_string = '<div style="font-size:10px;line-height:100%;">';
 //danger_html_string += 'VARNING! DRIVANDE MINA!<br>Ungefärlig position:' + '<br>' ;
 danger_html_string += 'Drivande mina röjd 210617<br>Ungefärlig position:' + '<br>' ;
-danger_html_string += 'Lat: ' + danger_pos_01[0].toString() + ' deg.' + '<br>' ;
-danger_html_string += 'Lon: ' + danger_pos_01[1].toString() + ' deg.' ;  //Disp.jsonToTable(content_json, {});
+danger_html_string += 'Lat: ' + danger_pos_01[0].toString() + '\u00B0' + '<br>' ;
+danger_html_string += 'Lon: ' + danger_pos_01[1].toString() + '\u00B0' ;  //Disp.jsonToTable(content_json, {});
 const danger_image_url = 'images/leaflet/' + 'danger_01_image.png' ;
 danger_html_string += '<br><br>' + '<img src="' + danger_image_url + '"/>';
 if (!is_touch_device) danger_marker_01.bindTooltip(danger_html_string);
@@ -123,8 +123,8 @@ shore_marker_01.setRotationOrigin("center");
 shore_marker_01.setRotationAngle(0);
 let shore_01_html_string = '<div style="font-size:10px;line-height:100%;">';
 shore_01_html_string += 'Västby Hamnförening<br>Web site: <a href="https://www.vastbyhamn.com">https://www.vastbyhamn.com</a><br>Position:' + '<br>' ;
-shore_01_html_string += 'Lat: ' + shore_pos_01[0].toString() + ' deg.' + '<br>' ;
-shore_01_html_string += 'Lon: ' + shore_pos_01[1].toString() + ' deg.' ;  //Disp.jsonToTable(content_json, {});
+shore_01_html_string += 'Lat: ' + shore_pos_01[0].toString() + '\u00B0' + '<br>' ;
+shore_01_html_string += 'Lon: ' + shore_pos_01[1].toString() + '\u00B0' ;  //Disp.jsonToTable(content_json, {});
 const shore_01_image_url = 'images/leaflet/' + 'shore_01_image.png' ;
 shore_01_html_string += '<br><br>' + '<img src="' + shore_01_image_url + '"/>';
 if (!is_touch_device) shore_marker_01.bindTooltip(shore_01_html_string);
@@ -138,8 +138,8 @@ shore_marker_02.setRotationOrigin("center");
 shore_marker_02.setRotationAngle(0);
 let shore_02_html_string = '<div style="font-size:10px;line-height:100%;">';
 shore_02_html_string += 'Höga Kusten Varvet<br>Web site: <a href="https://www.hagakustenvarvet.se">https://www.hagakustenvarvet.se</a><br>Position:' + '<br>' ;
-shore_02_html_string += 'Lat: ' + shore_pos_02[0].toString() + ' deg.' + '<br>' ;
-shore_02_html_string += 'Lon: ' + shore_pos_02[1].toString() + ' deg.' ;  //Disp.jsonToTable(content_json, {});
+shore_02_html_string += 'Lat: ' + shore_pos_02[0].toString() + '\u00B0' + '<br>' ;
+shore_02_html_string += 'Lon: ' + shore_pos_02[1].toString() + '\u00B0' ;  //Disp.jsonToTable(content_json, {});
 const shore_02_image_url = 'images/leaflet/' + 'shore_02_image.png' ;
 shore_02_html_string += '<br><br>' + '<img src="' + shore_02_image_url + '"/>';
 if (!is_touch_device) shore_marker_02.bindTooltip(shore_02_html_string);
@@ -158,7 +158,8 @@ const id_not_available_preamble_text = 'No own position to share';
 const id_not_found_preamble_text = 'Sharing position anonymously'; //'Share position with Test Site Bothnia';
 const id_found_preamble_text = 'Identified as ';
 const id_stored_preamble_text = 'Device recognized as ';
-let id_input = new IdInput({id_button_text: id_button_text, id_input_description: id_input_description, id_info_description: id_info_description, cookie_info_description: cookie_info_description, id_is_available: id_is_available, id_not_available_preamble_text: id_not_available_preamble_text, id_not_found_preamble_text: id_not_found_preamble_text, id_found_preamble_text: id_found_preamble_text, id_stored_preamble_text: id_stored_preamble_text});
+const id_button_style = { "position": "absolute", "width": "280px", "top": "5px", "right": "5px", "padding": "10px", "z-index": "400" , "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) };
+let id_input = new IdInput({id_button_style: id_button_style, id_button_text: id_button_text, id_input_description: id_input_description, id_info_description: id_info_description, cookie_info_description: cookie_info_description, id_is_available: id_is_available, id_not_available_preamble_text: id_not_available_preamble_text, id_not_found_preamble_text: id_not_found_preamble_text, id_found_preamble_text: id_found_preamble_text, id_stored_preamble_text: id_stored_preamble_text});
 let share_button = id_input.get_share_button();
 let cookie_value = id_input.get_cookie_value();
 
@@ -180,7 +181,7 @@ document.body.appendChild(camera_div);
 let camera_button = document.createElement("BUTTON");
 camera_div.appendChild(camera_button);
 camera_button.id = "camera_button";
-Help.set_properties( camera_button.style, { "position": "absolute", "width": "280px", "top": "60px", "right": "5px", "padding": "10px", "z-index": "400" , "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } ) ;
+Help.set_properties( camera_button.style, { "position": "absolute", "width": "280px", "top": "50px", "right": "5px", "padding": "10px", "z-index": "400" , "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } ) ;
 camera_button.addEventListener("click", create_image_input);
 let camera_button_text = document.createTextNode("Share observation with Test Site Bothnia");
 camera_button.appendChild(camera_button_text);
@@ -202,21 +203,30 @@ Help.set_properties( tsb_div.style, { "position": "relative" } );
 let tsb_button = document.createElement("BUTTON");
 tsb_div.appendChild(tsb_button);
 tsb_button.id = "tsb_button";
-Help.set_properties( tsb_button.style, { "position": "absolute", "width": "110px", "bottom": "0px", "right": "110px", "padding": "0px", "z-index": "400" , "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } ) ;
+Help.set_properties( tsb_button.style, { "position": "absolute", "width": "110px", "bottom": "0px", "right": "113px", "padding": "0px", "z-index": "400" , "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } ) ;
 const tsb_01_image_url = 'images/leaflet/' + 'tsb_01_image.png' ;
 tsb_button.innerHTML = '<img src="' + tsb_01_image_url + '"/>';
 tsb_button.addEventListener("click", open_tsb_website);
 
 let center_div = document.createElement("DIV");
 document.body.appendChild(center_div);
-Help.set_properties( center_div.style, { "position": "relative" } );
 let center_button = document.createElement("BUTTON");
 center_div.appendChild(center_button);
 center_button.id = "center_button";
-Help.set_properties( center_button.style, { "position": "absolute", "width": "45px", "bottom": "0px", "right": "235px", "padding": "0px", "z-index": "400" , "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } ) ;
+Help.set_properties( center_button.style, { "position": "absolute", "height":"40px", "width": "137px", "top": "95px", "right": "148px", "padding": "0px", "z-index": "400" , "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } ) ;
 const center_01_image_url = 'images/leaflet/' + 'crosshair.png' ;
-center_button.innerHTML = '<img src="' + center_01_image_url + '"/>';
+center_button.innerHTML = '<div><img style="vertical-align:middle;margin-left:-5px;margin-right:5px" src="' + center_01_image_url + '"/><span style="">Centered</span></div>';
 center_button.addEventListener("click", follow_position);
+
+let more_info_div = document.createElement("DIV");
+document.body.appendChild(more_info_div);
+let more_info_button = document.createElement("BUTTON");
+more_info_div.appendChild(more_info_button);
+more_info_button.id = "more_info_button";
+Help.set_properties( more_info_button.style, { "position": "absolute", "height":"40px", "width": "137px", "top": "95px", "right": "5px", "padding": "0px", "z-index": "400" , "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } ) ;
+const more_info_01_image_url = 'icons/leaflet/' + 'ship_symbol_black.png' ;
+more_info_button.innerHTML = '<div><img style="height:30px;vertical-align:middle;margin-left:-5px;margin-right:5px" src="' + more_info_01_image_url + '"/><span style="">More info</span></div>';
+more_info_button.addEventListener("click", show_more_info);
 
 
 function open_guab_website()
@@ -246,6 +256,20 @@ function follow_position()
   }
 }
 
+
+function show_more_info()
+{
+  if (!Ais.GET_ALL_AND_IMAGES)
+  {
+    Ais.GET_ALL_AND_IMAGES = true;
+    Help.set_properties( more_info_button.style, { "color": Help.rgba_literal_from_array([0,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([0,127,0,63]) } ) ;
+  }
+  else
+  {
+    Ais.GET_ALL_AND_IMAGES = false;
+    Help.set_properties( more_info_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } ) ;
+  }
+}
 
 function create_image_input()
 {
@@ -447,8 +471,8 @@ function refresh_display()
     let own_location_html_string = '<div style="font-size:10px;line-height:100%;">';
     if (Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "") own_location_html_string += 'User ID: ' + Ais.OWN_USER_ID + '<br>' ;
     //console.log('Help.get_cookie("mariex_user_id")', Help.get_cookie("mariex_user_id"))
-    own_location_html_string += 'Lat: ' + Ais.OWN_LOCATION_POS[0].toString().substring(0,8) + ' deg.' + '<br>' ;
-    own_location_html_string += 'Lon: ' + Ais.OWN_LOCATION_POS[1].toString().substring(0,8) + ' deg.' + '<br>' ;
+    own_location_html_string += 'Lat: ' + Ais.OWN_LOCATION_POS[0].toString().substring(0,8) + '\u00B0' + '<br>' ;
+    own_location_html_string += 'Lon: ' + Ais.OWN_LOCATION_POS[1].toString().substring(0,8) + '\u00B0' + '<br>' ;
     if (Ais.OWN_LOCATION_ACCURACY !== null)
     {
       own_location_html_string += 'Accuracy: ' + Ais.OWN_LOCATION_ACCURACY.toString().substring(0,6) + ' m' ;
@@ -463,7 +487,7 @@ function refresh_display()
       if (Ais.OWN_LOCATION_SPEED > 0) own_location_marker.setIcon(own_location_mobile_icon);
       if (Ais.OWN_LOCATION_HEADING !== null)
       {
-        own_location_html_string += '<br>Heading: ' + Ais.OWN_LOCATION_HEADING.toString().substring(0,6) + ' deg.' ;
+        own_location_html_string += '<br>Heading: ' + Ais.OWN_LOCATION_HEADING.toString().substring(0,6) + '\u00B0' ;
         own_location_marker.setRotationOrigin("center");
         own_location_marker.setRotationAngle(Ais.OWN_LOCATION_HEADING);
       }
@@ -491,10 +515,13 @@ function refresh_display()
   for (let _id_counter = 0; _id_counter < Ais.ID_ARRAY.length; _id_counter++)
   {
     const id = Ais.ID_ARRAY[_id_counter];
+    const mmsi = Ais.MMSI_ARRAY[_id_counter];
     const lat = Ais.POS_ARRAY[_id_counter][1];
     const lon = Ais.POS_ARRAY[_id_counter][0];
 	const wspeed = Ais.WIND_SPEED_ARRAY[_id_counter];
 	const wdir = Ais.WIND_DIR_ARRAY[_id_counter];
+	const airtemp = Ais.AIR_TEMP_ARRAY[_id_counter];
+	const watertemp = Ais.WATER_TEMP_ARRAY[_id_counter];
 	const speed = Ais.SPEED_ARRAY[_id_counter];
 	const course = Ais.COURSE_ARRAY[_id_counter];
     const content = Ais.TEXT_ARRAY[_id_counter];
@@ -544,7 +571,9 @@ function refresh_display()
           marker.setRotationAngle(wdir);
           html_string += 'Wind speed: ' + wspeed.toString().substring(0,3) + ' kt.' + '<br>';
           }
-          if (wdir !== null) html_string += 'Wind direction: ' + wdir.toString().substring(0,3) + ' deg.' + '<br>';
+          if (wdir !== null) html_string += 'Wind direction: ' + wdir.toString().substring(0,3) + '\u00B0' + '<br>';
+          if (airtemp !== null) html_string += 'Air temperature: ' + airtemp.toString().substring(0,4) + '\u00B0C' + '<br>';
+          if (watertemp !== null) html_string += 'Water temperature: ' + watertemp.toString().substring(0,4) + '\u00B0C' + '<br>';
           if (id !== null) html_string += 'ID: ' + id.toString();
         }
         else
@@ -562,7 +591,7 @@ function refresh_display()
           else
           {
             if (speed !== null) html_string += 'Speed: ' + speed.toString() + ' kt.' + '<br>' ;
-            if (course !== null) html_string += 'Course: ' + course.toString() + ' deg.' + '<br>' ;
+            if (course !== null) html_string += 'Course: ' + course.toString() + '' + '<br>' ;
             const shipname = Help.safe_get(content_json, "shipname");
             if (shipname !== null) html_string += 'Name: ' + shipname.toString() + '<br>' ;
             const callsign = Help.safe_get(content_json, "callsign");
@@ -572,9 +601,10 @@ function refresh_display()
             const imo = Help.safe_get(content_json, "imo");
             if (imo !== null) html_string += 'IMO: ' + imo.toString() + '<br>' ;
           }
+          if (mmsi !== null) html_string += 'MMSI: ' + mmsi.toString() + '<br>' ;
           if (id !== null) html_string += 'ID: ' + id.toString() + '<br>' ;
-          if (lat !== null) html_string += 'Lat: ' + lat.toString() + ' deg.' + '<br>' ;
-          if (lon !== null) html_string += 'Lon: ' + lon.toString() + ' deg.' ;  //Disp.jsonToTable(content_json, {});
+          if (lat !== null) html_string += 'Lat: ' + lat.toString() + '\u00B0' + '<br>' ;
+          if (lon !== null) html_string += 'Lon: ' + lon.toString() + '\u00B0' ;  //Disp.jsonToTable(content_json, {});
 
           const icon_filename = Help.safe_get(content_json, "icon_filename");
           if (icon_filename !== null)
@@ -586,7 +616,7 @@ function refresh_display()
         }
 
         const image_filename = Help.safe_get(content_json, "image_filename");
-        if (!is_touch_device && image_filename !== null)
+        if ( Ais.GET_ALL_AND_IMAGES && image_filename !== null) //!is_touch_device
         {
           const image_url = 'images/leaflet/' + image_filename ;
           html_string += '<br><br>' + '<img src="' + image_url + '"/>';
@@ -660,10 +690,13 @@ async function refresh_data()
 	  //{
         const ais_json = Help.json_safe_parse(ais_json_string); //[0];
         //console.log("ais_json", ais_json);
+        const mmsi = Help.safe_get(ais_json, "mmsi");
         const lon = Help.safe_get(ais_json, "lon");
         const lat = Help.safe_get(ais_json, "lat");
         const wdir = Help.safe_get(ais_json, "wdir");
         const wspeed = Help.safe_get(ais_json, "wspeed");
+        const airtemp = Help.safe_get(ais_json, "airtemp");
+        const watertemp = Help.safe_get(ais_json, "watertemp");
         const speed = Help.safe_get(ais_json, "speed");
         const course = Help.safe_get(ais_json, "course");
         const id = Help.safe_get(ais_json, "host_hardware_id");
@@ -673,9 +706,12 @@ async function refresh_data()
         if (id_index === -1)
         {
           Ais.ID_ARRAY.push( id ) ;
+          Ais.MMSI_ARRAY.push( mmsi )
           Ais.POS_ARRAY.push( [ lon, lat ] ) ;
           Ais.WIND_DIR_ARRAY.push( wdir );
           Ais.WIND_SPEED_ARRAY.push( wspeed );
+          Ais.AIR_TEMP_ARRAY.push( airtemp );
+	      Ais.WATER_TEMP_ARRAY.push( watertemp );
           Ais.SPEED_ARRAY.push( speed );
           Ais.COURSE_ARRAY.push( course );
           Ais.TEXT_ARRAY.push( ais_json_string );
@@ -683,9 +719,12 @@ async function refresh_data()
         }
         else
         {
+          if (mmsi !== null) Ais.MMSI_ARRAY[id_index] = mmsi;
           if (lon !== null && lat !== null) Ais.POS_ARRAY[id_index] = [ lon, lat ] ;
           if (wdir !== null) Ais.WIND_DIR_ARRAY[id_index] = wdir;
           if (wspeed !== null) Ais.WIND_SPEED_ARRAY[id_index] = wspeed;
+          if (airtemp !== null) Ais.AIR_TEMP_ARRAY[id_index] = airtemp;
+          if (watertemp !== null) Ais.WATER_TEMP_ARRAY[id_index] = watertemp;
           if (speed !== null) Ais.SPEED_ARRAY[id_index] = speed;
           if (course !== null) Ais.COURSE_ARRAY[id_index] = course;
           Ais.TEXT_ARRAY[id_index] = ais_json_string;
@@ -700,6 +739,9 @@ async function refresh_data()
 
   let position_string_array = []
 
+  if ( Ais.GET_ALL_AND_IMAGES )
+  {
+
   const position_response = await fetch(position_url, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '148;'}) });
   let position_data = null;
   try
@@ -710,6 +752,8 @@ async function refresh_data()
   {
   }
   position_string_array[0] = position_data
+
+  }
 
   const own_position_response = await fetch( own_position_url, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '99999;', 'duration': '300'}) } );
   let own_position_data = null;
@@ -722,10 +766,25 @@ async function refresh_data()
   }
   position_string_array[1] = own_position_data
 
+//Get AISHUB data separately at longer intervals (1 min?) at some point
+//  const aishub_position_response = await fetch(position_url, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '153;'}) });
+//  let position_data = null;
+//  try
+//  {
+//    aishub_position_data = await aishub_position_response.json();
+//  }
+//  catch(e)
+//  {
+//  }
+//  position_string_array[2] = aishub_position_data
+
   let current_timestamp = parseInt((new Date().valueOf()) / 1000);
   Ais.ALL_POS_ARRAY = [];
   Ais.ALL_TIME_ARRAY = [];
   Ais.ALL_ID_ARRAY = [];
+
+  if ( Ais.GET_ALL_AND_IMAGES )
+  {
 
   for (let _position_data_counter = 0; _position_data_counter < position_string_array.length; _position_data_counter++)
   {
@@ -741,27 +800,29 @@ async function refresh_data()
 
       if (position_string.length > 0)
       {
-      const regex_comma = /\|/g;
-      const regex_semicolon = /\~/g;
-      const position_json_string = position_string.replace(regex_semicolon, ";").replace(regex_comma, ",");
+        const regex_comma = /\|/g;
+        const regex_semicolon = /\~/g;
+        const position_json_string = position_string.replace(regex_semicolon, ";").replace(regex_comma, ",");
 
-      const position_json = Help.json_safe_parse(position_json_string); //[0];
-      if (position_json !== null)
-      {
-        for (let _position_json_counter = 0; _position_json_counter < position_json.length; _position_json_counter++)
+        const position_json = Help.json_safe_parse(position_json_string); //[0];
+        if (position_json !== null)
         {
-          const type = Help.safe_get(position_json[_position_json_counter], "type");
-          if ( [1,2,3,18,9].includes(parseInt(type)) )
+          for (let _position_json_counter = 0; _position_json_counter < position_json.length; _position_json_counter++)
           {
-            Ais.ALL_POS_ARRAY.push( [ Help.safe_get(position_json[_position_json_counter], "lon"), Help.safe_get(position_json[_position_json_counter], "lat") ] ) ;
-            Ais.ALL_ID_ARRAY.push( Help.safe_get(position_json[_position_json_counter], "mmsi") );
+            const type = Help.safe_get(position_json[_position_json_counter], "type");
+            if ( [1,2,3,18,9].includes(parseInt(type)) )
+            {
+              Ais.ALL_POS_ARRAY.push( [ Help.safe_get(position_json[_position_json_counter], "lon"), Help.safe_get(position_json[_position_json_counter], "lat") ] ) ;
+              Ais.ALL_ID_ARRAY.push( Help.safe_get(position_json[_position_json_counter], "mmsi") );
+            }
+            const position_time = parseInt(position_timestamp_array[_position_string_counter]);
+            Ais.ALL_TIME_ARRAY.push( position_time ) ;
           }
-          const position_time = parseInt(position_timestamp_array[_position_string_counter]);
-          Ais.ALL_TIME_ARRAY.push( position_time ) ;
         }
       }
     }
   }
+
   }
 
   let own_position_json_string = JSON.stringify(Ais.OWN_LOCATION_COORDS);

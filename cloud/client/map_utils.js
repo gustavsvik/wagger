@@ -6,10 +6,11 @@ class IdInput
 {
 
 
-  constructor({id_button_text = '', id_input_description = '', id_info_description = '', cookie_info_description = '', id_is_available = false, id_not_available_preamble_text = '', id_not_found_preamble_text = '', id_found_preamble_text = '', id_stored_preamble_text = ''} = {})
+  constructor({id_button_style = {}, id_button_text = '', id_input_description = '', id_info_description = '', cookie_info_description = '', id_is_available = false, id_not_available_preamble_text = '', id_not_found_preamble_text = '', id_found_preamble_text = '', id_stored_preamble_text = ''} = {})
   {
     let self = this;
 
+    self.id_button_style = id_button_style;
     self.id_button_text = id_button_text;
     self.id_input_description = id_input_description;
     self.id_info_description = id_info_description;
@@ -26,7 +27,7 @@ class IdInput
     self.share_button = document.createElement("BUTTON");
     share_div.appendChild(self.share_button);
     self.share_button.id = "share_button";
-    Help.set_properties( self.share_button.style, { "position": "absolute", "width": "280px", "top": "10px", "right": "5px", "padding": "10px", "z-index": "400" , "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } ) ;
+    Help.set_properties( self.share_button.style, self.id_button_style ) ;
 
     self.share_button.addEventListener("click", function(){ self.create_dialog(self.id_is_available, self.id_not_available_preamble_text, self.id_not_found_preamble_text, self.id_found_preamble_text, self.id_stored_preamble_text); } );
     let share_button_text = document.createTextNode(self.id_button_text);
