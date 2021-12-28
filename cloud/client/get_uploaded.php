@@ -7,7 +7,8 @@ include("../utils.php");
 include("../database.php");
 include("header.php");
 
-debug_log('Function start');
+debug_log('$DBNAME: ', $DBNAME);
+
 
 if ($web_api_channel > 0) $channels = strval($web_api_channel) . ';' ;
 
