@@ -1,6 +1,6 @@
 <?php
 
-
+/*
 class Check
 {
 
@@ -30,8 +30,8 @@ class Check
 
 
 }
-
-
+*/
+/*
 class CheckIf
 {
 
@@ -47,13 +47,13 @@ class CheckIf
   }
 
 }
-
-
+*/
+/*
 function safe_get($object, $key)
 {
   return !empty($object[$key]) ? $object[$key] : NULL ;
 }
-
+*/
 /*
 function is_stringy($val)
 {
@@ -69,7 +69,7 @@ function is_iterable($var)
 
 function debug_log($log_label, $log_var = "")
 {
-  $logged_scripts = [];  // 'partition_database.php', 'get_own_pos_records.php', 'get_requested.php', 'send_request.php', 'set_requested.php', 'database.php', 'get_static_data.php', 'get_static_records_string.php', 'get_ais_data_records.php', 'update_static_data.php', 'update_devices.php', 'get_uploaded.php', 'server_time.php', 'network_time.php', 'update_static_data_client.php', 'contributed.php'
+  $logged_scripts = [];  // 'partition_database.php', 'get_own_pos_records.php', 'get_requested.php', 'send_request.php', 'set_requested.php', 'database.php', 'get_static_data.php', 'get_static_records_string.php', 'get_ais_data_records.php', 'update_static_data.php', 'update_devices.php', 'get_uploaded.php', 'get_host_data.php', 'server_time.php', 'network_time.php', 'update_static_data_client.php', 'contributed.php'
   if (count($logged_scripts) > 0)
   {
     $logfile = '/srv/wagger/cloud/client/images/debug.log';
@@ -86,7 +86,7 @@ function debug_log($log_label, $log_var = "")
   }
 }
 
-
+/*
 function getPost($key, $default)
 {
   if (isset($_POST[$key]))
@@ -101,7 +101,7 @@ function getGet($key, $default)
     return $_GET[$key];
   return $default;
 }
-
+*/
 
 function get_separated_value_range_string($range_array, $separator)
 {
