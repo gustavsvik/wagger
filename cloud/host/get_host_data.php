@@ -1,15 +1,16 @@
 <?php
 
 
-include("../header.php");
-include("../db_ini.php");
-include("../utils.php");
-include("../database.php");
-include("header.php");
+include_once("../header.php");
+include_once("../db_ini.php");
+include_once("../GetSafe.php");
+include_once("../utils.php");
+include_once("../database.php");
+include_once("header.php");
 
 
-debug_log('$host_hardware_id: ', $host_hardware_id );
-debug_log('$host_text_id: ', $host_text_id );
+//debug_log('$host_hardware_id: ', $host_hardware_id );
+//debug_log('$host_text_id: ', $host_text_id );
 
 $conn = db_get_connection($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME);
 
@@ -17,7 +18,7 @@ $return_data_array = NULL;
 if (!is_null($conn))
 {
   $return_data_array = db_get_static_by_id($conn, "HOST", $host_hardware_id, $host_text_id);
-  debug_log('$return_data_array: ', $return_data_array);
+  //debug_log('$return_data_array: ', $return_data_array);
 
 /*
 $host_unique_indices = array();
@@ -64,16 +65,35 @@ if (count($host_descriptions) > 0) $host_description = strval($host_descriptions
 debug_log('host_description: ', $host_description);
 */
 
+$host_hardware_id = GetSafe::by_key($return_data_array, 'hardware_id');
+
+if ( !is_null($host_hardware_id) )
+{
+  $device_parent_index = NULL;
+
+  $host_unique_index = GetSafe::by_key($return_data_array, 'unique_index');
+  $host_text_id = GetSafe::by_key($return_data_array, 'text_id');
+  $host_address = GetSafe::by_key($return_data_array, 'address');
+  $common_description = GetSafe::by_key($return_data_array, 'description');
+}
+else
+{
+  $device_parent_index = db_get_parent_index_by_id($conn, "DEVICE", $host_text_id . '-VDM', NULL, "HOST" );
+  //debug_log('$device_parent_index: ', $device_parent_index);
+  $return_data_array = db_get_static_by_id($conn, "HOST", NULL, NULL, $device_parent_index);
+  debug_log('$return_data_array: ', $return_data_array);
+  $host_unique_index = GetSafe::by_key($return_data_array, 'unique_index');
+  $host_hardware_id = GetSafe::by_key($return_data_array, 'hardware_id');
+  $host_text_id = GetSafe::by_key($return_data_array, 'text_id');
+  $host_address = GetSafe::by_key($return_data_array, 'address');
+  $common_description = GetSafe::by_key($return_data_array, 'description');
+}
+
   $conn->close();
 }
 
-$host_unique_index = safe_get($return_data_array, 'unique_index');
-$host_hardware_id = safe_get($return_data_array, 'hardware_id');
-$host_text_id = safe_get($return_data_array, 'text_id');
-$common_address = safe_get($return_data_array, 'address');
-$common_description = safe_get($return_data_array, 'description');
-
 header("Content-type: application/json");
-$json_array = array('host_unique_index' => $host_unique_index, 'host_hardware_id' => $host_hardware_id, 'host_text_id' => $host_text_id, 'common_address' => $common_address, 'common_description' => $common_description);
+$json_array = array('host_unique_index' => $host_unique_index, 'host_hardware_id' => $host_hardware_id, 'host_text_id' => $host_text_id, 'host_address' => $host_address, 'common_description' => $common_description);
+debug_log('$json_array: ', $json_array);
 echo json_encode($json_array);
 
