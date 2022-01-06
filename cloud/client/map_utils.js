@@ -1,6 +1,80 @@
 "use strict";
 
 
+class WindBarbs
+{
+
+  constructor(lower_bounds = [0, 1, 3, 8, 13, 18, 23, 28, 33, 38], dir_url = 'icons/leaflet/', name_prepend = '', name_append = '_kt', name_extension = 'png', size = [30,54], anchor = [15,48], popup_anchor = [0,0])
+  {
+    this.lower_bounds = lower_bounds;
+	this.dir_url = dir_url;
+
+	this.icons = {};
+    for (let index = 0; index < this.lower_bounds.length; index++)
+    {
+      const bound_string = this.lower_bounds[index].toString().padStart(3, '0');
+      this.icons[index] = new CustomIcon({iconUrl: dir_url + name_prepend + bound_string + name_append + '.' + name_extension, iconSize: size, iconAnchor: anchor, popupAnchor: popup_anchor });
+    }
+  }
+
+
+  get_icon(wind_speed)
+  {
+    for (let index = this.lower_bounds.length - 1; index >= 0; index--)
+    {
+      if (parseFloat(wind_speed) > parseFloat(this.lower_bounds[index]))
+      {
+        return this.icons[index];
+      }
+    }
+    return this.icons[this.lower_bounds[0]];
+  }
+
+
+}
+
+
+
+class AisData
+{
+
+  constructor()
+  {
+    this.OWN_ZOOM_LEVEL = null;
+    this.OWN_POSITION_AVAILABLE = false;
+    this.OWN_POSITION_FOLLOW = false;
+    this.OWN_LOCATION_COORDS = {};
+    this.OWN_LOCATION_POS = [];
+    this.OWN_LOCATION_ACCURACY = null;
+    this.OWN_LOCATION_ALTITUDE = null;
+    this.OWN_LOCATION_ALTITUDE_ACCURACY = null;
+    this.OWN_LOCATION_SPEED = null;
+    this.OWN_LOCATION_HEADING = null;
+    this.OWN_USER_ID = null;
+    this.OWN_DATA_CHANNEL = null;
+    this.OWN_DATA_IMAGE_BYTES = null;
+    this.GET_ALL_AND_IMAGES = false;
+    this.ALL_POS_ARRAY = [];
+    this.ALL_TIME_ARRAY = [];
+    this.ALL_MMSI_ARRAY = [];
+    this.ID_ARRAY = [];
+    this.POS_ARRAY = [];
+    this.MMSI_ARRAY = [];
+    this.MARKER_ARRAY = [];
+    this.WIND_DIR_ARRAY = [];
+    this.WIND_SPEED_ARRAY = [];
+    this.AIR_TEMP_ARRAY = [];
+    this.WATER_TEMP_ARRAY = [];
+    this.SPEED_ARRAY = [];
+    this.COURSE_ARRAY = [];
+    this.TEXT_ARRAY = [];
+    this.TIME_ARRAY = [];
+  }
+
+
+}
+
+
 
 class IdInput
 {

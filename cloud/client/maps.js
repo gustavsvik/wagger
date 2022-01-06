@@ -43,16 +43,7 @@ const danger_icon = new CustomIcon({iconUrl: 'icons/leaflet/danger_over_symbol.p
 const shore_01_symbol = new CustomIcon({iconUrl: 'icons/leaflet/shore_01_symbol.png', iconSize: [32,32], iconAnchor: [16,16]});
 const shore_02_symbol = new CustomIcon({iconUrl: 'icons/leaflet/shore_02_symbol.png', iconSize: [40,30], iconAnchor: [20,15]});
 
-const wind_000_kt_icon = new CustomIcon({iconUrl: 'icons/leaflet/000_kt.png'});
-const wind_001_kt_icon = new CustomIcon({iconUrl: 'icons/leaflet/001_kt.png'});
-const wind_003_kt_icon = new CustomIcon({iconUrl: 'icons/leaflet/003_kt.png'});
-const wind_008_kt_icon = new CustomIcon({iconUrl: 'icons/leaflet/008_kt.png'});
-const wind_013_kt_icon = new CustomIcon({iconUrl: 'icons/leaflet/013_kt.png'});
-const wind_018_kt_icon = new CustomIcon({iconUrl: 'icons/leaflet/018_kt.png'});
-const wind_023_kt_icon = new CustomIcon({iconUrl: 'icons/leaflet/023_kt.png'});
-const wind_028_kt_icon = new CustomIcon({iconUrl: 'icons/leaflet/028_kt.png'});
-const wind_033_kt_icon = new CustomIcon({iconUrl: 'icons/leaflet/033_kt.png'});
-const wind_038_kt_icon = new CustomIcon({iconUrl: 'icons/leaflet/038_kt.png'});
+let wind_barbs = new WindBarbs();
 
 const center = [62.827, 17.875]; //[62.664450, 18.286383];
 
@@ -497,12 +488,12 @@ function refresh_display()
     const mmsi = Ais.MMSI_ARRAY[_id_counter];
     const lat = Ais.POS_ARRAY[_id_counter][1];
     const lon = Ais.POS_ARRAY[_id_counter][0];
-	const wspeed = Ais.WIND_SPEED_ARRAY[_id_counter];
-	const wdir = Ais.WIND_DIR_ARRAY[_id_counter];
-	const airtemp = Ais.AIR_TEMP_ARRAY[_id_counter];
-	const watertemp = Ais.WATER_TEMP_ARRAY[_id_counter];
-	const speed = Ais.SPEED_ARRAY[_id_counter];
-	const course = Ais.COURSE_ARRAY[_id_counter];
+    const wspeed = Ais.WIND_SPEED_ARRAY[_id_counter];
+    const wdir = Ais.WIND_DIR_ARRAY[_id_counter];
+    const airtemp = Ais.AIR_TEMP_ARRAY[_id_counter];
+    const watertemp = Ais.WATER_TEMP_ARRAY[_id_counter];
+    const speed = Ais.SPEED_ARRAY[_id_counter];
+    const course = Ais.COURSE_ARRAY[_id_counter];
     const content = Ais.TEXT_ARRAY[_id_counter];
     const age = current_timestamp - Ais.TIME_ARRAY[_id_counter];
 
@@ -532,21 +523,14 @@ function refresh_display()
 
         if (type === 8)
         {
-          marker.setIcon(wind_000_kt_icon);
+          marker.setIcon( wind_barbs.get_icon(0) );
+
           if (wspeed !== null)
           {
-          if (wspeed > 38.0) marker.setIcon(wind_038_kt_icon);
-          else if (wspeed > 33.0) marker.setIcon(wind_033_kt_icon);
-          else if (wspeed > 28.0) marker.setIcon(wind_028_kt_icon);
-          else if (wspeed > 23.0) marker.setIcon(wind_023_kt_icon);
-          else if (wspeed > 18.0) marker.setIcon(wind_018_kt_icon);
-          else if (wspeed > 13.0) marker.setIcon(wind_013_kt_icon);
-          else if (wspeed > 8.0) marker.setIcon(wind_008_kt_icon);
-          else if (wspeed > 3.0) marker.setIcon(wind_003_kt_icon);
-          else if (wspeed > 1.0) marker.setIcon(wind_001_kt_icon);
-          marker.setRotationOrigin("15px 48px");
-          marker.setRotationAngle(wdir);
-          html_string += 'Wind speed: ' + wspeed.toString().substring(0,3) + ' kt.' + '<br>';
+            marker.setIcon( wind_barbs.get_icon(wspeed) );
+            marker.setRotationOrigin("15px 48px");
+            marker.setRotationAngle(wdir);
+            html_string += 'Wind speed: ' + wspeed.toString().substring(0,3) + ' kt.' + '<br>';
           }
           if (wdir !== null) html_string += 'Wind direction: ' + wdir.toString().substring(0,3) + '\u00B0' + '<br>';
           if (airtemp !== null) html_string += 'Air temperature: ' + airtemp.toString().substring(0,4) + '\u00B0C' + '<br>';
