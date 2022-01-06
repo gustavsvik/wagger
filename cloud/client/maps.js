@@ -42,6 +42,7 @@ const shore_mobile_icon = new CustomIcon({iconUrl: 'icons/leaflet/land_vehicle_s
 const danger_icon = new CustomIcon({iconUrl: 'icons/leaflet/danger_over_symbol.png', iconSize: [24,24], iconAnchor: [12,12]});
 const shore_01_symbol = new CustomIcon({iconUrl: 'icons/leaflet/shore_01_symbol.png', iconSize: [32,32], iconAnchor: [16,16]});
 const shore_02_symbol = new CustomIcon({iconUrl: 'icons/leaflet/shore_02_symbol.png', iconSize: [40,30], iconAnchor: [20,15]});
+const own_location_lost_icon = new CustomIcon({iconUrl: 'icons/leaflet/danger_over_symbol.png', iconSize: [16,16], iconAnchor: [8,8]});
 
 let wind_barbs = new WindBarbs();
 
@@ -425,8 +426,15 @@ function handle_geolocation_error()
 {
   Ais.OWN_POSITION_AVAILABLE = false;
   id_input.set_id_is_available(Ais.OWN_POSITION_AVAILABLE);
-  id_input.set_not_available_text();
-  //console.log("id_input.id_input_description", id_input.id_input_description);
+
+  Ais.OWN_LOCATION_POS = [];
+
+  own_location_marker.setIcon(own_location_lost_icon);
+  own_accuracy_circle.setRadius(0);
+
+  if (!is_touch_device) own_location_marker.bindTooltip(id_not_available_preamble_text);
+  else own_location_marker.bindPopup(id_not_available_preamble_text, {closeOnClick: true, autoClose: false});
+  id_input.set_not_available_label();
 }
 
 
