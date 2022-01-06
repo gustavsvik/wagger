@@ -393,6 +393,11 @@ function handle_geolocation_success(position)
 {
   const own_coords = position.coords;
 
+  //own_location_marker = L.marker(center, {icon: own_location_stationary_icon});
+  //own_location_marker.addTo(map);
+  //own_accuracy_circle = L.circle(center, {color: 'steelblue', radius: 0, fillColor: 'steelblue', opacity: 0.2});
+  //own_accuracy_circle.addTo(map);
+
   Ais.OWN_POSITION_AVAILABLE = true;
   id_input.set_id_is_available(Ais.OWN_POSITION_AVAILABLE);
   Ais.OWN_USER_ID = id_input.get_id();
@@ -627,7 +632,15 @@ async function refresh_data()
   const geolocation_options = { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 };
   const watchID = navigator.geolocation.getCurrentPosition(handle_geolocation_success, handle_geolocation_error, geolocation_options);
   */
-  const response = await fetch(static_url);
+  let response = null;
+  try
+  {
+    response = await fetch(static_url);
+  }
+  catch(e)
+  {
+    console.error(e);
+  }
   let data = "";
   try
   {
@@ -635,7 +648,9 @@ async function refresh_data()
   }
   catch(e)
   {
+    console.error(e);
   }
+
   const data_array = Help.decodeTransferString(data);
   let data_string_array = [];
   if (data_array[2].length > 0) data_string_array = data_array[2][0];
@@ -709,18 +724,25 @@ async function refresh_data()
 
   if ( Ais.GET_ALL_AND_IMAGES )
   {
-
-  const position_response = await fetch(position_url, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '148;'}) });
-  let position_data = null;
-  try
-  {
-    position_data = await position_response.json();
-  }
-  catch(e)
-  {
-  }
-  position_string_array[0] = position_data
-
+    let position_response = null;
+    try
+    {
+      position_response = await fetch(position_url, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '148;'}) });
+    }
+    catch(e)
+    {
+      console.error(e);
+    }
+    let position_data = "";
+    try
+    {
+      position_data = await position_response.json();
+    }
+    catch(e)
+    {
+      console.error(e);
+    }
+    position_string_array[0] = position_data
   }
 
   const own_position_response = await fetch( own_position_url, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '99999;', 'duration': '300'}) } );
@@ -731,6 +753,7 @@ async function refresh_data()
   }
   catch(e)
   {
+    console.error(e);
   }
   position_string_array[1] = own_position_data
 
@@ -820,10 +843,10 @@ async function refresh_data()
     own_position_json_string = own_position_json_string.replace(regex_tilde, '~');
     own_position_json_string = own_position_json_string.replace(regex_pipe, '|');
     const own_position_upload_request = await fetch( 'https://' + window.location.hostname + '/client/send_request.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '99999;;'}) } );
-    //body: "channels=" + encodeURIComponent("99999;;") } );
+    if (!own_position_upload_request.ok) console.error(own_position_upload_request);
     const own_position_transfer_string = "99999;" + current_timestamp.toString() + ",-9999.0,," + own_position_json_string + ",;" ;
     const own_position_set_requested = await fetch( 'https://' + window.location.hostname + '/host/set_requested.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'returnstring': own_position_transfer_string}) } );
-    //body: "returnstring=" + encodeURIComponent(own_position_transfer_string) } );
+    if (!own_position_set_requested.ok) console.error(own_position_set_requested);
   }
 
   if (Ais.OWN_DATA_CHANNEL !== null && Ais.OWN_DATA_IMAGE_BYTES !== null)
@@ -832,10 +855,10 @@ async function refresh_data()
     const own_data_image_bytes = Ais.OWN_DATA_IMAGE_BYTES;
     Ais.OWN_DATA_IMAGE_BYTES = null;
     const own_image_upload_request = await fetch( 'https://' + window.location.hostname + '/client/send_request.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': own_data_channel_string + ';;'}) } );
-    //body: "channels=" + encodeURIComponent( own_data_channel_string + ";;") } );
+    if (!own_image_upload_request.ok) console.error(own_image_upload_request);
     const own_image_transfer_string = own_data_channel_string + ";" + current_timestamp.toString() + ",-9999.0,," + own_data_image_bytes + ",;" ;
     const own_image_set_requested = await fetch( 'https://' + window.location.hostname + '/host/set_requested.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'returnstring': own_image_transfer_string}) } );
-    //body: "returnstring=" + encodeURIComponent(own_image_transfer_string) } );
+    if (!own_image_set_requested.ok) console.error(own_image_set_requested);
   }
 
 }
