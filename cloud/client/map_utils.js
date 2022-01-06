@@ -147,9 +147,28 @@ else if (Ais.OWN_LOCATION_POS.length === 2)
     this.id_is_available = id_is_available;
   }
 
-  set_not_available_text()
+  set_not_available_label()
   {
     this.share_button.innerHTML = this.id_not_available_preamble_text;
+    Help.set_properties( this.share_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,0,0,63]) } );
+  }
+
+  set_not_found_label()
+  {
+    this.share_button.innerText = this.id_not_found_preamble_text;   //"Sharing position anonymously";
+    Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } );
+  }
+
+  set_found_label(user_id)
+  {
+    this.share_button.innerText = this.id_found_preamble_text + user_id;
+    Help.set_properties( this.share_button.style, { "color": Help.rgba_literal_from_array([127,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,0,63]) } ) ;
+  }
+
+  set_stored_label(user_id)
+  {
+    this.share_button.innerText = this.id_stored_preamble_text + user_id;
+    Help.set_properties( this.share_button.style, { "color": Help.rgba_literal_from_array([0,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([0,127,0,63]) } ) ;
   }
 
   create_dialog(id_is_available, id_not_available_preamble_text, id_not_found_preamble_text, id_found_preamble_text, id_stored_preamble_text)
@@ -226,6 +245,10 @@ else if (Ais.OWN_LOCATION_POS.length === 2)
 
     function submit_data()
     {
+      //Are these really necessary? No setting in this dialog can disable positioning.
+      if (!id_is_available) self.share_button.innerText = id_not_available_preamble_text;
+      Help.set_properties( self.share_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } );
+
       //Ais.OWN_USER_ID = id_input.value ;
       self.own_user_id = id_input.value ;
       //if ( Ais.OWN_POSITION_AVAILABLE && ( !store_cookie_check.checked || Ais.OWN_USER_ID === null || Ais.OWN_USER_ID === "" ) )

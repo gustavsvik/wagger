@@ -69,7 +69,8 @@ if (geolocation_available)
   own_accuracy_circle = L.circle(center, {color: 'steelblue', radius: 0, fillColor: 'steelblue', opacity: 0.2});
   own_accuracy_circle.addTo(map);
   const geolocation_options = { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 };
-  const watchID = navigator.geolocation.watchPosition(handle_geolocation_success, handle_geolocation_error, geolocation_options);
+  //const watchID =
+  navigator.geolocation.watchPosition(handle_geolocation_success, handle_geolocation_error, geolocation_options);
 }
 
 const is_touch_device = Help.isTouchDevice();
@@ -396,19 +397,19 @@ function handle_geolocation_success(position)
   id_input.set_id_is_available(Ais.OWN_POSITION_AVAILABLE);
   Ais.OWN_USER_ID = id_input.get_id();
 
-  share_button.innerText = "Sharing position anonymously";
-  Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } );
+  //share_button.innerText = id_not_found_preamble_text;   //"Sharing position anonymously";
+  //Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } );
+  id_input.set_not_found_label();
+
   cookie_value = id_input.get_cookie_value();
   if ( (typeof cookie_value !== 'undefined' && cookie_value !== null && cookie_value !== "") ) // && (typeof Ais.OWN_USER_ID === 'undefined' || Ais.OWN_USER_ID === "" || Ais.OWN_USER_ID === null) )
   {
     Ais.OWN_USER_ID = cookie_value;
-    share_button.innerText = "Device recognized as " + Ais.OWN_USER_ID;
-    Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([0,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([0,127,0,63]) } ) ;
+    id_input.set_stored_label(Ais.OWN_USER_ID);
   }
   if ( (typeof cookie_value === 'undefined' || cookie_value === null || cookie_value === "") && (typeof Ais.OWN_USER_ID !== 'undefined' && Ais.OWN_USER_ID !== "" && Ais.OWN_USER_ID !== null) )
   {
-    share_button.innerText = "Identified as " + Ais.OWN_USER_ID;
-    Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([127,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,0,63]) } ) ;
+    id_input.set_found_label(Ais.OWN_USER_ID);
   }
 
   Ais.OWN_LOCATION_COORDS = { "lat": own_coords.latitude, "lon": own_coords.longitude, "accuracy": own_coords.accuracy, "alt": own_coords.altitude, "alt_accuracy": own_coords.altitudeAccuracy, "speed": own_coords.speed, "heading": own_coords.heading };
