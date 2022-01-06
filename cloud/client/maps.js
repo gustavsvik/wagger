@@ -1,16 +1,14 @@
 'use strict';
 
 
-//const uuid = uuidv4();
-//console.log("uuid", uuid);
-
 const width  = window.innerWidth || document.documentElement.clientWidth ||
 document.body.clientWidth;
 const height = window.innerHeight|| document.documentElement.clientHeight||
 document.body.clientHeight;
-//console.log(width, height);
+
 
 let Ais = new AisData();
+
 
 let geolocation_available = false ;
 if('geolocation' in navigator)
@@ -19,7 +17,6 @@ if('geolocation' in navigator)
 }
 else
 {
-  /* geolocation IS NOT available */
   Ais.OWN_POSITION_AVAILABLE = false ;
 }
 
@@ -28,9 +25,6 @@ const CustomIcon = L.Icon.extend
 {
   options:
   {
-    //shadowUrl: 'leaf-shadow.png',
-    //shadowSize:   [50, 64],
-    //shadowAnchor: [4, 62],
     iconSize: [30,54],
     iconAnchor: [15,48],
     popupAnchor:  [0,0]
@@ -60,25 +54,14 @@ const wind_028_kt_icon = new CustomIcon({iconUrl: 'icons/leaflet/028_kt.png'});
 const wind_033_kt_icon = new CustomIcon({iconUrl: 'icons/leaflet/033_kt.png'});
 const wind_038_kt_icon = new CustomIcon({iconUrl: 'icons/leaflet/038_kt.png'});
 
-// center of the map
 const center = [62.827, 17.875]; //[62.664450, 18.286383];
 
-//const shore = [62.8315, 17.8705];
-//const sea_mobile = [62.827, 17.90];
-//const land_mobile = [62.832, 17.88];
-//const buoy_1 = [62.8219465526254, 17.878395190126632];
-//const buoy_2 = [62.830045904677235, 17.88962710650322];
-//const virtual_1 = [62.82410637983922, 17.883320754338765];
-//const virtual_2 = [62.8271661350588, 17.887655981226686];
-
-// Create the map
 let map = L.map( 'map', {attributionControl: false} ).setView(center, 14);
 Ais.OWN_ZOOM_LEVEL = 14;
 
-// Set up the OSM layer
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
 L.control.scale().addTo(map);
-let markersLayer = new L.LayerGroup();// add a marker in the given location
+let markersLayer = new L.LayerGroup();
 markersLayer.addTo(map);
 
 const static_url = 'https://' + window.location.hostname + '/client/get_static_records_string.php?web_api_table_label=host' ; //'http://labremote.net/client/get_static_records.php?web_api_table=host&web_api_column=host_description' ;
@@ -89,12 +72,12 @@ let own_location_marker = null;
 let own_accuracy_circle = null;
 if (geolocation_available)
 {
-  const geolocation_options = { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 };
-  const watchID = navigator.geolocation.getCurrentPosition(handle_geolocation_success, handle_geolocation_error, geolocation_options);
-  own_location_marker = L.marker(center, {icon: own_location_stationary_icon});
+  own_location_marker = L.marker(center, {icon: own_location_lost_icon});
   own_location_marker.addTo(map);
   own_accuracy_circle = L.circle(center, {color: 'steelblue', radius: 0, fillColor: 'steelblue', opacity: 0.2});
   own_accuracy_circle.addTo(map);
+  const geolocation_options = { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 };
+  const watchID = navigator.geolocation.watchPosition(handle_geolocation_success, handle_geolocation_error, geolocation_options);
 }
 
 const is_touch_device = Help.isTouchDevice();
@@ -415,7 +398,6 @@ camera_button.addEventListener('click', event => {
 
 function handle_geolocation_success(position)
 {
-  //console.log("position", position)
   const own_coords = position.coords;
 
   Ais.OWN_POSITION_AVAILABLE = true;
@@ -459,7 +441,6 @@ function handle_geolocation_error()
 
 function refresh_display()
 {
-
   markersLayer.clearLayers();
 
   let current_timestamp = parseInt((new Date().valueOf()) / 1000);
@@ -470,7 +451,6 @@ function refresh_display()
     own_location_marker.setLatLng(Ais.OWN_LOCATION_POS);
     let own_location_html_string = '<div style="font-size:10px;line-height:100%;">';
     if (Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "") own_location_html_string += 'User ID: ' + Ais.OWN_USER_ID + '<br>' ;
-    //console.log('Help.get_cookie("mariex_user_id")', Help.get_cookie("mariex_user_id"))
     own_location_html_string += 'Lat: ' + Ais.OWN_LOCATION_POS[0].toString().substring(0,8) + '\u00B0' + '<br>' ;
     own_location_html_string += 'Lon: ' + Ais.OWN_LOCATION_POS[1].toString().substring(0,8) + '\u00B0' + '<br>' ;
     if (Ais.OWN_LOCATION_ACCURACY !== null)
@@ -511,7 +491,6 @@ function refresh_display()
     }
   }
 
-  //console.log("Ais.MMSI_ARRAY.length", Ais.MMSI_ARRAY.length);
   for (let _id_counter = 0; _id_counter < Ais.ID_ARRAY.length; _id_counter++)
   {
     const id = Ais.ID_ARRAY[_id_counter];
@@ -531,8 +510,6 @@ function refresh_display()
     {
       let marker = L.marker([ lat, lon ], {icon: sea_stationary_icon});
 
-      //let marker = L.circleMarker([ latitude, longitude ]).addTo(map);
-      //marker.setIcon(sea_stationary_icon);
       if (speed > 0)
       {
         marker.setIcon(sea_mobile_icon);
@@ -543,7 +520,7 @@ function refresh_display()
       marker.setOpacity( time_opacity );
       marker.setRotationOrigin("center");
       marker.setRotationAngle(course);
-      //console.log(wind_speed);
+
       const content_json = Help.json_safe_parse(content);
       if (content_json !== null)
       {
@@ -564,7 +541,7 @@ function refresh_display()
           else if (wspeed > 23.0) marker.setIcon(wind_023_kt_icon);
           else if (wspeed > 18.0) marker.setIcon(wind_018_kt_icon);
           else if (wspeed > 13.0) marker.setIcon(wind_013_kt_icon);
-		  else if (wspeed > 8.0) marker.setIcon(wind_008_kt_icon);
+          else if (wspeed > 8.0) marker.setIcon(wind_008_kt_icon);
           else if (wspeed > 3.0) marker.setIcon(wind_003_kt_icon);
           else if (wspeed > 1.0) marker.setIcon(wind_001_kt_icon);
           marker.setRotationOrigin("15px 48px");
@@ -624,12 +601,12 @@ function refresh_display()
 
         if (!is_touch_device) marker.bindTooltip(html_string);
         else marker.bindPopup(html_string, {closeOnClick: true, autoClose: false}) ;
-
       }
+
       markersLayer.addLayer(marker);
     }
   }
-  //console.log("Ais.ALL_POS_ARRAY.length", Ais.ALL_POS_ARRAY.length);
+
   for (let _pos_counter = 0; _pos_counter < Ais.ALL_POS_ARRAY.length; _pos_counter++)
   {
     const lat = Ais.ALL_POS_ARRAY[_pos_counter][1];
@@ -651,19 +628,17 @@ function refresh_display()
 }
 
 
-//let firstTime = true;
-
 async function refresh_data()
 {
+  /*
   const geolocation_options = { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 };
   const watchID = navigator.geolocation.getCurrentPosition(handle_geolocation_success, handle_geolocation_error, geolocation_options);
-
+  */
   const response = await fetch(static_url);
   let data = "";
   try
   {
     data = await response.json();
-    //console.log("data", data);
   }
   catch(e)
   {
@@ -832,7 +807,6 @@ async function refresh_data()
 
   let user_id = null;
   if (Ais.OWN_POSITION_AVAILABLE && typeof Ais.OWN_USER_ID !== 'undefined' && Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "") user_id = Ais.OWN_USER_ID;
-  //console.log('Help.get_cookie("mariex_user_id")', Help.get_cookie("mariex_user_id"))
   if (user_id === null) user_id = "99999";
   if (Ais.OWN_LOCATION_POS.length === 2) // user_id !== null ||
   {
@@ -845,7 +819,6 @@ async function refresh_data()
     {
       new_channel_data = await new_channel_response.json();
       Ais.OWN_DATA_CHANNEL = new_channel_data["new_channel_index"];
-      //console.log("Ais.OWN_DATA_CHANNEL", Ais.OWN_DATA_CHANNEL);
     }
     catch(e)
     {
@@ -856,7 +829,6 @@ async function refresh_data()
     const own_position_upload_request = await fetch( 'https://' + window.location.hostname + '/client/send_request.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '99999;;'}) } );
     //body: "channels=" + encodeURIComponent("99999;;") } );
     const own_position_transfer_string = "99999;" + current_timestamp.toString() + ",-9999.0,," + own_position_json_string + ",;" ;
-    //console.log("own_position_transfer_string", own_position_transfer_string);
     const own_position_set_requested = await fetch( 'https://' + window.location.hostname + '/host/set_requested.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'returnstring': own_position_transfer_string}) } );
     //body: "returnstring=" + encodeURIComponent(own_position_transfer_string) } );
   }
@@ -866,12 +838,9 @@ async function refresh_data()
     const own_data_channel_string = (Ais.OWN_DATA_CHANNEL).toString(); //"99999";
     const own_data_image_bytes = Ais.OWN_DATA_IMAGE_BYTES;
     Ais.OWN_DATA_IMAGE_BYTES = null;
-    //console.log("own_data_channel_string", own_data_channel_string);
-    //console.log("own_data_image_bytes", own_data_image_bytes);
     const own_image_upload_request = await fetch( 'https://' + window.location.hostname + '/client/send_request.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': own_data_channel_string + ';;'}) } );
     //body: "channels=" + encodeURIComponent( own_data_channel_string + ";;") } );
     const own_image_transfer_string = own_data_channel_string + ";" + current_timestamp.toString() + ",-9999.0,," + own_data_image_bytes + ",;" ;
-    //console.log("own_image_transfer_string", own_image_transfer_string);
     const own_image_set_requested = await fetch( 'https://' + window.location.hostname + '/host/set_requested.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'returnstring': own_image_transfer_string}) } );
     //body: "returnstring=" + encodeURIComponent(own_image_transfer_string) } );
   }
