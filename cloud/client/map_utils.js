@@ -1,35 +1,160 @@
 "use strict";
 
 
+
+class TransparentDivIcon extends L.DivIcon
+{
+  constructor( { label = '*' } = {} )
+  {
+    super( { html: '<style> .leaflet-div-icon { background-color: transparent; border-color: transparent } </style> <span style="font-size:8px;line-height:100%;background-color:transparent;" />' + label, className: 'leaflet-div-icon' } );
+  }
+}
+
+
+
+class TransparentLabelMarker extends L.Marker
+{
+  constructor( pos = [0.0, 0.0], { label = '*' } = {} )
+  {
+    const noIcon = new TransparentDivIcon( {label: label } );
+    //noIcon.style.backgroundColor = 'transparent';
+	super(pos, {icon: noIcon, opacity: 1.0});
+  }
+}
+
+
+
+class CustomIcon extends L.Icon
+{
+  constructor( { iconUrl = 'icons/leaflet/danger_over_symbol.png', iconSize = [30,54], iconAnchor = [15,48] } = {} ) //iconUrl = 'icons/leaflet/danger_over_symbol.png')
+  {
+    super( { iconUrl: iconUrl, iconSize: iconSize, iconAnchor: iconAnchor, popupAnchor: [0,0] } );
+  }
+}
+
+
+
+class FixedMarker extends L.Marker
+{
+  constructor( pos = [0.0, 0.0], { iconUrl = 'icons/leaflet/building_symbol.png', iconSize = [32,32], iconAnchor = [16,16] } = {} ) //iconUrl = 'icons/leaflet/building_symbol.png')
+  {
+    const symbol = new CustomIcon({iconUrl: iconUrl, iconSize: iconSize, iconAnchor: iconAnchor});
+
+	super(pos, {icon: symbol});
+
+
+/*
+    let marker = L.marker(this.pos, {icon: shore01Symbol});
+
+shoreMarker01.addTo(map);
+shoreMarker01.setOpacity( 1.0 );
+shoreMarker01.setRotationOrigin("center");
+shoreMarker01.setRotationAngle(0);
+let shore01HtmlString = '<div style="font-size:10px;line-height:100%;">';
+shore01HtmlString += 'Västby Hamnförening<br>Web site: <a href="https://www.vastbyhamn.com">https://www.vastbyhamn.com</a><br>Position:' + '<br>' ;
+shore01HtmlString += 'Lat: ' + shorePos01[0].toString() + '\u00B0' + '<br>' ;
+shore01HtmlString += 'Lon: ' + shorePos01[1].toString() + '\u00B0' ;  //Disp.jsonToTable(contentJson, {});
+const shore01ImageUrl = 'images/leaflet/' + 'shore_01_image.png' ;
+shore01HtmlString += '<br><br>' + '<img src="' + shore01ImageUrl + '"/>';
+if (!isTouchDevice) shoreMarker01.bindTooltip(shore01HtmlString);
+else shoreMarker01.bindPopup(shore01HtmlString, {closeOnClick: true, autoClose: false});
+*/
+  }
+}
+
+/*
+class MobileMarker extends FixedMarker
+{
+  constructor(pos = [0.0, 0.0], iconUrl = 'icons/leaflet/land_vehicle_symbol.png')
+  {
+	super(pos, {icon: symbol})
+*/
+
 class WindBarbs
 {
 
-  constructor(lower_bounds = [0, 1, 3, 8, 13, 18, 23, 28, 33, 38], dir_url = 'icons/leaflet/', name_prepend = '', name_append = '_kt', name_extension = 'png', size = [30,54], anchor = [15,48], popup_anchor = [0,0])
-  {
-    this.lower_bounds = lower_bounds;
-	this.dir_url = dir_url;
+  #lowerBounds = [0, 1, 3, 8, 13, 18, 23, 28, 33, 38, 43];
+  #dirUrl = 'icons/leaflet/';
+  #namePrepend = '';
+  #nameAppend = '_kt';
+  #nameExtension = 'png';
+  #size = [30,54];
+  #anchor = [15,48];
+  #popupAnchor = [0,0];
+  #icons = {};
 
-	this.icons = {};
-    for (let index = 0; index < this.lower_bounds.length; index++)
+  constructor()
+  {
+    for (let index = 0; index < this.#lowerBounds.length; index++)
     {
-      const bound_string = this.lower_bounds[index].toString().padStart(3, '0');
-      this.icons[index] = new CustomIcon({iconUrl: dir_url + name_prepend + bound_string + name_append + '.' + name_extension, iconSize: size, iconAnchor: anchor, popupAnchor: popup_anchor });
+      const boundString = this.#lowerBounds[index].toString().padStart(3, '0');
+      this.#icons[index] = new CustomIcon({iconUrl: this.#dirUrl + this.#namePrepend + boundString + this.#nameAppend + '.' + this.#nameExtension, iconSize: this.#size, iconAnchor: this.#anchor, popupAnchor: this.#popupAnchor });
     }
   }
 
 
-  get_icon(wind_speed)
+  getIcon(windSpeed)
   {
-    for (let index = this.lower_bounds.length - 1; index >= 0; index--)
+    for (let index = this.#lowerBounds.length - 1; index >= 0; index--)
     {
-      if (parseFloat(wind_speed) > parseFloat(this.lower_bounds[index]))
+      if (parseFloat(windSpeed) > parseFloat(this.#lowerBounds[index]))
       {
-        return this.icons[index];
+        return this.#icons[index];
       }
     }
-    return this.icons[this.lower_bounds[0]];
+    return this.#icons[this.#lowerBounds[0]];
   }
 
+
+}
+
+
+
+class SurfaceObject
+{
+
+  id = '';
+  lat = 0.0;
+  lon = 0.0;
+
+  constructor( { id = null, lat = null, lon = null } = {} )
+  {
+    this.id = id;
+	this.lat = lat;
+	this.lon = lon;
+  }
+
+}
+
+
+
+class OwnSurfaceObject extends SurfaceObject
+{
+
+  id = '99999';
+  lat = 0.0;
+  lon = 0.0;
+
+  constructor( { lat = 0.0, lon = 0.0 } = {} )
+  {
+	super( { id: '99999', lat: null, lon: null } );
+
+    this.id = id;
+	this.lat = lat;
+	this.lon = lon;
+  }
+
+}
+
+
+
+class SpaceObject extends SurfaceObject
+{
+  constructor( { id = '', pos = [0.0, 0.0], alt = 0.0 } = {} )
+  {
+    super( { id: id, pos: pos } );
+    this.alt = alt;
+  }
 
 }
 
@@ -65,6 +190,7 @@ class AisData
     this.WIND_SPEED_ARRAY = [];
     this.AIR_TEMP_ARRAY = [];
     this.WATER_TEMP_ARRAY = [];
+    this.WAVE_HEIGHT_ARRAY = [];
     this.SPEED_ARRAY = [];
     this.COURSE_ARRAY = [];
     this.TEXT_ARRAY = [];
@@ -79,216 +205,215 @@ class AisData
 class IdInput
 {
 
-
-  constructor({id_button_style = {}, id_button_text = '', id_input_description = '', id_info_description = '', cookie_info_description = '', id_is_available = false, id_not_available_preamble_text = '', id_not_found_preamble_text = '', id_found_preamble_text = '', id_stored_preamble_text = ''} = {})
+  constructor({idButtonStyle = {}, idButtonText = '', idInputDescription = '', idInfoDescription = '', cookieInfoDescription = '', idIsAvailable = false, idNotAvailablePreambleText = '', idNotFoundPreambleText = '', idFoundPreambleText = '', idStoredPreambleText = ''} = {})
   {
     let self = this;
 
-    self.id_button_style = id_button_style;
-    self.id_button_text = id_button_text;
-    self.id_input_description = id_input_description;
-    self.id_info_description = id_info_description;
-    self.cookie_info_description = cookie_info_description;
-    self.id_is_available = id_is_available;
-    self.id_not_available_preamble_text = id_not_available_preamble_text;
-    self.id_not_found_preamble_text = id_not_found_preamble_text;
-    self.id_found_preamble_text = id_found_preamble_text;
-    self.id_stored_preamble_text = id_stored_preamble_text;
+    self.idButtonStyle = idButtonStyle;
+    self.idButtonText = idButtonText;
+    self.idInputDescription = idInputDescription;
+    self.idInfoDescription = idInfoDescription;
+    self.cookieInfoDescription = cookieInfoDescription;
+    self.idIsAvailable = idIsAvailable;
+    self.idNotAvailablePreambleText = idNotAvailablePreambleText;
+    self.idNotFoundPreambleText = idNotFoundPreambleText;
+    self.idFoundPreambleText = idFoundPreambleText;
+    self.idStoredPreambleText = idStoredPreambleText;
 
-    let share_div = document.createElement("DIV");
-    document.body.appendChild(share_div);
-    //Help.set_properties( share_div.style, { "position": "relative" } );
-    self.share_button = document.createElement("BUTTON");
-    share_div.appendChild(self.share_button);
-    self.share_button.id = "share_button";
-    Help.set_properties( self.share_button.style, self.id_button_style ) ;
+    let shareDiv = document.createElement("DIV");
+    document.body.appendChild(shareDiv);
+    //ElementProps.set( shareDiv.style, { "position": "relative" } );
+    self.shareButton = document.createElement("BUTTON");
+    shareDiv.appendChild(self.shareButton);
+    self.shareButton.id = "share_button";
+    ElementProps.set( self.shareButton.style, self.idButtonStyle ) ;
 
-    self.share_button.addEventListener("click", function(){ self.create_dialog(self.id_is_available, self.id_not_available_preamble_text, self.id_not_found_preamble_text, self.id_found_preamble_text, self.id_stored_preamble_text); } );
-    let share_button_text = document.createTextNode(self.id_button_text);
-    self.share_button.appendChild(share_button_text);
-    self.cookie_value = Help.get_cookie("mariex_user_id");
+    self.shareButton.addEventListener("click", function(){ self.createDialog(self.idIsAvailable, self.idNotAvailablePreambleText, self.idNotFoundPreambleText, self.idFoundPreambleText, self.idStoredPreambleText); } );
+    let shareButtonText = document.createTextNode(self.idButtonText);
+    self.shareButton.appendChild(shareButtonText);
+    self.cookieValue = Cookie.get("mariex_user_id");
 /*
-    Ais.OWN_USER_ID = cookie_value;
-if (Ais.OWN_POSITION_AVAILABLE && cookie_value !== null)
+    Ais.OWN_USER_ID = cookieValue;
+if (Ais.OWN_POSITION_AVAILABLE && cookieValue !== null)
 {
-  this.share_button.innerText = "Identified as " + Ais.OWN_USER_ID;
-  Help.set_properties( this.share_button.style, { "color": Help.rgba_literal_from_array([127,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,0,63]) } ) ;
+  this.shareButton.innerText = "Identified as " + Ais.OWN_USER_ID;
+  ElementProps.set( this.shareButton.style, { "color": ElementProps.rgbaLiteral([127,127,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,0,63]) } ) ;
 }
 else if (Ais.OWN_LOCATION_POS.length === 2)
 {
-  this.share_button.innerText = "Sharing position anonymously" ;
-  Help.set_properties( this.share_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } );
+  this.shareButton.innerText = "Sharing position anonymously" ;
+  ElementProps.set( this.shareButton.style, { "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } );
 }
 */
   }
 
-  get_id()
+  getId()
   {
-    return this.own_user_id;
+    return this.ownUserId;
   }
 
-  get_share_button()
+  getShareButton()
   {
-    return this.share_button;
+    return this.shareButton;
   }
 
-  get_cookie_value()
+  getCookieValue()
   {
-    return this.cookie_value;
+    return this.cookieValue;
   }
 
-  set_id(own_user_id = "")
+  setId(ownUserId = "")
   {
-    this.own_user_id = own_user_id;
+    this.ownUserId = ownUserId;
   }
 
-  set_id_is_available(id_is_available = false)
+  setIdIsAvailable(idIsAvailable = false)
   {
-    this.id_is_available = id_is_available;
+    this.idIsAvailable = idIsAvailable;
   }
 
-  set_not_available_label()
+  setNotAvailableLabel()
   {
-    this.share_button.innerHTML = this.id_not_available_preamble_text;
-    Help.set_properties( this.share_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,0,0,63]) } );
+    this.shareButton.innerHTML = this.idNotAvailablePreambleText;
+    ElementProps.set( this.shareButton.style, { "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,0,0,63]) } );
   }
 
-  set_not_found_label()
+  setNotFoundLabel()
   {
-    this.share_button.innerText = this.id_not_found_preamble_text;   //"Sharing position anonymously";
-    Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } );
+    this.shareButton.innerText = this.idNotFoundPreambleText;   //"Sharing position anonymously";
+    ElementProps.set( shareButton.style, { "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } );
   }
 
-  set_found_label(user_id)
+  setFoundLabel(userId)
   {
-    this.share_button.innerText = this.id_found_preamble_text + user_id;
-    Help.set_properties( this.share_button.style, { "color": Help.rgba_literal_from_array([127,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,0,63]) } ) ;
+    this.shareButton.innerText = this.idFoundPreambleText + userId;
+    ElementProps.set( this.shareButton.style, { "color": ElementProps.rgbaLiteral([127,127,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,0,63]) } ) ;
   }
 
-  set_stored_label(user_id)
+  setStoredLabel(userId)
   {
-    this.share_button.innerText = this.id_stored_preamble_text + user_id;
-    Help.set_properties( this.share_button.style, { "color": Help.rgba_literal_from_array([0,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([0,127,0,63]) } ) ;
+    this.shareButton.innerText = this.idStoredPreambleText + userId;
+    ElementProps.set( this.shareButton.style, { "color": ElementProps.rgbaLiteral([0,127,0,255]), "backgroundColor": ElementProps.rgbaLiteral([0,127,0,63]) } ) ;
   }
 
-  create_dialog(id_is_available, id_not_available_preamble_text, id_not_found_preamble_text, id_found_preamble_text, id_stored_preamble_text)
+  createDialog(idIsAvailable, idNotAvailablePreambleText, idNotFoundPreambleText, idFoundPreambleText, idStoredPreambleText)
   {
     let self = this;
 
-    let id_dialog = document.createElement("DIALOG");
-    document.body.appendChild(id_dialog);
-    dialogPolyfill.registerDialog(id_dialog);
-    let dialog_div = document.createElement("DIV");
-    id_dialog.appendChild(dialog_div);
+    let idDialog = document.createElement("DIALOG");
+    document.body.appendChild(idDialog);
+    dialogPolyfill.registerDialog(idDialog);
+    let dialogDiv = document.createElement("DIV");
+    idDialog.appendChild(dialogDiv);
 
-    let description_div = document.createElement("DIV");
-    Help.set_properties( description_div.style, {"position": "relative"} );
-    description_div.innerHTML = this.id_input_description;
-    dialog_div.appendChild(description_div);
+    let descriptionDiv = document.createElement("DIV");
+    ElementProps.set( descriptionDiv.style, {"position": "relative"} );
+    descriptionDiv.innerHTML = this.idInputDescription;
+    dialogDiv.appendChild(descriptionDiv);
 
-    let id_input = document.createElement("INPUT");
-    let id_info_button = document.createElement("BUTTON");
-    let id_div = document.createElement("DIV");
-    Help.set_properties( id_div.style, {"position": "relative", "top": "10px", "width": "100%"} );
-    id_div.appendChild(id_input);
-    Help.set_properties( id_input.style, {} );
-    self.cookie_value = Help.get_cookie("mariex_user_id");
-    //if (cookie_value !== null) Ais.OWN_USER_ID = cookie_value;
-    if (typeof self.cookie_value !== 'undefined' && self.cookie_value !== null && self.cookie_value !== "") this.own_user_id = self.cookie_value;
-    if (typeof self.own_user_id !== 'undefined' && self.own_user_id !== null && self.own_user_id !== "") this.own_user_id = self.own_user_id;
-    //if (Ais.OWN_USER_ID === null) Help.set_properties( id_input, {"placeholder": "My user ID"} );
-    if (typeof this.own_user_id === 'undefined' || this.own_user_id === null || this.own_user_id === "") Help.set_properties( id_input, {"placeholder": "My user ID"} );
-    //else Help.set_properties( id_input, {"value": Ais.OWN_USER_ID} );
-    else Help.set_properties( id_input, {"value": this.own_user_id} );
-    id_div.appendChild(id_info_button);
-    Help.set_properties( id_info_button.style, {"height": "30px", "width": "30px", "border-radius": "50%", "border": "1px solid #000", "margin-left": "20px", "padding": "0px"} );
-    id_info_button.addEventListener("click", id_info);
-    let id_info_button_text = document.createTextNode("i");
-    id_info_button.appendChild(id_info_button_text);
-    dialog_div.appendChild(id_div);
+    let idInput = document.createElement("INPUT");
+    let idInfoButton = document.createElement("BUTTON");
+    let idDiv = document.createElement("DIV");
+    ElementProps.set( idDiv.style, {"position": "relative", "top": "10px", "width": "100%"} );
+    idDiv.appendChild(idInput);
+    ElementProps.set( idInput.style, {} );
+    self.cookieValue = Cookie.get("mariex_user_id");
+    //if (cookieValue !== null) Ais.OWN_USER_ID = cookieValue;
+    if (typeof self.cookieValue !== 'undefined' && self.cookieValue !== null && self.cookieValue !== "") this.ownUserId = self.cookieValue;
+    if (typeof self.ownUserId !== 'undefined' && self.ownUserId !== null && self.ownUserId !== "") this.ownUserId = self.ownUserId;
+    //if (Ais.OWN_USER_ID === null) ElementProps.set( idInput, {"placeholder": "My user ID"} );
+    if (typeof this.ownUserId === 'undefined' || this.ownUserId === null || this.ownUserId === "") ElementProps.set( idInput, {"placeholder": "My user ID"} );
+    //else ElementProps.set( idInput, {"value": Ais.OWN_USER_ID} );
+    else ElementProps.set( idInput, {"value": this.ownUserId} );
+    idDiv.appendChild(idInfoButton);
+    ElementProps.set( idInfoButton.style, {"height": "30px", "width": "30px", "border-radius": "50%", "border": "1px solid #000", "margin-left": "20px", "padding": "0px"} );
+    idInfoButton.addEventListener("click", idInfo);
+    let idInfoButtonText = document.createTextNode("i");
+    idInfoButton.appendChild(idInfoButtonText);
+    dialogDiv.appendChild(idDiv);
 
-    let submit_button = document.createElement("BUTTON");
-    let cancel_button = document.createElement("BUTTON");
-    let store_cookie_check = document.createElement("INPUT");
-    let store_cookie_label = document.createElement('LABEL');
-    let cookie_info_button = document.createElement("BUTTON");
-    let id_button_div = document.createElement("DIV");
-    Help.set_properties( id_button_div.style, {"position": "relative", "top": "30px"} );
-    id_button_div.appendChild(submit_button);
-    Help.set_properties( submit_button.style, {"padding": "10px"} );
-    id_button_div.appendChild(cancel_button);
-    Help.set_properties( cancel_button.style, {"padding": "10px", "margin-left": "10px"} );
-    id_button_div.appendChild(store_cookie_check);
-    Help.set_properties( store_cookie_check, {"id": "store_cookie_check", "type": "checkbox", "checked": "true"} );
-    Help.set_properties( store_cookie_check.style, {"padding": "10px", "margin-left": "15px"} );
-    id_button_div.appendChild(store_cookie_label);
-    Help.set_properties( store_cookie_label, {"htmlFor": "store_cookie_check", "innerText": "Set cookie"} );
-    Help.set_properties( store_cookie_label.style, {"margin-left": "5px"} );
-    id_button_div.appendChild(cookie_info_button);
-    Help.set_properties( cookie_info_button.style, {"height": "30px", "width": "30px", "border-radius": "50%", "border": "1px solid #000", "margin-left": "5px", "padding": "0px", "position": "absolute", "top": "50%", "-ms-transform": "translateY(-50%)", "transform": "translateY(-50%)"} );
-    submit_button.addEventListener("click", submit_data);
-    cancel_button.addEventListener("click", cancel);
-    cookie_info_button.addEventListener("click", cookie_info);
-    let submit_button_text = document.createTextNode("Submit");
-    submit_button.appendChild(submit_button_text);
-    let cancel_button_text = document.createTextNode("Cancel");
-    cancel_button.appendChild(cancel_button_text);
-    let cookie_info_button_text = document.createTextNode("i");
-    cookie_info_button.appendChild(cookie_info_button_text);
-    dialog_div.appendChild(id_button_div);
+    let submitButton = document.createElement("BUTTON");
+    let cancelButton = document.createElement("BUTTON");
+    let storeCookieCheck = document.createElement("INPUT");
+    let storeCookieLabel = document.createElement('LABEL');
+    let cookieInfoButton = document.createElement("BUTTON");
+    let idButtonDiv = document.createElement("DIV");
+    ElementProps.set( idButtonDiv.style, {"position": "relative", "top": "30px"} );
+    idButtonDiv.appendChild(submitButton);
+    ElementProps.set( submitButton.style, {"padding": "10px"} );
+    idButtonDiv.appendChild(cancelButton);
+    ElementProps.set( cancelButton.style, {"padding": "10px", "margin-left": "10px"} );
+    idButtonDiv.appendChild(storeCookieCheck);
+    ElementProps.set( storeCookieCheck, {"id": "store_cookie_check", "type": "checkbox", "checked": "true"} );
+    ElementProps.set( storeCookieCheck.style, {"padding": "10px", "margin-left": "15px"} );
+    idButtonDiv.appendChild(storeCookieLabel);
+    ElementProps.set( storeCookieLabel, {"htmlFor": "store_cookie_check", "innerText": "Set cookie"} );
+    ElementProps.set( storeCookieLabel.style, {"margin-left": "5px"} );
+    idButtonDiv.appendChild(cookieInfoButton);
+    ElementProps.set( cookieInfoButton.style, {"height": "30px", "width": "30px", "border-radius": "50%", "border": "1px solid #000", "margin-left": "5px", "padding": "0px", "position": "absolute", "top": "50%", "-ms-transform": "translateY(-50%)", "transform": "translateY(-50%)"} );
+    submitButton.addEventListener("click", submitData);
+    cancelButton.addEventListener("click", cancel);
+    cookieInfoButton.addEventListener("click", cookieInfo);
+    let submitButtonText = document.createTextNode("Submit");
+    submitButton.appendChild(submitButtonText);
+    let cancelButtonText = document.createTextNode("Cancel");
+    cancelButton.appendChild(cancelButtonText);
+    let cookieInfoButtonText = document.createTextNode("i");
+    cookieInfoButton.appendChild(cookieInfoButtonText);
+    dialogDiv.appendChild(idButtonDiv);
 
-    Help.set_properties( dialog_div.style, {"position": "relative", "top": "-25px"} ); //"overflow-y": "auto",
+    ElementProps.set( dialogDiv.style, {"position": "relative", "top": "-25px"} ); //"overflow-y": "auto",
 
-    id_dialog.showModal();
+    idDialog.showModal();
 
     window.scrollTo(0, 0);
 
-    function submit_data()
+    function submitData()
     {
       //Are these really necessary? No setting in this dialog can disable positioning.
-      if (!id_is_available) self.share_button.innerText = id_not_available_preamble_text;
-      Help.set_properties( self.share_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } );
+      if (!idIsAvailable) self.shareButton.innerText = idNotAvailablePreambleText;
+      ElementProps.set( self.shareButton.style, { "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } );
 
-      //Ais.OWN_USER_ID = id_input.value ;
-      self.own_user_id = id_input.value ;
-      //if ( Ais.OWN_POSITION_AVAILABLE && ( !store_cookie_check.checked || Ais.OWN_USER_ID === null || Ais.OWN_USER_ID === "" ) )
-      if ( self.id_is_available && ( !store_cookie_check.checked || self.own_user_id === null || self.own_user_id === "" ) ) //Ais.OWN_POSITION_AVAILABLE
+      //Ais.OWN_USER_ID = idInput.value ;
+      self.ownUserId = idInput.value ;
+      //if ( Ais.OWN_POSITION_AVAILABLE && ( !storeCookieCheck.checked || Ais.OWN_USER_ID === null || Ais.OWN_USER_ID === "" ) )
+      if ( self.idIsAvailable && ( !storeCookieCheck.checked || self.ownUserId === null || self.ownUserId === "" ) ) //Ais.OWN_POSITION_AVAILABLE
       {
-        Help.set_cookie("mariex_user_id", "", 1000);
-        self.cookie_value = "";
-        self.share_button.innerText = id_not_found_preamble_text; //"Sharing position anonymously";
-        Help.set_properties( self.share_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } );
+        Cookie.set("mariex_user_id", "", 1000);
+        self.cookieValue = "";
+        self.shareButton.innerText = idNotFoundPreambleText; //"Sharing position anonymously";
+        ElementProps.set( self.shareButton.style, { "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } );
       }
-      //else if (Ais.OWN_USER_ID === "99999") share_button.innerText = "Sharing position anonymously";
-      //if ( Ais.OWN_POSITION_AVAILABLE && !store_cookie_check.checked && Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "" )
-      if ( self.id_is_available && !store_cookie_check.checked && self.own_user_id !== null && self.own_user_id !== "" ) //Ais.OWN_POSITION_AVAILABLE
+      //else if (Ais.OWN_USER_ID === "99999") shareButton.innerText = "Sharing position anonymously";
+      //if ( Ais.OWN_POSITION_AVAILABLE && !storeCookieCheck.checked && Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "" )
+      if ( self.idIsAvailable && !storeCookieCheck.checked && self.ownUserId !== null && self.ownUserId !== "" ) //Ais.OWN_POSITION_AVAILABLE
       {
-        //this.share_button.innerText = "Identified as " + Ais.OWN_USER_ID;
-        self.share_button.innerText = id_found_preamble_text + self.own_user_id; //"Identified as "
-        Help.set_properties( self.share_button.style, { "color": Help.rgba_literal_from_array([127,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,0,63]) } ) ;
+        //this.shareButton.innerText = "Identified as " + Ais.OWN_USER_ID;
+        self.shareButton.innerText = idFoundPreambleText + self.ownUserId; //"Identified as "
+        ElementProps.set( self.shareButton.style, { "color": ElementProps.rgbaLiteral([127,127,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,0,63]) } ) ;
       }
-      //if (store_cookie_check.checked && Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "")
-      if (store_cookie_check.checked && self.own_user_id !== null && self.own_user_id !== "")
+      //if (storeCookieCheck.checked && Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "")
+      if (storeCookieCheck.checked && self.ownUserId !== null && self.ownUserId !== "")
       {
-        Help.set_cookie("mariex_user_id", id_input.value, 1000);
-        self.cookie_value = id_input.value;
-        if (self.id_is_available) //Ais.OWN_POSITION_AVAILABLE
+        Cookie.set("mariex_user_id", idInput.value, 1000);
+        self.cookieValue = idInput.value;
+        if (self.idIsAvailable) //Ais.OWN_POSITION_AVAILABLE
         {
-          //this.share_button.innerText = "Device recognized as " + Ais.OWN_USER_ID;
-          self.share_button.innerText = id_stored_preamble_text + self.own_user_id; //"Device recognized as "
-          Help.set_properties( self.share_button.style, { "color": Help.rgba_literal_from_array([0,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([0,127,0,63]) } ) ;
+          //this.shareButton.innerText = "Device recognized as " + Ais.OWN_USER_ID;
+          self.shareButton.innerText = idStoredPreambleText + self.ownUserId; //"Device recognized as "
+          ElementProps.set( self.shareButton.style, { "color": ElementProps.rgbaLiteral([0,127,0,255]), "backgroundColor": ElementProps.rgbaLiteral([0,127,0,63]) } ) ;
         }
       }
 
-      id_dialog.close();
+      idDialog.close();
 
       //async function
-      //const user_id_exists_response = await fetch( 'https://labremote.net/client/user_id_exists.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'module_address': Ais.OWN_USER_ID}) } );
-      //let new_channel_data = null;
+      //const userIdExistsResponse = await fetch( 'https://labremote.net/client/user_id_exists.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'module_address': Ais.OWN_USER_ID}) } );
+      //let newChannelData = null;
       //try
       //{
-      //  new_channel_data = await user_id_exists_response.json();
-      //  Ais.OWN_DATA_CHANNEL = new_channel_data["new_channel_index"];
+      //  newChannelData = await userIdExistsResponse.json();
+      //  Ais.OWN_DATA_CHANNEL = newChannelData["new_channel_index"];
       //}
       //catch(e)
       //{
@@ -297,17 +422,17 @@ else if (Ais.OWN_LOCATION_POS.length === 2)
 
     function cancel()
     {
-      id_dialog.close();
+      idDialog.close();
     }
 
-    function id_info()
+    function idInfo()
     {
-      window.alert(id_info_description)
+      window.alert(idInfoDescription)
     }
 
-    function cookie_info()
+    function cookieInfo()
     {
-      window.alert(cookie_info_description)
+      window.alert(cookieInfoDescription)
     }
 
   }
