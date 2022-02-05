@@ -2,6 +2,175 @@
 
 
 
+class GetSafe
+{
+
+  constructor()
+  {
+  }
+
+  static byKey(obj, key, def = null)
+  {
+    let val = def;
+    if (obj !== null)
+    {
+      if (key in obj) val = obj[key];
+    }
+    return val;
+  }
+
+  static json(json_string)
+  {
+    let json = null;
+    try
+    {
+      json = JSON.parse(json_string);
+    }
+    catch(e)
+    {
+    }
+    return json;
+  }
+
+}
+
+
+class Device
+{
+
+  constructor()
+  {
+  }
+
+  static isTouch()
+  {
+    return (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0));
+  }
+
+}
+
+
+
+class ElementProps
+{
+
+  constructor()
+  {
+  }
+
+  static set(elem, prop_object)
+  {
+    for (let _prop in prop_object) elem[_prop] = prop_object[_prop];
+  }
+
+  static rgbaArray(color)
+  {
+    let rgb = [];;
+    if (color.search(/rgb/) !== -1) rgb = color.match(/([0-9]+\.?[0-9]*)/g);
+    if (rgb.length === 3) rgb.push(1);
+    for (let i = 0; i < rgb.length; i++) rgb[i] = parseInt(rgb[i], 10);
+    rgb[3] *= 255;
+
+    return rgb;
+  }
+
+  static rgbaLiteral( rgba_array )
+  {
+    return "rgba(" + rgba_array[0].toString() + "," + rgba_array[1].toString() + "," + rgba_array[2].toString() + "," + (rgba_array[3]/255).toString() + ")";
+  }
+
+}
+
+
+
+class Cookie
+{
+
+  constructor()
+  {
+  }
+
+  static set(name, val = null, days = null, path = '/')
+  {
+    let setval = "";
+    if (val !== null) setval = val;
+    let expires = new Date(0).toUTCString();
+    if (days !== null) expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = name + '=' + encodeURIComponent(setval) + '; expires=' + expires + '; path=' + path + '; SameSite=Strict' ;
+  }
+
+  static get(name)
+  {
+    const cookie_parts = document.cookie.split('; ');
+    let all_keys_array = [];
+    let all_values_array = [];
+    for (let pair_counter = 0; pair_counter < cookie_parts.length; pair_counter++)
+    {
+      const key_value_pair = cookie_parts[pair_counter].split('=');
+      all_keys_array.push(key_value_pair[0]);
+      all_values_array.push(key_value_pair[1]);
+    }
+    const name_index = all_keys_array.indexOf(name);
+    if (name_index > -1) return all_values_array[name_index];
+    else return null;
+  }
+
+}
+
+
+
+class Transform
+{
+
+  constructor()
+  {
+  }
+
+  static delimitedStringToArrays(data, field_length)
+  {
+    let _json_string = null;
+    if (data === null || typeof data === 'undefined' || data === "") _json_string = "";
+    else _json_string = data.returnstring;
+
+    let _json_array = _json_string.split(";");
+    let _no_of_channels = (_json_array.length - 1) / 2;
+    let _channel_string = "";
+    let _channel_data = "";
+    let _channel_data_array = _channel_data.split(",");
+    let _timestamp_matrix = [];
+    let _value_matrix = [];
+    let _bytestring_matrix = [];
+
+    if (typeof field_length === 'undefined') field_length = 4;
+    for (let _channel_index = 0; _channel_index < _no_of_channels; _channel_index++)
+    {
+      _channel_string = _json_array[_channel_index*2];
+      _channel_data = _json_array[_channel_index*2 + 1];
+      _channel_data_array = _channel_data.split(",");
+      let _field_data_array_length = (_channel_data_array.length - 1)/field_length - 0 ;
+
+      let _timestamp_array = [];
+      let _value_array = [];
+      let _subsamples_string_array = [];
+      let _base64_string_array = [];
+      for (let _sample_index = 0; _sample_index < _field_data_array_length ; _sample_index++)
+      {
+        _timestamp_array[_sample_index] = parseInt( _channel_data_array[_sample_index*4+0] );
+        _value_array[_sample_index] = parseFloat(_channel_data_array[_sample_index*4+1]);
+        _base64_string_array[_sample_index] = _channel_data_array[_sample_index*4+3];
+      }
+      _timestamp_matrix.push(_timestamp_array);
+      let _channel_int = parseInt(_channel_string);
+      _value_matrix.push([_channel_int, _value_array]);
+      _bytestring_matrix.push(_base64_string_array);
+    }
+    return [_timestamp_matrix, _value_matrix, _bytestring_matrix] ;
+  }
+
+}
+
+
+
 class Help
 {
 
@@ -64,33 +233,6 @@ class Help
   static isTouchDevice()
   {
     return (('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0));
-  }
-
-
-  static set_cookie(name, val = null, days = null, path = '/')
-  {
-    let setval = "";
-    if (val !== null) setval = val;
-    let expires = new Date(0).toUTCString();
-    if (days !== null) expires = new Date(Date.now() + days * 864e5).toUTCString();
-    document.cookie = name + '=' + encodeURIComponent(setval) + '; expires=' + expires + '; path=' + path + '; SameSite=Strict' ;
-  }
-
-
-  static get_cookie(name)
-  {
-    const cookie_parts = document.cookie.split('; ');
-    let all_keys_array = [];
-    let all_values_array = [];
-    for (let pair_counter = 0; pair_counter < cookie_parts.length; pair_counter++)
-    {
-      const key_value_pair = cookie_parts[pair_counter].split('=');
-      all_keys_array.push(key_value_pair[0]);
-      all_values_array.push(key_value_pair[1]);
-    }
-    const name_index = all_keys_array.indexOf(name);
-    if (name_index > -1) return all_values_array[name_index];
-    else return null;
   }
 
 
@@ -645,6 +787,7 @@ class App
 
 }
 
+/*
 class AisData
 {
   constructor()
@@ -680,3 +823,4 @@ class AisData
     this.TIME_ARRAY = [];
   }
 }
+*/
