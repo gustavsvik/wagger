@@ -6,20 +6,27 @@ document.body.clientWidth;
 const height = window.innerHeight|| document.documentElement.clientHeight||
 document.body.clientHeight;
 
+//let spaceObject = new SpaceObject();
 
 let Ais = new AisData();
 
+const center = [62.827, 17.875]; //[62.664450, 18.286383];
 
-let geolocation_available = false ;
+let map = L.map( 'map', {attributionControl: false} ).setView(center, 12);
+Ais.OWN_ZOOM_LEVEL = 14;
+
+
+let geolocationAvailable = false ;
 if('geolocation' in navigator)
 {
-  geolocation_available = true;
+  geolocationAvailable = true;
 }
 else
 {
   Ais.OWN_POSITION_AVAILABLE = false ;
 }
 
+/*
 const CustomIcon = L.Icon.extend
 (
 {
@@ -31,334 +38,360 @@ const CustomIcon = L.Icon.extend
   }
 }
 );
+*/
+/*
+L.FixedSizeMarker = L.Marker.extend({
+  options: {
+    fontSize: 12,   // starting size of icon in pixels
+    zoomBase: 3     // Zoom level where fontSize is the correct size
+  },
+  update: function () {
+    if (this.Icon && this.Icon.tagName === 'DIV' && this._map) {
+      let size = this.options.fontSize * Math.pow(2, (this._map.getZoom() - this.options.zoomBase));
+      this.Icon.style.fontSize = size + 'px';
+    }
+    return L.Marker.prototype.update.call(this);
+  }
+});
+L.fixedSizeMarker = (latlng, options) => new L.FixedSizeMarker(latlng, options);
 
-const own_location_mobile_icon = new CustomIcon({iconUrl: 'icons/leaflet/own_ship_symbol.png', iconSize: [20,32],iconAnchor: [10,16]});
-const own_location_stationary_icon = new CustomIcon({iconUrl: 'icons/leaflet/own_ship_stationary_symbol.png', iconSize: [16,16], iconAnchor: [8,8]}); //000_kt.png', iconSize: [45,81],iconAnchor: [22.5,72]});
-const sea_mobile_icon = new CustomIcon({iconUrl: 'icons/leaflet/ship_symbol.png', iconSize: [16,24],iconAnchor: [8,12]});
-const sea_stationary_icon = new CustomIcon({iconUrl: 'icons/leaflet/ship_stationary_symbol.png', iconSize: [12,12], iconAnchor: [6,6]});
-const shore_stationary_icon = new CustomIcon({iconUrl: 'icons/leaflet/building_symbol.png', iconSize: [16,18], iconAnchor: [8,11]});
-const aton_special_mark_virtual_icon = new CustomIcon({iconUrl: 'icons/leaflet/ais_aton_special_mark_virtual.png', iconSize: [24,32], iconAnchor: [12,24]});
-const shore_mobile_icon = new CustomIcon({iconUrl: 'icons/leaflet/land_vehicle_symbol.png'});
-const danger_icon = new CustomIcon({iconUrl: 'icons/leaflet/danger_over_symbol.png', iconSize: [24,24], iconAnchor: [12,12]});
-const shore_01_symbol = new CustomIcon({iconUrl: 'icons/leaflet/shore_01_symbol.png', iconSize: [32,32], iconAnchor: [16,16]});
-const shore_02_symbol = new CustomIcon({iconUrl: 'icons/leaflet/shore_02_symbol.png', iconSize: [40,30], iconAnchor: [20,15]});
-const own_location_lost_icon = new CustomIcon({iconUrl: 'icons/leaflet/danger_over_symbol.png', iconSize: [16,16], iconAnchor: [8,8]});
+const myIcon3 = L.divIcon({html:"Example_3"}); //className: 'my-div-icon',
+L.fixedSizeMarker({lat: 0.7800052024755708, lng: -12.135975261193327},
+                  {icon: myIcon3, fontSize: 24, zoomBase: 3}).addTo(map);
+*/
 
-let wind_barbs = new WindBarbs();
+const ownLocationMobileIcon = new CustomIcon({iconUrl: 'icons/leaflet/own_ship_symbol.png', iconSize: [20,32],iconAnchor: [10,16]});
+const ownLocationStationaryIcon = new CustomIcon({iconUrl: 'icons/leaflet/own_ship_stationary_symbol.png', iconSize: [16,16], iconAnchor: [8,8]}); //000_kt.png', iconSize: [45,81],iconAnchor: [22.5,72]});
+const seaMobileIcon = new CustomIcon({iconUrl: 'icons/leaflet/ship_symbol.png', iconSize: [16,24],iconAnchor: [8,12]});
+const seaStationaryIcon = new CustomIcon({iconUrl: 'icons/leaflet/ship_stationary_symbol.png', iconSize: [12,12], iconAnchor: [6,6]});
+const shoreStationaryIcon = new CustomIcon({iconUrl: 'icons/leaflet/building_symbol.png', iconSize: [16,18], iconAnchor: [8,11]});
+const atonSpecialMarkVirtualIcon = new CustomIcon({iconUrl: 'icons/leaflet/ais_aton_special_mark_virtual.png', iconSize: [24,32], iconAnchor: [12,24]});
+const shoreMobileIcon = new CustomIcon({iconUrl: 'icons/leaflet/land_vehicle_symbol.png'});
+const dangerIcon = new CustomIcon({iconUrl: 'icons/leaflet/danger_over_symbol.png', iconSize: [24,24], iconAnchor: [12,12]});
+const shore01Symbol = new CustomIcon({iconUrl: 'icons/leaflet/shore_01_symbol.png', iconSize: [32,32], iconAnchor: [16,16]});
+const shore02Symbol = new CustomIcon({iconUrl: 'icons/leaflet/shore_02_symbol.png', iconSize: [40,30], iconAnchor: [20,15]});
+const ownLocationLostIcon = new CustomIcon({iconUrl: 'icons/leaflet/danger_over_symbol.png', iconSize: [16,16], iconAnchor: [8,8]});
 
-const center = [62.827, 17.875]; //[62.664450, 18.286383];
-
-let map = L.map( 'map', {attributionControl: false} ).setView(center, 14);
-Ais.OWN_ZOOM_LEVEL = 14;
+let windBarbs = new WindBarbs();
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(map);
 L.control.scale().addTo(map);
 let markersLayer = new L.LayerGroup();
 markersLayer.addTo(map);
 
-const static_url = 'https://' + window.location.hostname + '/client/get_static_records_string.php?web_api_table_label=host' ; //'http://labremote.net/client/get_static_records.php?web_api_table=host&web_api_column=host_description' ;
-const position_url = 'https://' + window.location.hostname + '/client/get_ais_data_records.php';
-const own_position_url = 'https://' + window.location.hostname + '/client/get_own_pos_records.php';
+const staticUrl = 'https://' + window.location.hostname + '/client/get_static_records_string.php?web_api_table_label=device' ; //'http://labremote.net/client/get_static_records.php?web_api_table=host&web_api_column=host_description' ;
+const positionUrl = 'https://' + window.location.hostname + '/client/get_ais_data_records.php';
+const ownPositionUrl = 'https://' + window.location.hostname + '/client/get_own_pos_records.php';
 
-let own_location_marker = null;
-let own_accuracy_circle = null;
-if (geolocation_available)
+//const noIcon = new TransparentDivIcon( { html: "Example" } );
+//let noMarker = new TransparentLabelMarker([0.7800052024755708, -12.135975261193327], {label: '1.2'});
+//noMarker.addTo(map);
+
+//const latitudeVector = [62.00793,62.024597,62.041264,62.057926,62.074593,62.09126,62.107925,62.12459,62.14126,62.157925,62.17459,62.191257,62.20792,62.224586,62.241253,62.25792,62.274586,62.291252,62.30792,62.324585,62.34125,62.357914,62.37458,62.391247,62.407913,62.42458,62.441246,62.457912,62.47458,62.491245,62.507908,62.524574,62.54124,62.557907,62.574574,62.59124,62.607906,62.624573,62.64124,62.657906,62.67457,62.691235,62.7079,62.724567,62.741234,62.7579,62.774567,62.791233,62.8079,62.824562,62.84123,62.857895,62.87456,62.891228,62.907894,62.92456,62.941227,62.957893,62.974556,62.991222,63.00789];
+//const longitudeVector = [18.013636,18.041412,18.06919,18.096966,18.124743,18.152521,18.180298,18.208075,18.235851,18.263628,18.291405,18.319181,18.34696,18.374737,18.402514,18.43029,18.458067,18.485844,18.51362,18.541399,18.569176,18.596952,18.62473,18.652506,18.680283,18.70806,18.735838,18.763615,18.791391,18.819168,18.846945,18.874722,18.902498,18.930277,18.958054,18.98583,19.013607];
+
+let ownLocationMarker = null;
+let ownAccuracyCircle = null;
+if (geolocationAvailable)
 {
-  own_location_marker = L.marker(center, {icon: own_location_lost_icon});
-  own_location_marker.addTo(map);
-  own_accuracy_circle = L.circle(center, {color: 'steelblue', radius: 0, fillColor: 'steelblue', opacity: 0.2});
-  own_accuracy_circle.addTo(map);
-  const geolocation_options = { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 };
+  ownLocationMarker = L.marker(center, {icon: ownLocationLostIcon});
+  ownLocationMarker.addTo(map);
+  ownAccuracyCircle = L.circle(center, {color: 'steelblue', radius: 0, fillColor: 'steelblue', opacity: 0.2});
+  ownAccuracyCircle.addTo(map);
+  const geolocationOptions = { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 };
   //const watchID =
-  navigator.geolocation.watchPosition(handle_geolocation_success, handle_geolocation_error, geolocation_options);
+  navigator.geolocation.watchPosition(handleGeolocationSuccess, handleGeolocationError, geolocationOptions);
 }
 
-const is_touch_device = Help.isTouchDevice();
+const isTouchDevice = Device.isTouch();
 
-const danger_pos_01 = [62.664450, 18.286383];
-let danger_marker_01 = L.marker(danger_pos_01, {icon: danger_icon});
-danger_marker_01.addTo(map);
-danger_marker_01.setOpacity( 1.0 );
-danger_marker_01.setRotationOrigin("center");
-danger_marker_01.setRotationAngle(0);
-let danger_html_string = '<div style="font-size:10px;line-height:100%;">';
-//danger_html_string += 'VARNING! DRIVANDE MINA!<br>Ungefärlig position:' + '<br>' ;
-danger_html_string += 'Drivande mina röjd 210617<br>Ungefärlig position:' + '<br>' ;
-danger_html_string += 'Lat: ' + danger_pos_01[0].toString() + '\u00B0' + '<br>' ;
-danger_html_string += 'Lon: ' + danger_pos_01[1].toString() + '\u00B0' ;  //Disp.jsonToTable(content_json, {});
-const danger_image_url = 'images/leaflet/' + 'danger_01_image.png' ;
-danger_html_string += '<br><br>' + '<img src="' + danger_image_url + '"/>';
-if (!is_touch_device) danger_marker_01.bindTooltip(danger_html_string);
-else danger_marker_01.bindPopup(danger_html_string, {closeOnClick: true, autoClose: false});
+const dangerPos01 = [62.664450, 18.286383];
+let dangerMarker01 = L.marker(dangerPos01, {icon: dangerIcon});
+dangerMarker01.addTo(map);
+dangerMarker01.setOpacity( 1.0 );
+dangerMarker01.setRotationOrigin("center");
+dangerMarker01.setRotationAngle(0);
+let dangerHtmlString = '<div style="font-size:10px;line-height:100%;">';
+//dangerHtmlString += 'VARNING! DRIVANDE MINA!<br>Ungefärlig position:' + '<br>' ;
+dangerHtmlString += 'Drivande mina röjd 210617<br>Ungefärlig position:' + '<br>' ;
+dangerHtmlString += 'Lat: ' + dangerPos01[0].toString() + '\u00B0' + '<br>' ;
+dangerHtmlString += 'Lon: ' + dangerPos01[1].toString() + '\u00B0' ;  //Disp.jsonToTable(contentJson, {});
+const dangerImageUrl = 'images/leaflet/' + 'danger_01_image.png' ;
+dangerHtmlString += '<br><br>' + '<img src="' + dangerImageUrl + '"/>';
+if (!isTouchDevice) dangerMarker01.bindTooltip(dangerHtmlString);
+else dangerMarker01.bindPopup(dangerHtmlString, {closeOnClick: true, autoClose: false});
 
-const shore_pos_01 = [62.83, 17.864]; //[62.664450, 18.286383];
-let shore_marker_01 = L.marker(shore_pos_01, {icon: shore_01_symbol});
-shore_marker_01.addTo(map);
-shore_marker_01.setOpacity( 1.0 );
-shore_marker_01.setRotationOrigin("center");
-shore_marker_01.setRotationAngle(0);
-let shore_01_html_string = '<div style="font-size:10px;line-height:100%;">';
-shore_01_html_string += 'Västby Hamnförening<br>Web site: <a href="https://www.vastbyhamn.com">https://www.vastbyhamn.com</a><br>Position:' + '<br>' ;
-shore_01_html_string += 'Lat: ' + shore_pos_01[0].toString() + '\u00B0' + '<br>' ;
-shore_01_html_string += 'Lon: ' + shore_pos_01[1].toString() + '\u00B0' ;  //Disp.jsonToTable(content_json, {});
-const shore_01_image_url = 'images/leaflet/' + 'shore_01_image.png' ;
-shore_01_html_string += '<br><br>' + '<img src="' + shore_01_image_url + '"/>';
-if (!is_touch_device) shore_marker_01.bindTooltip(shore_01_html_string);
-else shore_marker_01.bindPopup(shore_01_html_string, {closeOnClick: true, autoClose: false});
+const shorePos01 = [62.83, 17.864]; //[62.664450, 18.286383];
 
-const shore_pos_02 = [62.832, 17.874]; //[62.664450, 18.286383];
-let shore_marker_02 = L.marker(shore_pos_02, {icon: shore_02_symbol});
-shore_marker_02.addTo(map);
-shore_marker_02.setOpacity( 1.0 );
-shore_marker_02.setRotationOrigin("center");
-shore_marker_02.setRotationAngle(0);
-let shore_02_html_string = '<div style="font-size:10px;line-height:100%;">';
-shore_02_html_string += 'Höga Kusten Varvet<br>Web site: <a href="https://www.hagakustenvarvet.se">https://www.hagakustenvarvet.se</a><br>Position:' + '<br>' ;
-shore_02_html_string += 'Lat: ' + shore_pos_02[0].toString() + '\u00B0' + '<br>' ;
-shore_02_html_string += 'Lon: ' + shore_pos_02[1].toString() + '\u00B0' ;  //Disp.jsonToTable(content_json, {});
-const shore_02_image_url = 'images/leaflet/' + 'shore_02_image.png' ;
-shore_02_html_string += '<br><br>' + '<img src="' + shore_02_image_url + '"/>';
-if (!is_touch_device) shore_marker_02.bindTooltip(shore_02_html_string);
-else shore_marker_02.bindPopup(shore_02_html_string, {closeOnClick: true, autoClose: false});
+//let shoreMarker01 = L.marker(shorePos01, {icon: shore01Symbol});
+let shoreMarker01 = new FixedMarker(shorePos01, { iconUrl: 'icons/leaflet/shore_01_symbol.png' } );
 
-setInterval(refresh_data, 5000);
-setInterval(refresh_display, 2000);
+shoreMarker01.addTo(map);
+shoreMarker01.setOpacity( 1.0 );
+shoreMarker01.setRotationOrigin("center");
+shoreMarker01.setRotationAngle(0);
+let shore01HtmlString = '<div style="font-size:10px;line-height:100%;">';
+shore01HtmlString += 'Västby Hamnförening<br>Web site: <a href="https://www.vastbyhamn.com">https://www.vastbyhamn.com</a><br>Position:' + '<br>' ;
+shore01HtmlString += 'Lat: ' + shorePos01[0].toString() + '\u00B0' + '<br>' ;
+shore01HtmlString += 'Lon: ' + shorePos01[1].toString() + '\u00B0' ;  //Disp.jsonToTable(contentJson, {});
+const shore01ImageUrl = 'images/leaflet/' + 'shore_01_image.png' ;
+shore01HtmlString += '<br><br>' + '<img src="' + shore01ImageUrl + '"/>';
+if (!isTouchDevice) shoreMarker01.bindTooltip(shore01HtmlString);
+else shoreMarker01.bindPopup(shore01HtmlString, {closeOnClick: true, autoClose: false});
 
-let id_button_text = 'Share position with Test Site Bothnia';
-if (!Ais.OWN_POSITION_AVAILABLE) id_button_text = 'No own position to share';
-const id_input_description = '<br>Please enter a specific user ID (up to 10 characters will be displayed):';
-const id_info_description = 'Welcome to the MarIEx position reporting tool of Test Site Bothnia! We try to take all precautions possible to keep our test sites safe and secure, and your help is greatly appreciated. By adding a user ID to identify your position marker on the chart (either an arbitrary one of your choice or your name, ship name, call sign, MMSI, or other presumably unique identifier) when present in or near one of our test areas, you can improve your visibility not only to our test management team but to your fellow seafarers and land travellers as well. Please consider when choosing your ID that it will be sent back (securely) to Test Site Bothnia and stored (securely) in our database before being publicly shared in this application, and take note that your ID may be shortened to its first 10 characters when displayed.';
-const cookie_info_description = 'To be able to link your device to your position unambiguously for the benefit of the Test Site Bothnia team and your fellow seafarers and land travellers, you can permit the MarIEx app to set a single cookie containing your user ID only (which is non-shareable with other sites). If you uncheck the box no new cookie will be set on the device and any cookies previously set by MarIEx will be removed.';
-const id_is_available = Ais.OWN_POSITION_AVAILABLE ;
-const id_not_available_preamble_text = 'No own position to share';
-const id_not_found_preamble_text = 'Sharing position anonymously'; //'Share position with Test Site Bothnia';
-const id_found_preamble_text = 'Identified as ';
-const id_stored_preamble_text = 'Device recognized as ';
-const id_button_style = { "position": "absolute", "width": "280px", "top": "5px", "right": "5px", "padding": "10px", "z-index": "400" , "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) };
-let id_input = new IdInput({id_button_style: id_button_style, id_button_text: id_button_text, id_input_description: id_input_description, id_info_description: id_info_description, cookie_info_description: cookie_info_description, id_is_available: id_is_available, id_not_available_preamble_text: id_not_available_preamble_text, id_not_found_preamble_text: id_not_found_preamble_text, id_found_preamble_text: id_found_preamble_text, id_stored_preamble_text: id_stored_preamble_text});
-let share_button = id_input.get_share_button();
-let cookie_value = id_input.get_cookie_value();
+const shorePos02 = [62.832, 17.874]; //[62.664450, 18.286383];
+let shoreMarker02 = L.marker(shorePos02, {icon: shore02Symbol});
+shoreMarker02.addTo(map);
+shoreMarker02.setOpacity( 1.0 );
+shoreMarker02.setRotationOrigin("center");
+shoreMarker02.setRotationAngle(0);
+let shore02HtmlString = '<div style="font-size:10px;line-height:100%;">';
+shore02HtmlString += 'Höga Kusten Varvet<br>Web site: <a href="https://www.hagakustenvarvet.se">https://www.hagakustenvarvet.se</a><br>Position:' + '<br>' ;
+shore02HtmlString += 'Lat: ' + shorePos02[0].toString() + '\u00B0' + '<br>' ;
+shore02HtmlString += 'Lon: ' + shorePos02[1].toString() + '\u00B0' ;  //Disp.jsonToTable(contentJson, {});
+const shore02ImageUrl = 'images/leaflet/' + 'shore_02_image.png' ;
+shore02HtmlString += '<br><br>' + '<img src="' + shore02ImageUrl + '"/>';
+if (!isTouchDevice) shoreMarker02.bindTooltip(shore02HtmlString);
+else shoreMarker02.bindPopup(shore02HtmlString, {closeOnClick: true, autoClose: false});
 
-if (Ais.OWN_POSITION_AVAILABLE && (typeof cookie_value !== 'undefined' && cookie_value !== null && cookie_value !== "") )
+setInterval(refreshData, 5000);
+setInterval(refreshDisplay, 2000);
+
+let idButtonText = 'Share position with Test Site Bothnia';
+if (!Ais.OWN_POSITION_AVAILABLE) idButtonText = 'No own position to share';
+const idInputDescription = '<br>Please enter a specific user ID (up to 10 characters will be displayed):';
+const idInfoDescription = 'Welcome to the MarIEx position reporting tool of Test Site Bothnia! We try to take all precautions possible to keep our test sites safe and secure, and your help is greatly appreciated. By adding a user ID to identify your position marker on the chart (either an arbitrary one of your choice or your name, ship name, call sign, MMSI, or other presumably unique identifier) when present in or near one of our test areas, you can improve your visibility not only to our test management team but to your fellow seafarers and land travellers as well. Please consider when choosing your ID that it will be sent back (securely) to Test Site Bothnia and stored (securely) in our database before being publicly shared in this application, and take note that your ID may be shortened to its first 10 characters when displayed.';
+const cookieInfoDescription = 'To be able to link your device to your position unambiguously for the benefit of the Test Site Bothnia team and your fellow seafarers and land travellers, you can permit the MarIEx app to set a single cookie containing your user ID only (which is non-shareable with other sites). If you uncheck the box no new cookie will be set on the device and any cookies previously set by MarIEx will be removed.';
+const idIsAvailable = Ais.OWN_POSITION_AVAILABLE ;
+const idNotAvailablePreambleText = 'No own position to share';
+const idNotFoundPreambleText = 'Sharing position anonymously'; //'Share position with Test Site Bothnia';
+const idFoundPreambleText = 'Identified as ';
+const idStoredPreambleText = 'Device recognized as ';
+const idButtonStyle = { "position": "absolute", "width": "280px", "top": "5px", "right": "5px", "padding": "10px", "z-index": "400" , "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) };
+let idInput = new IdInput({idButtonStyle: idButtonStyle, idButtonText: idButtonText, idInputDescription: idInputDescription, idInfoDescription: idInfoDescription, cookieInfoDescription: cookieInfoDescription, idIsAvailable: idIsAvailable, idNotAvailablePreambleText: idNotAvailablePreambleText, idNotFoundPreambleText: idNotFoundPreambleText, idFoundPreambleText: idFoundPreambleText, idStoredPreambleText: idStoredPreambleText});
+let shareButton = idInput.getShareButton();
+let cookieValue = idInput.getCookieValue();
+
+if (Ais.OWN_POSITION_AVAILABLE && (typeof cookieValue !== 'undefined' && cookieValue !== null && cookieValue !== "") )
 {
-  Ais.OWN_USER_ID = cookie_value;
-  id_input.set_id(cookie_value);
-  share_button.innerText = "Identified as " + Ais.OWN_USER_ID;
-  Help.set_properties( this.share_button.style, { "color": Help.rgba_literal_from_array([127,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,0,63]) } ) ;
+  Ais.OWN_USER_ID = cookieValue;
+  idInput.setId(cookieValue);
+  shareButton.innerText = "Identified as " + Ais.OWN_USER_ID;
+  ElementProps.set( this.shareButton.style, { "color": ElementProps.rgbaLiteral([127,127,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,0,63]) } ) ;
 }
 else if (Ais.OWN_LOCATION_POS.length === 2)
 {
-  share_button.innerText = "Sharing position anonymously" ;
-  Help.set_properties( this.share_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } );
+  shareButton.innerText = "Sharing position anonymously" ;
+  ElementProps.set( this.shareButton.style, { "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } );
 }
 
-let camera_div = document.createElement("DIV");
-document.body.appendChild(camera_div);
-let camera_button = document.createElement("BUTTON");
-camera_div.appendChild(camera_button);
-camera_button.id = "camera_button";
-Help.set_properties( camera_button.style, { "position": "absolute", "width": "280px", "top": "50px", "right": "5px", "padding": "10px", "z-index": "400" , "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } ) ;
-camera_button.addEventListener("click", create_image_input);
-let camera_button_text = document.createTextNode("Share observation with Test Site Bothnia");
-camera_button.appendChild(camera_button_text);
+let cameraDiv = document.createElement("DIV");
+document.body.appendChild(cameraDiv);
+let cameraButton = document.createElement("BUTTON");
+cameraDiv.appendChild(cameraButton);
+cameraButton.id = "camera_button";
+ElementProps.set( cameraButton.style, { "position": "absolute", "width": "280px", "top": "50px", "right": "5px", "padding": "10px", "z-index": "400" , "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } ) ;
+cameraButton.addEventListener("click", createImageInput);
+let cameraButtonText = document.createTextNode("Share observation with Test Site Bothnia");
+cameraButton.appendChild(cameraButtonText);
 
-let guab_div = document.createElement("DIV");
-document.body.appendChild(guab_div);
-Help.set_properties( guab_div.style, { "position": "relative" } );
-let guab_button = document.createElement("BUTTON");
-guab_div.appendChild(guab_button);
-guab_button.id = "guab_button";
-Help.set_properties( guab_button.style, { "position": "absolute", "width": "110px", "bottom": "0px", "right": "0px", "padding": "0px", "z-index": "400" , "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } ) ;
-const guab_01_image_url = 'images/leaflet/' + 'guab_01_image.png' ;
-guab_button.innerHTML = '<img src="' + guab_01_image_url + '"/>';
-guab_button.addEventListener("click", open_guab_website);
+let guabDiv = document.createElement("DIV");
+document.body.appendChild(guabDiv);
+ElementProps.set( guabDiv.style, { "position": "relative" } );
+let guabButton = document.createElement("BUTTON");
+guabDiv.appendChild(guabButton);
+guabButton.id = "guab_button";
+ElementProps.set( guabButton.style, { "position": "absolute", "width": "110px", "bottom": "0px", "right": "0px", "padding": "0px", "z-index": "400" , "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } ) ;
+const guab01ImageUrl = 'images/leaflet/' + 'guab_01_image.png' ;
+guabButton.innerHTML = '<img src="' + guab01ImageUrl + '"/>';
+guabButton.addEventListener("click", openGuabWebsite);
 
-let tsb_div = document.createElement("DIV");
-document.body.appendChild(tsb_div);
-Help.set_properties( tsb_div.style, { "position": "relative" } );
-let tsb_button = document.createElement("BUTTON");
-tsb_div.appendChild(tsb_button);
-tsb_button.id = "tsb_button";
-Help.set_properties( tsb_button.style, { "position": "absolute", "width": "110px", "bottom": "0px", "right": "113px", "padding": "0px", "z-index": "400" , "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } ) ;
-const tsb_01_image_url = 'images/leaflet/' + 'tsb_01_image.png' ;
-tsb_button.innerHTML = '<img src="' + tsb_01_image_url + '"/>';
-tsb_button.addEventListener("click", open_tsb_website);
+let tsbDiv = document.createElement("DIV");
+document.body.appendChild(tsbDiv);
+ElementProps.set( tsbDiv.style, { "position": "relative" } );
+let tsbButton = document.createElement("BUTTON");
+tsbDiv.appendChild(tsbButton);
+tsbButton.id = "tsb_button";
+ElementProps.set( tsbButton.style, { "position": "absolute", "width": "110px", "bottom": "0px", "right": "113px", "padding": "0px", "z-index": "400" , "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } ) ;
+const tsb01ImageUrl = 'images/leaflet/' + 'tsb_01_image.png' ;
+tsbButton.innerHTML = '<img src="' + tsb01ImageUrl + '"/>';
+tsbButton.addEventListener("click", openTsbWebsite);
 
-let center_div = document.createElement("DIV");
-document.body.appendChild(center_div);
-let center_button = document.createElement("BUTTON");
-center_div.appendChild(center_button);
-center_button.id = "center_button";
-Help.set_properties( center_button.style, { "position": "absolute", "height":"40px", "width": "137px", "top": "95px", "right": "148px", "padding": "0px", "z-index": "400" , "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } ) ;
-const center_01_image_url = 'images/leaflet/' + 'crosshair.png' ;
-center_button.innerHTML = '<div><img style="vertical-align:middle;margin-left:-5px;margin-right:5px" src="' + center_01_image_url + '"/><span style="">Centered</span></div>';
-center_button.addEventListener("click", follow_position);
+let centerDiv = document.createElement("DIV");
+document.body.appendChild(centerDiv);
+let centerButton = document.createElement("BUTTON");
+centerDiv.appendChild(centerButton);
+centerButton.id = "center_button";
+ElementProps.set( centerButton.style, { "position": "absolute", "height":"40px", "width": "137px", "top": "95px", "right": "148px", "padding": "0px", "z-index": "400" , "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } ) ;
+const center01ImageUrl = 'images/leaflet/' + 'crosshair.png' ;
+centerButton.innerHTML = '<div><img style="vertical-align:middle;margin-left:-5px;margin-right:5px" src="' + center01ImageUrl + '"/><span style="">Centered</span></div>';
+centerButton.addEventListener("click", followPosition);
 
-let more_info_div = document.createElement("DIV");
-document.body.appendChild(more_info_div);
-let more_info_button = document.createElement("BUTTON");
-more_info_div.appendChild(more_info_button);
-more_info_button.id = "more_info_button";
-Help.set_properties( more_info_button.style, { "position": "absolute", "height":"40px", "width": "137px", "top": "95px", "right": "5px", "padding": "0px", "z-index": "400" , "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } ) ;
-const more_info_01_image_url = 'icons/leaflet/' + 'ship_symbol_black.png' ;
-more_info_button.innerHTML = '<div><img style="height:30px;vertical-align:middle;margin-left:-5px;margin-right:5px" src="' + more_info_01_image_url + '"/><span style="">More info</span></div>';
-more_info_button.addEventListener("click", show_more_info);
+let moreInfoDiv = document.createElement("DIV");
+document.body.appendChild(moreInfoDiv);
+let moreInfoButton = document.createElement("BUTTON");
+moreInfoDiv.appendChild(moreInfoButton);
+moreInfoButton.id = "more_info_button";
+ElementProps.set( moreInfoButton.style, { "position": "absolute", "height":"40px", "width": "137px", "top": "95px", "right": "5px", "padding": "0px", "z-index": "400" , "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } ) ;
+const moreInfo01ImageUrl = 'icons/leaflet/' + 'ship_symbol_black.png' ;
+moreInfoButton.innerHTML = '<div><img style="height:30px;vertical-align:middle;margin-left:-5px;margin-right:5px" src="' + moreInfo01ImageUrl + '"/><span style="">More info</span></div>';
+moreInfoButton.addEventListener("click", showMoreInfo);
 
 
-function open_guab_website()
+function openGuabWebsite()
 {
   window.open('https://gustavsvik.eu')
 }
 
 
-function open_tsb_website()
+function openTsbWebsite()
 {
   window.open('https://testsitebothnia.eu')
 }
 
 
-function follow_position()
+function followPosition()
 {
   if (!Ais.OWN_POSITION_FOLLOW)
   {
     Ais.OWN_POSITION_FOLLOW = true;
-    Help.set_properties( center_button.style, { "color": Help.rgba_literal_from_array([0,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([0,127,0,63]) } ) ;
+    ElementProps.set( centerButton.style, { "color": ElementProps.rgbaLiteral([0,127,0,255]), "backgroundColor": ElementProps.rgbaLiteral([0,127,0,63]) } ) ;
     Ais.OWN_ZOOM_LEVEL = map.getZoom();
   }
   else
   {
     Ais.OWN_POSITION_FOLLOW = false;
-    Help.set_properties( center_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } ) ;
+    ElementProps.set( centerButton.style, { "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } ) ;
   }
 }
 
 
-function show_more_info()
+function showMoreInfo()
 {
   if (!Ais.GET_ALL_AND_IMAGES)
   {
     Ais.GET_ALL_AND_IMAGES = true;
-    Help.set_properties( more_info_button.style, { "color": Help.rgba_literal_from_array([0,127,0,255]), "backgroundColor": Help.rgba_literal_from_array([0,127,0,63]) } ) ;
+    ElementProps.set( moreInfoButton.style, { "color": ElementProps.rgbaLiteral([0,127,0,255]), "backgroundColor": ElementProps.rgbaLiteral([0,127,0,63]) } ) ;
   }
   else
   {
     Ais.GET_ALL_AND_IMAGES = false;
-    Help.set_properties( more_info_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } ) ;
+    ElementProps.set( moreInfoButton.style, { "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } ) ;
   }
 }
 
-function create_image_input()
+function createImageInput()
 {
-  let image_dialog = document.createElement("DIALOG");
-  document.body.appendChild(image_dialog);
-  dialogPolyfill.registerDialog(image_dialog);
-  let dialog_div = document.createElement("DIV");
-  image_dialog.appendChild(dialog_div);
+  let imageDialog = document.createElement("DIALOG");
+  document.body.appendChild(imageDialog);
+  dialogPolyfill.registerDialog(imageDialog);
+  let dialogDiv = document.createElement("DIV");
+  imageDialog.appendChild(dialogDiv);
 
-  let description_div = document.createElement("DIV");
-  Help.set_properties( description_div.style, {"position": "relative"} );
-  description_div.innerHTML = '<br>Use the text field below to describe (anonymously if you prefer) your finds and/or hit the button to attach related media files:' //'<br>Welcome to the MarIEx environmental reporting tool of Test Site Bothnia! We try to take all precautions possible to keep our test sites safe and secure, and your help is greatly appreciated. Here you can report occurrences in or near test site areas of e g:<ul><li>Severe winds, waves, thunderstorms, precipitation, flooding, ice formation and other sudden weather changes for the worse and potentially hazardous natural phenomena</li><li>Divers, swimmers, water skiers, jet ski riders, kayakers and other unprotected personnel</li><li>Seals and other vulnerable aquatic mammals or other kinds of species</li><li>Algae blooms or infestations of jellyfish or other invasive or harmful species</li><li>Natural objects (e g logs) or man-made equipment (e g buoys or vehicles) adrift, stranded or abandoned</li><li>Refuse, oil spills or other kinds of man-made pollution</li><li>Containers of harmful substances or other hazardous items like mines or other kinds of unexploded munitions</li><li>Other harmful activity in progress, such as pollution, vandalism, theft or reckless or unsafe behaviour</li><li>Unidentifiable or evasive vessels (e g submarines) or other suspicious equipment or personnel (e g divers)</li></ul>Use the text field below to describe (anonymously if you prefer) your finds and/or hit the button to attach related media files:';
-  dialog_div.appendChild(description_div);
+  let descriptionDiv = document.createElement("DIV");
+  ElementProps.set( descriptionDiv.style, {"position": "relative"} );
+  descriptionDiv.innerHTML = '<br>Use the text field below to describe (anonymously if you prefer) your finds and/or hit the button to attach related media files:' //'<br>Welcome to the MarIEx environmental reporting tool of Test Site Bothnia! We try to take all precautions possible to keep our test sites safe and secure, and your help is greatly appreciated. Here you can report occurrences in or near test site areas of e g:<ul><li>Severe winds, waves, thunderstorms, precipitation, flooding, ice formation and other sudden weather changes for the worse and potentially hazardous natural phenomena</li><li>Divers, swimmers, water skiers, jet ski riders, kayakers and other unprotected personnel</li><li>Seals and other vulnerable aquatic mammals or other kinds of species</li><li>Algae blooms or infestations of jellyfish or other invasive or harmful species</li><li>Natural objects (e g logs) or man-made equipment (e g buoys or vehicles) adrift, stranded or abandoned</li><li>Refuse, oil spills or other kinds of man-made pollution</li><li>Containers of harmful substances or other hazardous items like mines or other kinds of unexploded munitions</li><li>Other harmful activity in progress, such as pollution, vandalism, theft or reckless or unsafe behaviour</li><li>Unidentifiable or evasive vessels (e g submarines) or other suspicious equipment or personnel (e g divers)</li></ul>Use the text field below to describe (anonymously if you prefer) your finds and/or hit the button to attach related media files:';
+  dialogDiv.appendChild(descriptionDiv);
 
-  let attach_button = document.createElement("BUTTON");
-  let share_info_button = document.createElement("BUTTON");
-  let attach_button_div = document.createElement("DIV");
-  Help.set_properties( attach_button_div.style, {"position": "relative", "top": "10px"} );
-  attach_button_div.appendChild(attach_button);
-  Help.set_properties( attach_button.style, {"padding": "10px"} );
-  attach_button_div.appendChild(share_info_button);
-  Help.set_properties( share_info_button.style, {"height": "30px", "width": "30px", "border-radius": "50%", "border": "1px solid #000", "margin-left": "20px", "padding": "0px"} );
-  attach_button.addEventListener("click", get_image);
-  share_info_button.addEventListener("click", share_info);
-  let attach_button_text = document.createTextNode("Attach image or file");
-  attach_button.appendChild(attach_button_text);
-  let share_info_button_text = document.createTextNode("i");
-  share_info_button.appendChild(share_info_button_text);
-  dialog_div.appendChild(attach_button_div);
+  let attachButton = document.createElement("BUTTON");
+  let shareInfoButton = document.createElement("BUTTON");
+  let attachButtonDiv = document.createElement("DIV");
+  ElementProps.set( attachButtonDiv.style, {"position": "relative", "top": "10px"} );
+  attachButtonDiv.appendChild(attachButton);
+  ElementProps.set( attachButton.style, {"padding": "10px"} );
+  attachButtonDiv.appendChild(shareInfoButton);
+  ElementProps.set( shareInfoButton.style, {"height": "30px", "width": "30px", "border-radius": "50%", "border": "1px solid #000", "margin-left": "20px", "padding": "0px"} );
+  attachButton.addEventListener("click", getImage);
+  shareInfoButton.addEventListener("click", shareInfo);
+  let attachButtonText = document.createTextNode("Attach image or file");
+  attachButton.appendChild(attachButtonText);
+  let shareInfoButtonText = document.createTextNode("i");
+  shareInfoButton.appendChild(shareInfoButtonText);
+  dialogDiv.appendChild(attachButtonDiv);
 
-  let image_textarea = document.createElement("TEXTAREA");
-  let textarea_div = document.createElement("DIV");
-  Help.set_properties( textarea_div.style, {"position": "relative", "top": "10px"} );
-  textarea_div.appendChild(image_textarea);
-  Help.set_properties( image_textarea, {"rows": "10"} ); //, "cols": "35"
-  Help.set_properties( image_textarea.style, {fieldStyle: {"font-size": "10pt"}, "position": "relative", "top": "10px", "width": "100%"} );
-  let default_text = 'My contact information (email or phone, not required): ';
-  if (Ais.OWN_LOCATION_POS.length === 2) default_text += '\r\n' + 'My current location: ' + Ais.OWN_LOCATION_POS[0].toString().substring(0,8) + ',' + Ais.OWN_LOCATION_POS[1].toString().substring(0,8);
-  default_text += '\r\n\r\n' + 'My observation: ' + '\r\n';
-  image_textarea.value = default_text;
-  dialog_div.appendChild(textarea_div);
+  let imageTextarea = document.createElement("TEXTAREA");
+  let textareaDiv = document.createElement("DIV");
+  ElementProps.set( textareaDiv.style, {"position": "relative", "top": "10px"} );
+  textareaDiv.appendChild(imageTextarea);
+  ElementProps.set( imageTextarea, {"rows": "10"} ); //, "cols": "35"
+  ElementProps.set( imageTextarea.style, {fieldStyle: {"font-size": "10pt"}, "position": "relative", "top": "10px", "width": "100%"} );
+  let defaultText = 'My contact information (email or phone, not required): ';
+  if (Ais.OWN_LOCATION_POS.length === 2) defaultText += '\r\n' + 'My current location: ' + Ais.OWN_LOCATION_POS[0].toString().substring(0,8) + ',' + Ais.OWN_LOCATION_POS[1].toString().substring(0,8);
+  defaultText += '\r\n\r\n' + 'My observation: ' + '\r\n';
+  imageTextarea.value = defaultText;
+  dialogDiv.appendChild(textareaDiv);
 
-  let submit_button = document.createElement("BUTTON");
-  let cancel_button = document.createElement("BUTTON");
-  let share_button_div = document.createElement("DIV");
-  Help.set_properties( share_button_div.style, {"position": "relative", "top": "30px"} );
-  share_button_div.appendChild(submit_button);
-  Help.set_properties( submit_button.style, {"padding": "10px"} );
-  share_button_div.appendChild(cancel_button);
-  Help.set_properties( cancel_button.style, {"padding": "10px", "margin-left": "10px"} );
-  submit_button.addEventListener("click", submit_data);
-  cancel_button.addEventListener("click", cancel);
-  let submit_button_text = document.createTextNode("Submit");
-  submit_button.appendChild(submit_button_text);
-  let cancel_button_text = document.createTextNode("Cancel");
-  cancel_button.appendChild(cancel_button_text);
-  dialog_div.appendChild(share_button_div);
+  let submitButton = document.createElement("BUTTON");
+  let cancelButton = document.createElement("BUTTON");
+  let shareButtonDiv = document.createElement("DIV");
+  ElementProps.set( shareButtonDiv.style, {"position": "relative", "top": "30px"} );
+  shareButtonDiv.appendChild(submitButton);
+  ElementProps.set( submitButton.style, {"padding": "10px"} );
+  shareButtonDiv.appendChild(cancelButton);
+  ElementProps.set( cancelButton.style, {"padding": "10px", "margin-left": "10px"} );
+  submitButton.addEventListener("click", submitData);
+  cancelButton.addEventListener("click", cancel);
+  let submitButtonText = document.createTextNode("Submit");
+  submitButton.appendChild(submitButtonText);
+  let cancelButtonText = document.createTextNode("Cancel");
+  cancelButton.appendChild(cancelButtonText);
+  dialogDiv.appendChild(shareButtonDiv);
 
-  Help.set_properties( dialog_div.style, {"position": "relative", "top": "-25px"} ); //"overflow-y": "auto",
+  ElementProps.set( dialogDiv.style, {"position": "relative", "top": "-25px"} ); //"overflow-y": "auto",
 
-  image_dialog.showModal();
+  imageDialog.showModal();
 
   window.scrollTo(0, 0);
 
-  function share_info()
+  function shareInfo()
   {
     window.alert('Welcome to the MarIEx environmental reporting tool of Test Site Bothnia! We try to take all precautions possible to keep our test sites safe and secure, and your help is greatly appreciated. Here you can report occurrences in or near test site areas of e g:\n\n- Severe winds, waves, thunderstorms, precipitation, flooding, ice formation and other sudden weather changes for the worse and potentially hazardous natural phenomena\n- Divers, swimmers, water skiers, jet ski riders, kayakers and other unprotected personnel\n- Seals and other vulnerable aquatic mammals or other kinds of species\n- Algae blooms or infestations of jellyfish or other invasive or harmful species\n- Natural objects (e g logs) or man-made equipment (e g buoys or vehicles) adrift, stranded or abandoned\n- Refuse, oil spills or other kinds of man-made pollution\n- Containers of harmful substances or other hazardous items like mines or other kinds of unexploded munitions\n- Other harmful activity in progress, such as pollution, vandalism, theft or reckless or unsafe behaviour\n- Unidentifiable or evasive vessels (e g submarines) or other suspicious equipment or personnel (e g divers)')
   }
 
-  function submit_data()
+  function submitData()
   {
-    image_dialog.close();
+    imageDialog.close();
   }
 
   function cancel()
   {
-    image_dialog.close();
+    imageDialog.close();
   }
 
 }
 
 
-function get_image()
+function getImage()
 {
-  let image_div = document.createElement("DIV");
-  document.body.appendChild(image_div);
-  let image_input = document.createElement("INPUT");
-  image_input.addEventListener("change", get_image_file);
-  image_div.appendChild(image_input);
+  let imageDiv = document.createElement("DIV");
+  document.body.appendChild(imageDiv);
+  let imageInput = document.createElement("INPUT");
+  imageInput.addEventListener("change", getImageFile);
+  imageDiv.appendChild(imageInput);
 
-  Help.set_properties( image_input, {"id": "image_input", "type": "file", "accept": "image/*", "style": "display:none"} );   // ,audio/*,video/* "capture": "user" //force camera input only
+  ElementProps.set( imageInput, {"id": "image_input", "type": "file", "accept": "image/*", "style": "display:none"} );   // ,audio/*,video/* "capture": "user" //force camera input only
 
-  image_input.click();
+  imageInput.click();
 
-  function get_image_file(event)
+  function getImageFile(event)
   {
-    const image = document.createElement("IMG");
-    const image_file = event.target.files[0];
+    //const image = document.createElement("IMG");
+    const imageFile = event.target.files[0];
     const reader = new FileReader();
-    reader.addEventListener('load', image_reader)
-    reader.readAsDataURL(image_file);
+    reader.addEventListener('load', imageReader)
+    reader.readAsDataURL(imageFile);
 
-    function image_reader(event)
+    function imageReader(event)
     {
-      const own_data_image_bytes = event.target.result.split(',')[1];
-      Ais.OWN_DATA_IMAGE_BYTES = own_data_image_bytes;
+      const ownDataImageBytes = event.target.result.split(',')[1];
+      Ais.OWN_DATA_IMAGE_BYTES = ownDataImageBytes;
     }
   }
 }
 
 /*
-let image_div = document.createElement("DIV");
-document.body.appendChild(image_div);
+let imageDiv = document.createElement("DIV");
+document.body.appendChild(imageDiv);
 if ('mediaDevices' in navigator && 'getUserMedia' in navigator.mediaDevices)
 {
 const video = document.createElement('video');
@@ -369,9 +402,9 @@ video.setAttribute('playsinline', true);
 //const source = document.createElement('source');
 //source.setAttribute('src', 'https://res.cloudinary.com/dthskrjhy/video/upload/v1545324364/ASR/Typenex_Dandelion_Break_-_Fade_To_Black.mp4');
 //video.appendChild(source);
-//Help.set_properties( video.style, { "position": "absolute", "bottom": "0px", "right": "100px", "padding": "10px", "z-index": "400" } );
-image_div.appendChild(video);
-camera_button.addEventListener('click', event => {
+//ElementProps.set( video.style, { "position": "absolute", "bottom": "0px", "right": "100px", "padding": "10px", "z-index": "400" } );
+imageDiv.appendChild(video);
+cameraButton.addEventListener('click', event => {
   const constraints = {
     video: true,
     audio: false
@@ -389,253 +422,258 @@ camera_button.addEventListener('click', event => {
 */
 
 
-function handle_geolocation_success(position)
+function handleGeolocationSuccess(position)
 {
-  const own_coords = position.coords;
+  const ownCoords = position.coords;
 
-  //own_location_marker = L.marker(center, {icon: own_location_stationary_icon});
-  //own_location_marker.addTo(map);
-  //own_accuracy_circle = L.circle(center, {color: 'steelblue', radius: 0, fillColor: 'steelblue', opacity: 0.2});
-  //own_accuracy_circle.addTo(map);
+  //ownLocationMarker = L.marker(center, {icon: ownLocationStationaryIcon});
+  //ownLocationMarker.addTo(map);
+  //ownAccuracyCircle = L.circle(center, {color: 'steelblue', radius: 0, fillColor: 'steelblue', opacity: 0.2});
+  //ownAccuracyCircle.addTo(map);
 
   Ais.OWN_POSITION_AVAILABLE = true;
-  id_input.set_id_is_available(Ais.OWN_POSITION_AVAILABLE);
-  Ais.OWN_USER_ID = id_input.get_id();
+  idInput.setIdIsAvailable(Ais.OWN_POSITION_AVAILABLE);
+  Ais.OWN_USER_ID = idInput.getId();
 
-  //share_button.innerText = id_not_found_preamble_text;   //"Sharing position anonymously";
-  //Help.set_properties( share_button.style, { "color": Help.rgba_literal_from_array([0,0,0,255]), "backgroundColor": Help.rgba_literal_from_array([127,127,127,63]) } );
-  id_input.set_not_found_label();
+  //shareButton.innerText = idNotFoundPreambleText;   //"Sharing position anonymously";
+  //ElementProps.set( shareButton.style, { "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } );
+  idInput.setNotFoundLabel();
 
-  cookie_value = id_input.get_cookie_value();
-  if ( (typeof cookie_value !== 'undefined' && cookie_value !== null && cookie_value !== "") ) // && (typeof Ais.OWN_USER_ID === 'undefined' || Ais.OWN_USER_ID === "" || Ais.OWN_USER_ID === null) )
+  cookieValue = idInput.getCookieValue();
+  if ( (typeof cookieValue !== 'undefined' && cookieValue !== null && cookieValue !== "") ) // && (typeof Ais.OWN_USER_ID === 'undefined' || Ais.OWN_USER_ID === "" || Ais.OWN_USER_ID === null) )
   {
-    Ais.OWN_USER_ID = cookie_value;
-    id_input.set_stored_label(Ais.OWN_USER_ID);
+    Ais.OWN_USER_ID = cookieValue;
+    idInput.setStoredLabel(Ais.OWN_USER_ID);
   }
-  if ( (typeof cookie_value === 'undefined' || cookie_value === null || cookie_value === "") && (typeof Ais.OWN_USER_ID !== 'undefined' && Ais.OWN_USER_ID !== "" && Ais.OWN_USER_ID !== null) )
+  if ( (typeof cookieValue === 'undefined' || cookieValue === null || cookieValue === "") && (typeof Ais.OWN_USER_ID !== 'undefined' && Ais.OWN_USER_ID !== "" && Ais.OWN_USER_ID !== null) )
   {
-    id_input.set_found_label(Ais.OWN_USER_ID);
+    idInput.setFoundLabel(Ais.OWN_USER_ID);
   }
 
-  Ais.OWN_LOCATION_COORDS = { "lat": own_coords.latitude, "lon": own_coords.longitude, "accuracy": own_coords.accuracy, "alt": own_coords.altitude, "alt_accuracy": own_coords.altitudeAccuracy, "speed": own_coords.speed, "heading": own_coords.heading };
-  Ais.OWN_LOCATION_POS[0] = own_coords.latitude;
-  Ais.OWN_LOCATION_POS[1] = own_coords.longitude;
-  Ais.OWN_LOCATION_ACCURACY = own_coords.accuracy;
-  Ais.OWN_LOCATION_ALTITUDE = own_coords.altitude;
-  Ais.OWN_LOCATION_ALTITUDE_ACCURACY = own_coords.altitudeAccuracy;
-  Ais.OWN_LOCATION_SPEED = own_coords.speed;
-  Ais.OWN_LOCATION_HEADING = own_coords.heading;
+  Ais.OWN_LOCATION_COORDS = { "lat": ownCoords.latitude, "lon": ownCoords.longitude, "accuracy": ownCoords.accuracy, "alt": ownCoords.altitude, "alt_accuracy": ownCoords.altitudeAccuracy, "speed": ownCoords.speed, "heading": ownCoords.heading };
+  Ais.OWN_LOCATION_POS[0] = ownCoords.latitude;
+  Ais.OWN_LOCATION_POS[1] = ownCoords.longitude;
+  Ais.OWN_LOCATION_ACCURACY = ownCoords.accuracy;
+  Ais.OWN_LOCATION_ALTITUDE = ownCoords.altitude;
+  Ais.OWN_LOCATION_ALTITUDE_ACCURACY = ownCoords.altitudeAccuracy;
+  Ais.OWN_LOCATION_SPEED = ownCoords.speed;
+  Ais.OWN_LOCATION_HEADING = ownCoords.heading;
 }
 
 
-function handle_geolocation_error()
+function handleGeolocationError()
 {
   Ais.OWN_POSITION_AVAILABLE = false;
-  id_input.set_id_is_available(Ais.OWN_POSITION_AVAILABLE);
+  idInput.setIdIsAvailable(Ais.OWN_POSITION_AVAILABLE);
 
   Ais.OWN_LOCATION_POS = [];
 
-  own_location_marker.setIcon(own_location_lost_icon);
-  own_accuracy_circle.setRadius(0);
+  ownLocationMarker.setIcon(ownLocationLostIcon);
+  ownAccuracyCircle.setRadius(0);
 
-  if (!is_touch_device) own_location_marker.bindTooltip(id_not_available_preamble_text);
-  else own_location_marker.bindPopup(id_not_available_preamble_text, {closeOnClick: true, autoClose: false});
-  id_input.set_not_available_label();
+  if (!isTouchDevice) ownLocationMarker.bindTooltip(idNotAvailablePreambleText);
+  else ownLocationMarker.bindPopup(idNotAvailablePreambleText, {closeOnClick: true, autoClose: false});
+  idInput.setNotAvailableLabel();
 }
 
 
-function refresh_display()
+function refreshDisplay()
 {
   markersLayer.clearLayers();
 
-  let current_timestamp = parseInt((new Date().valueOf()) / 1000);
+  let currentTimestamp = parseInt((new Date().valueOf()) / 1000);
 
   if (Ais.OWN_LOCATION_POS.length === 2)
   {
-    own_location_marker.setIcon(own_location_stationary_icon);
-    own_location_marker.setLatLng(Ais.OWN_LOCATION_POS);
-    let own_location_html_string = '<div style="font-size:10px;line-height:100%;">';
-    if (Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "") own_location_html_string += 'User ID: ' + Ais.OWN_USER_ID + '<br>' ;
-    own_location_html_string += 'Lat: ' + Ais.OWN_LOCATION_POS[0].toString().substring(0,8) + '\u00B0' + '<br>' ;
-    own_location_html_string += 'Lon: ' + Ais.OWN_LOCATION_POS[1].toString().substring(0,8) + '\u00B0' + '<br>' ;
+    ownLocationMarker.setIcon(ownLocationStationaryIcon);
+    ownLocationMarker.setLatLng(Ais.OWN_LOCATION_POS);
+    let ownLocationHtmlString = '<div style="font-size:10px;line-height:100%;">';
+    if (Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "") ownLocationHtmlString += 'User ID: ' + Ais.OWN_USER_ID + '<br>' ;
+    ownLocationHtmlString += 'Lat: ' + Ais.OWN_LOCATION_POS[0].toString().substring(0,8) + '\u00B0' + '<br>' ;
+    ownLocationHtmlString += 'Lon: ' + Ais.OWN_LOCATION_POS[1].toString().substring(0,8) + '\u00B0' + '<br>' ;
     if (Ais.OWN_LOCATION_ACCURACY !== null)
     {
-      own_location_html_string += 'Accuracy: ' + Ais.OWN_LOCATION_ACCURACY.toString().substring(0,6) + ' m' ;
-      own_accuracy_circle.setLatLng(Ais.OWN_LOCATION_POS);
-      own_accuracy_circle.setRadius(parseInt(Ais.OWN_LOCATION_ACCURACY));
+      ownLocationHtmlString += 'Accuracy: ' + Ais.OWN_LOCATION_ACCURACY.toString().substring(0,6) + ' m' ;
+      ownAccuracyCircle.setLatLng(Ais.OWN_LOCATION_POS);
+      ownAccuracyCircle.setRadius(parseInt(Ais.OWN_LOCATION_ACCURACY));
     }
-    if (Ais.OWN_LOCATION_ALTITUDE !== null) own_location_html_string += '<br>Altitude: ' + Ais.OWN_LOCATION_ALTITUDE.toString().substring(0,6) + ' m' ;
-    if (Ais.OWN_LOCATION_ALTITUDE_ACCURACY !== null) own_location_html_string += '<br>Altitude: ' + Ais.OWN_LOCATION_ALTITUDE_ACCURACY.toString().substring(0,6) + ' m' ;
+    if (Ais.OWN_LOCATION_ALTITUDE !== null) ownLocationHtmlString += '<br>Altitude: ' + Ais.OWN_LOCATION_ALTITUDE.toString().substring(0,6) + ' m' ;
+    if (Ais.OWN_LOCATION_ALTITUDE_ACCURACY !== null) ownLocationHtmlString += '<br>Altitude: ' + Ais.OWN_LOCATION_ALTITUDE_ACCURACY.toString().substring(0,6) + ' m' ;
     if (Ais.OWN_LOCATION_SPEED !== null)
     {
-      own_location_html_string += '<br>Speed: ' + Ais.OWN_LOCATION_SPEED.toString().substring(0,6) + ' m/s' ;
-      if (Ais.OWN_LOCATION_SPEED > 0) own_location_marker.setIcon(own_location_mobile_icon);
+      ownLocationHtmlString += '<br>Speed: ' + Ais.OWN_LOCATION_SPEED.toString().substring(0,6) + ' m/s' ;
+      if (Ais.OWN_LOCATION_SPEED > 0) ownLocationMarker.setIcon(ownLocationMobileIcon);
       if (Ais.OWN_LOCATION_HEADING !== null)
       {
-        own_location_html_string += '<br>Heading: ' + Ais.OWN_LOCATION_HEADING.toString().substring(0,6) + '\u00B0' ;
-        own_location_marker.setRotationOrigin("center");
-        own_location_marker.setRotationAngle(Ais.OWN_LOCATION_HEADING);
+        ownLocationHtmlString += '<br>Heading: ' + Ais.OWN_LOCATION_HEADING.toString().substring(0,6) + '\u00B0' ;
+        ownLocationMarker.setRotationOrigin("center");
+        ownLocationMarker.setRotationAngle(Ais.OWN_LOCATION_HEADING);
       }
     }
-    if (!is_touch_device) own_location_marker.bindTooltip(own_location_html_string);
-    else own_location_marker.bindPopup(own_location_html_string, {closeOnClick: true, autoClose: false});
+    if (!isTouchDevice) ownLocationMarker.bindTooltip(ownLocationHtmlString);
+    else ownLocationMarker.bindPopup(ownLocationHtmlString, {closeOnClick: true, autoClose: false});
 
     if (Ais.OWN_POSITION_FOLLOW && Ais.OWN_LOCATION_POS.length === 2)
     {
       map.flyTo(Ais.OWN_LOCATION_POS);
-      const center_pos = map.getCenter(); // get map center
-      const map_bounds = map.getBounds();
-      const map_bound_north = L.latLng(map_bounds.getNorth(), center_pos['lng']);
-      const map_bound_east = L.latLng(center_pos['lat'], map_bounds.getEast());
-      const map_distance_north = map_bound_north.distanceTo(center_pos);
-      const map_distance_east = map_bound_east.distanceTo(center_pos);
-      const margin_factor = Math.min(map_distance_north, map_distance_east) / Ais.OWN_LOCATION_ACCURACY;
-      const zoom_level_adjust = Math.floor(Math.log2(margin_factor));
-      const current_zoom_level = map.getZoom();
-      if (zoom_level_adjust < 0) map.flyTo(Ais.OWN_LOCATION_POS, current_zoom_level + zoom_level_adjust);
+      const centerPos = map.getCenter(); // get map center
+      const mapBounds = map.getBounds();
+      const mapBoundNorth = L.latLng(mapBounds.getNorth(), centerPos['lng']);
+      const mapBoundEast = L.latLng(centerPos['lat'], mapBounds.getEast());
+      const mapDistanceNorth = mapBoundNorth.distanceTo(centerPos);
+      const mapDistanceEast = mapBoundEast.distanceTo(centerPos);
+      const marginFactor = Math.min(mapDistanceNorth, mapDistanceEast) / Ais.OWN_LOCATION_ACCURACY;
+      const zoomLevelAdjust = Math.floor(Math.log2(marginFactor));
+      const currentZoomLevel = map.getZoom();
+      if (zoomLevelAdjust < 0) map.flyTo(Ais.OWN_LOCATION_POS, currentZoomLevel + zoomLevelAdjust);
     }
   }
 
-  for (let _id_counter = 0; _id_counter < Ais.ID_ARRAY.length; _id_counter++)
+  for (let _idCounter = 0; _idCounter < Ais.ID_ARRAY.length; _idCounter++)
   {
-    const id = Ais.ID_ARRAY[_id_counter];
-    const mmsi = Ais.MMSI_ARRAY[_id_counter];
-    const lat = Ais.POS_ARRAY[_id_counter][1];
-    const lon = Ais.POS_ARRAY[_id_counter][0];
-    const wspeed = Ais.WIND_SPEED_ARRAY[_id_counter];
-    const wdir = Ais.WIND_DIR_ARRAY[_id_counter];
-    const airtemp = Ais.AIR_TEMP_ARRAY[_id_counter];
-    const watertemp = Ais.WATER_TEMP_ARRAY[_id_counter];
-    const speed = Ais.SPEED_ARRAY[_id_counter];
-    const course = Ais.COURSE_ARRAY[_id_counter];
-    const content = Ais.TEXT_ARRAY[_id_counter];
-    const age = current_timestamp - Ais.TIME_ARRAY[_id_counter];
+    const id = Ais.ID_ARRAY[_idCounter];
+    const mmsi = Ais.MMSI_ARRAY[_idCounter];
+    const lat = Ais.POS_ARRAY[_idCounter][1];
+    const lon = Ais.POS_ARRAY[_idCounter][0];
+    const wspeed = Ais.WIND_SPEED_ARRAY[_idCounter];
+    const wdir = Ais.WIND_DIR_ARRAY[_idCounter];
+    const airtemp = Ais.AIR_TEMP_ARRAY[_idCounter];
+    const watertemp = Ais.WATER_TEMP_ARRAY[_idCounter];
+    const waveheight = Ais.WAVE_HEIGHT_ARRAY[_idCounter];
+    const speed = Ais.SPEED_ARRAY[_idCounter];
+    const course = Ais.COURSE_ARRAY[_idCounter];
+    const content = Ais.TEXT_ARRAY[_idCounter];
+    const age = currentTimestamp - Ais.TIME_ARRAY[_idCounter];
 
     if (lat !== null && lon !== null)
     {
-      let marker = L.marker([ lat, lon ], {icon: sea_stationary_icon});
+      let marker = L.marker([ lat, lon ], {icon: seaStationaryIcon});
 
       if (speed > 0)
       {
-        marker.setIcon(sea_mobile_icon);
+        marker.setIcon(seaMobileIcon);
       }
-      let time_opacity = (1200-(age-600))/1200 ;
-      if (time_opacity > 1) time_opacity = 1;
-      if (time_opacity < 0) time_opacity = 0;
-      marker.setOpacity( time_opacity );
+      let timeOpacity = (1200-(age-600))/1200 ;
+      if (timeOpacity > 1) timeOpacity = 1;
+      if (timeOpacity < 0) timeOpacity = 0;
+      marker.setOpacity( timeOpacity );
       marker.setRotationOrigin("center");
       marker.setRotationAngle(course);
 
-      const content_json = Help.json_safe_parse(content);
-      if (content_json !== null)
+      const contentJson = GetSafe.json(content);
+      if (contentJson !== null)
       {
-        let type = Help.safe_get(content_json, "type");
+        let type = GetSafe.byKey(contentJson, "type");
         if ( type !== null) type = parseInt(type);
 
-        let html_string = '<div style="font-size:10px;line-height:100%;">';
-        html_string += (age/60).toString().substring(0,3) + ' min. ago' + '<br>';
+        let htmlString = '<div style="font-size:10px;line-height:100%;">';
+        htmlString += (age/60).toString().substring(0,3) + ' min. ago' + '<br>';
 
         if (type === 8)
         {
-          marker.setIcon( wind_barbs.get_icon(0) );
+          marker.setIcon( windBarbs.getIcon(0) );
 
           if (wspeed !== null)
           {
-            marker.setIcon( wind_barbs.get_icon(wspeed) );
+            marker.setIcon( windBarbs.getIcon(wspeed) );
             marker.setRotationOrigin("15px 48px");
             marker.setRotationAngle(wdir);
-            html_string += 'Wind speed: ' + wspeed.toString().substring(0,3) + ' kt.' + '<br>';
+            htmlString += 'Wind speed: ' + wspeed.toString().substring(0,3) + ' kt.' + '<br>';
           }
-          if (wdir !== null) html_string += 'Wind direction: ' + wdir.toString().substring(0,3) + '\u00B0' + '<br>';
-          if (airtemp !== null) html_string += 'Air temperature: ' + airtemp.toString().substring(0,4) + '\u00B0C' + '<br>';
-          if (watertemp !== null) html_string += 'Water temperature: ' + watertemp.toString().substring(0,4) + '\u00B0C' + '<br>';
-          if (id !== null) html_string += 'ID: ' + id.toString();
+          if (wdir !== null) htmlString += 'Wind direction: ' + wdir.toString().substring(0,3) + '\u00B0' + '<br>';
+          if (airtemp !== null) htmlString += 'Air temperature: ' + airtemp.toString().substring(0,4) + '\u00B0C' + '<br>';
+          if (watertemp !== null) htmlString += 'Water temperature: ' + watertemp.toString().substring(0,4) + '\u00B0C' + '<br>';
+          if (waveheight !== null) htmlString += 'Wave height: ' + waveheight.toString().substring(0,4) + ' m.' + '<br>';
+          if (id !== null) htmlString += 'ID: ' + id.toString();
         }
         else
         {
           if (type === 4)
           {
-            marker.setIcon(shore_stationary_icon);
+            marker.setIcon(shoreStationaryIcon);
           }
           else if (type === 21)
           {
-            const complete_name = Help.safe_get(content_json, "complete_name");
-            if (complete_name !== null) html_string += 'Info: ' + complete_name.toString() + '<br>' ;
-            marker.setIcon(aton_special_mark_virtual_icon);
+            const completeName = GetSafe.byKey(contentJson, "complete_name");
+            if (completeName !== null) htmlString += 'Info: ' + completeName.toString() + '<br>' ;
+            marker.setIcon(atonSpecialMarkVirtualIcon);
           }
           else
           {
-            if (speed !== null) html_string += 'Speed: ' + speed.toString() + ' kt.' + '<br>' ;
-            if (course !== null) html_string += 'Course: ' + course.toString() + '' + '<br>' ;
-            const shipname = Help.safe_get(content_json, "shipname");
-            if (shipname !== null) html_string += 'Name: ' + shipname.toString() + '<br>' ;
-            const callsign = Help.safe_get(content_json, "callsign");
-            if (callsign !== null) html_string += 'Callsign: ' + callsign.toString() + '<br>' ;
-            const destination = Help.safe_get(content_json, "destination");
-            if (destination !== null) html_string += 'Destination: ' + destination.toString() + '<br>' ;
-            const imo = Help.safe_get(content_json, "imo");
-            if (imo !== null) html_string += 'IMO: ' + imo.toString() + '<br>' ;
+            if (speed !== null) htmlString += 'Speed: ' + speed.toString() + ' kt.' + '<br>' ;
+            if (course !== null) htmlString += 'Course: ' + course.toString() + '' + '<br>' ;
+            const shipname = GetSafe.byKey(contentJson, "shipname");
+            if (shipname !== null) htmlString += 'Name: ' + shipname.toString() + '<br>' ;
+            const callsign = GetSafe.byKey(contentJson, "callsign");
+            if (callsign !== null) htmlString += 'Callsign: ' + callsign.toString() + '<br>' ;
+            const destination = GetSafe.byKey(contentJson, "destination");
+            if (destination !== null) htmlString += 'Destination: ' + destination.toString() + '<br>' ;
+            const imo = GetSafe.byKey(contentJson, "imo");
+            if (imo !== null) htmlString += 'IMO: ' + imo.toString() + '<br>' ;
           }
-          if (mmsi !== null) html_string += 'MMSI: ' + mmsi.toString() + '<br>' ;
-          if (id !== null) html_string += 'ID: ' + id.toString() + '<br>' ;
-          if (lat !== null) html_string += 'Lat: ' + lat.toString() + '\u00B0' + '<br>' ;
-          if (lon !== null) html_string += 'Lon: ' + lon.toString() + '\u00B0' ;  //Disp.jsonToTable(content_json, {});
+          if (mmsi !== null) htmlString += 'MMSI: ' + mmsi.toString() + '<br>' ;
+          if (id !== null) htmlString += 'ID: ' + id.toString() + '<br>' ;
+          if (lat !== null) htmlString += 'Lat: ' + lat.toString() + '\u00B0' + '<br>' ;
+          if (lon !== null) htmlString += 'Lon: ' + lon.toString() + '\u00B0' ;  //Disp.jsonToTable(contentJson, {});
 
-          const icon_filename = Help.safe_get(content_json, "icon_filename");
-          if (icon_filename !== null)
+          const iconFilename = GetSafe.byKey(contentJson, "icon_filename");
+          if (iconFilename !== null)
           {
-            const icon_url = 'icons/leaflet/' + icon_filename ;
-            const icon = new CustomIcon({iconUrl: icon_url, iconSize: [32,32],iconAnchor: [16,16]})
+            const iconUrl = 'icons/leaflet/' + iconFilename ;
+            const icon = new CustomIcon({iconUrl: iconUrl, iconSize: [32,32],iconAnchor: [16,16]})
             marker.setIcon(icon);
           }
         }
 
-        const image_filename = Help.safe_get(content_json, "image_filename");
-        if ( Ais.GET_ALL_AND_IMAGES && image_filename !== null) //!is_touch_device
+        const imageFilename = GetSafe.byKey(contentJson, "image_filename");
+        if ( Ais.GET_ALL_AND_IMAGES && imageFilename !== null) //!isTouchDevice
         {
-          const image_url = 'images/leaflet/' + image_filename ;
-          html_string += '<br><br>' + '<img src="' + image_url + '"/>';
+          const imageUrl = 'images/leaflet/' + imageFilename ;
+          htmlString += '<br><br>' + '<img src="' + imageUrl + '"/>';
         }
 
-        if (!is_touch_device) marker.bindTooltip(html_string);
-        else marker.bindPopup(html_string, {closeOnClick: true, autoClose: false}) ;
+        if (!isTouchDevice) marker.bindTooltip(htmlString);
+        else marker.bindPopup(htmlString, {closeOnClick: true, autoClose: false}) ;
       }
 
       markersLayer.addLayer(marker);
     }
   }
 
-  for (let _pos_counter = 0; _pos_counter < Ais.ALL_POS_ARRAY.length; _pos_counter++)
+  for (let _posCounter = 0; _posCounter < Ais.ALL_POS_ARRAY.length; _posCounter++)
   {
-    const lat = Ais.ALL_POS_ARRAY[_pos_counter][1];
-    const lon = Ais.ALL_POS_ARRAY[_pos_counter][0];
-    const id = Ais.ALL_ID_ARRAY[_pos_counter];
+    const lat = Ais.ALL_POS_ARRAY[_posCounter][1];
+    const lon = Ais.ALL_POS_ARRAY[_posCounter][0];
+    const id = Ais.ALL_ID_ARRAY[_posCounter];
     //console.log("mmsi", mmsi);
-    const age = current_timestamp - parseInt(Ais.ALL_TIME_ARRAY[_pos_counter]);
-    if (lat !== null && lon !== null )
+    const age = currentTimestamp - parseInt(Ais.ALL_TIME_ARRAY[_posCounter]);
+    if (lat !== null && lon !== null)
     {
+      // && parseFloat(id) > 0.0 let marker_2 = new TransparentLabelMarker([ lat, lon ], {label: id.toString().substring(0,4)});
+
       let marker_2 = L.circleMarker([ lat, lon ], {opacity: 0.5, color: "#00c600"});
       if (id === "99999") marker_2 = L.circleMarker([ lat, lon ], {opacity: 0.5, color: "#ff0000"});
       marker_2.setRadius(4 - 4 * age/900);
+      let htmlString = '<div style="font-size:10px;line-height:100%;">' + (age/60).toString().substring(0,3)  + ' min. ago' + '<br>' + 'ID: ' + id.toString() + '<br>' + 'Lat: ' + lat.toString() + '<br>' + 'Lon: ' + lon.toString() + '</div>'; // + ' m.'
+      if (!isTouchDevice) marker_2.bindTooltip(htmlString);
+      else marker_2.bindPopup(htmlString, {closeOnClick: true, autoClose: false});
+
       markersLayer.addLayer(marker_2);
-      let html_string = '<div style="font-size:10px;line-height:100%;">' + (age/60).toString().substring(0,3)  + ' min. ago' + '<br>' + 'ID: ' + id.toString() + '<br>' + 'Lat: ' + lat.toString() + '<br>' + 'Lon: ' + lon.toString() + '</div>';
-      if (!is_touch_device) marker_2.bindTooltip(html_string);
-      else marker_2.bindPopup(html_string, {closeOnClick: true, autoClose: false});
     }
   }
 }
 
 
-async function refresh_data()
+async function refreshData()
 {
   /*
-  const geolocation_options = { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 };
-  const watchID = navigator.geolocation.getCurrentPosition(handle_geolocation_success, handle_geolocation_error, geolocation_options);
+  const geolocationOptions = { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 };
+  const watchID = navigator.geolocation.getCurrentPosition(handleGeolocationSuccess, handleGeolocationError, geolocationOptions);
   */
   let response = null;
   try
   {
-    response = await fetch(static_url);
+    response = await fetch(staticUrl);
   }
   catch(e)
   {
@@ -651,42 +689,43 @@ async function refresh_data()
     console.error(e);
   }
 
-  const data_array = Help.decodeTransferString(data);
-  let data_string_array = [];
-  if (data_array[2].length > 0) data_string_array = data_array[2][0];
-  let timestamp_array = [];
-  if (data_array[0].length > 0) timestamp_array = data_array[0][0];
-  for (let _ais_string_counter = 0; _ais_string_counter < data_string_array.length; _ais_string_counter++)
+  const dataArray = Transform.delimitedStringToArrays(data);
+  let dataStringArray = [];
+  if (dataArray[2].length > 0) dataStringArray = dataArray[2][0];
+  let timestampArray = [];
+  if (dataArray[0].length > 0) timestampArray = dataArray[0][0];
+  for (let _aisStringCounter = 0; _aisStringCounter < dataStringArray.length; _aisStringCounter++)
   {
 
-    const time = parseInt(timestamp_array[_ais_string_counter]);
+    const time = parseInt(timestampArray[_aisStringCounter]);
 
-    let ais_string = data_string_array[_ais_string_counter]
-    if (ais_string.length > 0)
+    let aisString = dataStringArray[_aisStringCounter]
+    if (aisString.length > 0)
     {
-      const regex_comma = /\|/g;
-      const regex_semicolon = /\~/g;
-      let ais_json_string = ais_string.replace(regex_semicolon, ";");
-      ais_json_string = ais_json_string.replace(regex_comma, ",");
-      //console.log("ais_json_string", ais_json_string);
+      const regexComma = /\|/g;
+      const regexSemicolon = /\~/g;
+      let aisJsonString = aisString.replace(regexSemicolon, ";");
+      aisJsonString = aisJsonString.replace(regexComma, ",");
+      //console.log("aisJsonString", aisJsonString);
 	  //try
 	  //{
-        const ais_json = Help.json_safe_parse(ais_json_string); //[0];
-        //console.log("ais_json", ais_json);
-        const mmsi = Help.safe_get(ais_json, "mmsi");
-        const lon = Help.safe_get(ais_json, "lon");
-        const lat = Help.safe_get(ais_json, "lat");
-        const wdir = Help.safe_get(ais_json, "wdir");
-        const wspeed = Help.safe_get(ais_json, "wspeed");
-        const airtemp = Help.safe_get(ais_json, "airtemp");
-        const watertemp = Help.safe_get(ais_json, "watertemp");
-        const speed = Help.safe_get(ais_json, "speed");
-        const course = Help.safe_get(ais_json, "course");
-        const id = Help.safe_get(ais_json, "host_hardware_id");
+        const aisJson = GetSafe.json(aisJsonString); //[0];
+        //console.log("aisJson", aisJson);
+        const mmsi = GetSafe.byKey(aisJson, "mmsi");
+        const lon = GetSafe.byKey(aisJson, "lon");
+        const lat = GetSafe.byKey(aisJson, "lat");
+        const wdir = GetSafe.byKey(aisJson, "wdir");
+        const wspeed = GetSafe.byKey(aisJson, "wspeed");
+        const airtemp = GetSafe.byKey(aisJson, "airtemp");
+        const watertemp = GetSafe.byKey(aisJson, "watertemp");
+        const waveheight = GetSafe.byKey(aisJson, "waveheight");
+        const speed = GetSafe.byKey(aisJson, "speed");
+        const course = GetSafe.byKey(aisJson, "course");
+        const id = GetSafe.byKey(aisJson, "host_hardware_id");
 
-        const id_index = Ais.ID_ARRAY.indexOf(id);
+        const idIndex = Ais.ID_ARRAY.indexOf(id);
 
-        if (id_index === -1)
+        if (idIndex === -1)
         {
           Ais.ID_ARRAY.push( id ) ;
           Ais.MMSI_ARRAY.push( mmsi )
@@ -694,24 +733,26 @@ async function refresh_data()
           Ais.WIND_DIR_ARRAY.push( wdir );
           Ais.WIND_SPEED_ARRAY.push( wspeed );
           Ais.AIR_TEMP_ARRAY.push( airtemp );
-	      Ais.WATER_TEMP_ARRAY.push( watertemp );
+          Ais.WATER_TEMP_ARRAY.push( watertemp );
+          Ais.WAVE_HEIGHT_ARRAY.push( waveheight );
           Ais.SPEED_ARRAY.push( speed );
           Ais.COURSE_ARRAY.push( course );
-          Ais.TEXT_ARRAY.push( ais_json_string );
+          Ais.TEXT_ARRAY.push( aisJsonString );
           Ais.TIME_ARRAY.push( time ) ;
         }
         else
         {
-          if (mmsi !== null) Ais.MMSI_ARRAY[id_index] = mmsi;
-          if (lon !== null && lat !== null) Ais.POS_ARRAY[id_index] = [ lon, lat ] ;
-          if (wdir !== null) Ais.WIND_DIR_ARRAY[id_index] = wdir;
-          if (wspeed !== null) Ais.WIND_SPEED_ARRAY[id_index] = wspeed;
-          if (airtemp !== null) Ais.AIR_TEMP_ARRAY[id_index] = airtemp;
-          if (watertemp !== null) Ais.WATER_TEMP_ARRAY[id_index] = watertemp;
-          if (speed !== null) Ais.SPEED_ARRAY[id_index] = speed;
-          if (course !== null) Ais.COURSE_ARRAY[id_index] = course;
-          Ais.TEXT_ARRAY[id_index] = ais_json_string;
-          Ais.TIME_ARRAY[id_index] = time;
+          if (mmsi !== null) Ais.MMSI_ARRAY[idIndex] = mmsi;
+          if (lon !== null && lat !== null) Ais.POS_ARRAY[idIndex] = [ lon, lat ] ;
+          if (wdir !== null) Ais.WIND_DIR_ARRAY[idIndex] = wdir;
+          if (wspeed !== null) Ais.WIND_SPEED_ARRAY[idIndex] = wspeed;
+          if (airtemp !== null) Ais.AIR_TEMP_ARRAY[idIndex] = airtemp;
+          if (watertemp !== null) Ais.WATER_TEMP_ARRAY[idIndex] = watertemp;
+          if (waveheight !== null) Ais.WAVE_HEIGHT_ARRAY[idIndex] = waveheight;
+          if (speed !== null) Ais.SPEED_ARRAY[idIndex] = speed;
+          if (course !== null) Ais.COURSE_ARRAY[idIndex] = course;
+          Ais.TEXT_ARRAY[idIndex] = aisJsonString;
+          Ais.TIME_ARRAY[idIndex] = time;
         }
       //}
       //catch(e)
@@ -720,56 +761,56 @@ async function refresh_data()
     }
   }
 
-  let position_string_array = []
+  let positionStringArray = []
 
   if ( Ais.GET_ALL_AND_IMAGES )
   {
-    let position_response = null;
+    let positionResponse = null;
     try
     {
-      position_response = await fetch(position_url, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '148;'}) });
+      positionResponse = await fetch(positionUrl, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '148;154;'}) });
     }
     catch(e)
     {
       console.error(e);
     }
-    let position_data = "";
+    let positionData = "";
     try
     {
-      position_data = await position_response.json();
+      positionData = await positionResponse.json();
     }
     catch(e)
     {
       console.error(e);
     }
-    position_string_array[0] = position_data
+    positionStringArray[0] = positionData
   }
 
-  const own_position_response = await fetch( own_position_url, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '99999;', 'duration': '300'}) } );
-  let own_position_data = null;
+  const ownPositionResponse = await fetch( ownPositionUrl, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '99999;', 'duration': '300'}) } );
+  let ownPositionData = null;
   try
   {
-    own_position_data = await own_position_response.json();
+    ownPositionData = await ownPositionResponse.json();
   }
   catch(e)
   {
     console.error(e);
   }
-  position_string_array[1] = own_position_data
+  positionStringArray[1] = ownPositionData
 
 //Get AISHUB data separately at longer intervals (1 min?) at some point
-//  const aishub_position_response = await fetch(position_url, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '153;'}) });
-//  let position_data = null;
+//  const aishubPositionResponse = await fetch(positionUrl, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '153;'}) });
+//  let positionData = null;
 //  try
 //  {
-//    aishub_position_data = await aishub_position_response.json();
+//    aishubPositionData = await aishubPositionResponse.json();
 //  }
 //  catch(e)
 //  {
 //  }
-//  position_string_array[2] = aishub_position_data
+//  positionStringArray[2] = aishubPositionData
 
-  let current_timestamp = parseInt((new Date().valueOf()) / 1000);
+  let currentTimestamp = parseInt((new Date().valueOf()) / 1000);
   Ais.ALL_POS_ARRAY = [];
   Ais.ALL_TIME_ARRAY = [];
   Ais.ALL_ID_ARRAY = [];
@@ -777,37 +818,37 @@ async function refresh_data()
   if ( Ais.GET_ALL_AND_IMAGES )
   {
 
-  for (let _position_data_counter = 0; _position_data_counter < position_string_array.length; _position_data_counter++)
+  for (let _positionDataCounter = 0; _positionDataCounter < positionStringArray.length; _positionDataCounter++)
   {
-    const position_data_array = Help.decodeTransferString(position_string_array[_position_data_counter]);
-    let position_data_string_array = [];
-    if (position_data_array[2].length > 0) position_data_string_array = position_data_array[2][0];
-    let position_timestamp_array = [];
-    if (position_data_array[0].length > 0) position_timestamp_array = position_data_array[0][0];
+    const positionDataArray = Transform.delimitedStringToArrays(positionStringArray[_positionDataCounter]);
+    let positionDataStringArray = [];
+    if (positionDataArray[2].length > 0) positionDataStringArray = positionDataArray[2][0];
+    let positionTimestampArray = [];
+    if (positionDataArray[0].length > 0) positionTimestampArray = positionDataArray[0][0];
 
-    for (let _position_string_counter = 0; _position_string_counter < position_data_string_array.length; _position_string_counter++)
+    for (let _positionStringCounter = 0; _positionStringCounter < positionDataStringArray.length; _positionStringCounter++)
     {
-      let position_string = position_data_string_array[_position_string_counter];
+      let positionString = positionDataStringArray[_positionStringCounter];
 
-      if (position_string.length > 0)
+      if (positionString.length > 0)
       {
-        const regex_comma = /\|/g;
-        const regex_semicolon = /\~/g;
-        const position_json_string = position_string.replace(regex_semicolon, ";").replace(regex_comma, ",");
+        const regexComma = /\|/g;
+        const regexSemicolon = /\~/g;
+        const positionJsonString = positionString.replace(regexSemicolon, ";").replace(regexComma, ",");
 
-        const position_json = Help.json_safe_parse(position_json_string); //[0];
-        if (position_json !== null)
+        const positionJson = GetSafe.json(positionJsonString); //[0];
+        if (positionJson !== null)
         {
-          for (let _position_json_counter = 0; _position_json_counter < position_json.length; _position_json_counter++)
+          for (let _positionJsonCounter = 0; _positionJsonCounter < positionJson.length; _positionJsonCounter++)
           {
-            const type = Help.safe_get(position_json[_position_json_counter], "type");
+            const type = GetSafe.byKey(positionJson[_positionJsonCounter], "type");
             if ( [1,2,3,18,9].includes(parseInt(type)) )
             {
-              Ais.ALL_POS_ARRAY.push( [ Help.safe_get(position_json[_position_json_counter], "lon"), Help.safe_get(position_json[_position_json_counter], "lat") ] ) ;
-              Ais.ALL_ID_ARRAY.push( Help.safe_get(position_json[_position_json_counter], "mmsi") );
+              Ais.ALL_POS_ARRAY.push( [ GetSafe.byKey(positionJson[_positionJsonCounter], "lon"), GetSafe.byKey(positionJson[_positionJsonCounter], "lat") ] ) ;
+              Ais.ALL_ID_ARRAY.push( GetSafe.byKey(positionJson[_positionJsonCounter], "mmsi") );
             }
-            const position_time = parseInt(position_timestamp_array[_position_string_counter]);
-            Ais.ALL_TIME_ARRAY.push( position_time ) ;
+            const positionTime = parseInt(positionTimestampArray[_positionStringCounter]);
+            Ais.ALL_TIME_ARRAY.push( positionTime ) ;
           }
         }
       }
@@ -816,49 +857,50 @@ async function refresh_data()
 
   }
 
-  let own_position_json_string = JSON.stringify(Ais.OWN_LOCATION_COORDS);
+  let ownPositionJsonString = JSON.stringify(Ais.OWN_LOCATION_COORDS);
 
-  const regex_pipe = new RegExp(',', 'g');
-  const regex_tilde = new RegExp(';', 'g');
+  const regexPipe = new RegExp(',', 'g');
+  const regexTilde = new RegExp(';', 'g');
 
-  let user_id = null;
-  if (Ais.OWN_POSITION_AVAILABLE && typeof Ais.OWN_USER_ID !== 'undefined' && Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "") user_id = Ais.OWN_USER_ID;
-  if (user_id === null) user_id = "99999";
-  if (Ais.OWN_LOCATION_POS.length === 2) // user_id !== null ||
+  let userId = null;
+  if (Ais.OWN_POSITION_AVAILABLE && typeof Ais.OWN_USER_ID !== 'undefined' && Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "") userId = Ais.OWN_USER_ID;
+  if (userId === null) userId = "99999";
+  if (Ais.OWN_LOCATION_POS.length === 2) // userId !== null ||
   {
-    own_position_json_string = '[[null, null, ' + '"' + user_id + '"' + ', ' + own_position_json_string + ']]' ;
+    ownPositionJsonString = '[[null, null, ' + '"' + userId + '"' + ', ' + ownPositionJsonString + ']]' ;
 
-    const new_channel_response = await fetch( 'https://' + window.location.hostname + '/client/update_static_data_client.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'common_description': own_position_json_string, 'module_address': user_id}) } );
-    //body: "common_description=" + encodeURIComponent(own_position_json_string) } );
-    let new_channel_data = null;
+    const newChannelResponse = await fetch( 'https://' + window.location.hostname + '/client/update_static_data_client.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'common_description': ownPositionJsonString, 'module_address': userId}) } );
+    //body: "common_description=" + encodeURIComponent(ownPositionJsonString) } );
+    let newChannelData = null;
     try
     {
-      new_channel_data = await new_channel_response.json();
-      Ais.OWN_DATA_CHANNEL = new_channel_data["new_channel_index"];
+      newChannelData = await newChannelResponse.json();
+      Ais.OWN_DATA_CHANNEL = newChannelData["new_channel_index"];
     }
     catch(e)
     {
+      console.error(e);
     }
 
-    own_position_json_string = own_position_json_string.replace(regex_tilde, '~');
-    own_position_json_string = own_position_json_string.replace(regex_pipe, '|');
-    const own_position_upload_request = await fetch( 'https://' + window.location.hostname + '/client/send_request.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '99999;;'}) } );
-    if (!own_position_upload_request.ok) console.error(own_position_upload_request);
-    const own_position_transfer_string = "99999;" + current_timestamp.toString() + ",-9999.0,," + own_position_json_string + ",;" ;
-    const own_position_set_requested = await fetch( 'https://' + window.location.hostname + '/host/set_requested.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'returnstring': own_position_transfer_string}) } );
-    if (!own_position_set_requested.ok) console.error(own_position_set_requested);
+    ownPositionJsonString = ownPositionJsonString.replace(regexTilde, '~');
+    ownPositionJsonString = ownPositionJsonString.replace(regexPipe, '|');
+    const ownPositionUploadRequest = await fetch( 'https://' + window.location.hostname + '/client/send_request.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '99999;;'}) } );
+    if (!ownPositionUploadRequest.ok) console.error(ownPositionUploadRequest);
+    const ownPositionTransferString = "99999;" + currentTimestamp.toString() + ",-9999.0,," + ownPositionJsonString + ",;" ;
+    const ownPositionSetRequested = await fetch( 'https://' + window.location.hostname + '/host/set_requested.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'returnstring': ownPositionTransferString}) } );
+    if (!ownPositionSetRequested.ok) console.error(ownPositionSetRequested);
   }
 
   if (Ais.OWN_DATA_CHANNEL !== null && Ais.OWN_DATA_IMAGE_BYTES !== null)
   {
-    const own_data_channel_string = (Ais.OWN_DATA_CHANNEL).toString(); //"99999";
-    const own_data_image_bytes = Ais.OWN_DATA_IMAGE_BYTES;
+    const ownDataChannelString = (Ais.OWN_DATA_CHANNEL).toString(); //"99999";
+    const ownDataImageBytes = Ais.OWN_DATA_IMAGE_BYTES;
     Ais.OWN_DATA_IMAGE_BYTES = null;
-    const own_image_upload_request = await fetch( 'https://' + window.location.hostname + '/client/send_request.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': own_data_channel_string + ';;'}) } );
-    if (!own_image_upload_request.ok) console.error(own_image_upload_request);
-    const own_image_transfer_string = own_data_channel_string + ";" + current_timestamp.toString() + ",-9999.0,," + own_data_image_bytes + ",;" ;
-    const own_image_set_requested = await fetch( 'https://' + window.location.hostname + '/host/set_requested.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'returnstring': own_image_transfer_string}) } );
-    if (!own_image_set_requested.ok) console.error(own_image_set_requested);
+    const ownImageUploadRequest = await fetch( 'https://' + window.location.hostname + '/client/send_request.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': ownDataChannelString + ';;'}) } );
+    if (!ownImageUploadRequest.ok) console.error(ownImageUploadRequest);
+    const ownImageTransferString = ownDataChannelString + ";" + currentTimestamp.toString() + ",-9999.0,," + ownDataImageBytes + ",;" ;
+    const ownImageSetRequested = await fetch( 'https://' + window.location.hostname + '/host/set_requested.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'returnstring': ownImageTransferString}) } );
+    if (!ownImageSetRequested.ok) console.error(ownImageSetRequested);
   }
 
 }
