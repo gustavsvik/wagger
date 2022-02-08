@@ -26,8 +26,13 @@ else
   Ais.OWN_POSITION_AVAILABLE = false ;
 }
 
+setInterval(refreshData, 5000);
+setInterval(refreshDisplay, 2000);
+setInterval(refreshAishubData, 30000);
+const httpData = new HttpData();
+
 /*
-const CustomIcon = L.Icon.extend
+const DefaultIcon = L.Icon.extend
 (
 {
   options:
@@ -60,17 +65,17 @@ L.fixedSizeMarker({lat: 0.7800052024755708, lng: -12.135975261193327},
                   {icon: myIcon3, fontSize: 24, zoomBase: 3}).addTo(map);
 */
 
-const ownLocationMobileIcon = new CustomIcon({iconUrl: 'icons/leaflet/own_ship_symbol.png', iconSize: [20,32],iconAnchor: [10,16]});
-const ownLocationStationaryIcon = new CustomIcon({iconUrl: 'icons/leaflet/own_ship_stationary_symbol.png', iconSize: [16,16], iconAnchor: [8,8]}); //000_kt.png', iconSize: [45,81],iconAnchor: [22.5,72]});
-const seaMobileIcon = new CustomIcon({iconUrl: 'icons/leaflet/ship_symbol.png', iconSize: [16,24],iconAnchor: [8,12]});
-const seaStationaryIcon = new CustomIcon({iconUrl: 'icons/leaflet/ship_stationary_symbol.png', iconSize: [12,12], iconAnchor: [6,6]});
-const shoreStationaryIcon = new CustomIcon({iconUrl: 'icons/leaflet/building_symbol.png', iconSize: [16,18], iconAnchor: [8,11]});
-const atonSpecialMarkVirtualIcon = new CustomIcon({iconUrl: 'icons/leaflet/ais_aton_special_mark_virtual.png', iconSize: [24,32], iconAnchor: [12,24]});
-const shoreMobileIcon = new CustomIcon({iconUrl: 'icons/leaflet/land_vehicle_symbol.png'});
-const dangerIcon = new CustomIcon({iconUrl: 'icons/leaflet/danger_over_symbol.png', iconSize: [24,24], iconAnchor: [12,12]});
-const shore01Symbol = new CustomIcon({iconUrl: 'icons/leaflet/shore_01_symbol.png', iconSize: [32,32], iconAnchor: [16,16]});
-const shore02Symbol = new CustomIcon({iconUrl: 'icons/leaflet/shore_02_symbol.png', iconSize: [40,30], iconAnchor: [20,15]});
-const ownLocationLostIcon = new CustomIcon({iconUrl: 'icons/leaflet/danger_over_symbol.png', iconSize: [16,16], iconAnchor: [8,8]});
+const ownLocationMobileIcon = new DefaultIcon({iconUrl: 'icons/leaflet/own_ship_symbol.png', iconSize: [20,32],iconAnchor: [10,16]});
+const ownLocationStationaryIcon = new DefaultIcon({iconUrl: 'icons/leaflet/own_ship_stationary_symbol.png', iconSize: [16,16], iconAnchor: [8,8]}); //000_kt.png', iconSize: [45,81],iconAnchor: [22.5,72]});
+const seaMobileIcon = new DefaultIcon({iconUrl: 'icons/leaflet/ship_symbol.png', iconSize: [16,24],iconAnchor: [8,12]});
+const seaStationaryIcon = new DefaultIcon({iconUrl: 'icons/leaflet/ship_stationary_symbol.png', iconSize: [12,12], iconAnchor: [6,6]});
+const shoreStationaryIcon = new DefaultIcon({iconUrl: 'icons/leaflet/building_symbol.png', iconSize: [16,18], iconAnchor: [8,11]});
+const atonSpecialMarkVirtualIcon = new DefaultIcon({iconUrl: 'icons/leaflet/ais_aton_special_mark_virtual.png', iconSize: [24,32], iconAnchor: [12,24]});
+const shoreMobileIcon = new DefaultIcon({iconUrl: 'icons/leaflet/land_vehicle_symbol.png'});
+const dangerIcon = new DefaultIcon({iconUrl: 'icons/leaflet/danger_over_symbol.png', iconSize: [24,24], iconAnchor: [12,12]});
+const shore01Symbol = new DefaultIcon({iconUrl: 'icons/leaflet/shore_01_symbol.png', iconSize: [32,32], iconAnchor: [16,16]});
+const shore02Symbol = new DefaultIcon({iconUrl: 'icons/leaflet/shore_02_symbol.png', iconSize: [40,30], iconAnchor: [20,15]});
+const ownLocationLostIcon = new DefaultIcon({iconUrl: 'icons/leaflet/danger_over_symbol.png', iconSize: [16,16], iconAnchor: [8,8]});
 
 let windBarbs = new WindBarbs();
 
@@ -154,9 +159,6 @@ shore02HtmlString += '<br><br>' + '<img src="' + shore02ImageUrl + '"/>';
 if (!isTouchDevice) shoreMarker02.bindTooltip(shore02HtmlString);
 else shoreMarker02.bindPopup(shore02HtmlString, {closeOnClick: true, autoClose: false});
 
-setInterval(refreshData, 5000);
-setInterval(refreshDisplay, 2000);
-
 let idButtonText = 'Share position with Test Site Bothnia';
 if (!Ais.OWN_POSITION_AVAILABLE) idButtonText = 'No own position to share';
 const idInputDescription = '<br>Please enter a specific user ID (up to 10 characters will be displayed):';
@@ -237,6 +239,8 @@ const moreInfo01ImageUrl = 'icons/leaflet/' + 'ship_symbol_black.png' ;
 moreInfoButton.innerHTML = '<div><img style="height:30px;vertical-align:middle;margin-left:-5px;margin-right:5px" src="' + moreInfo01ImageUrl + '"/><span style="">More info</span></div>';
 moreInfoButton.addEventListener("click", showMoreInfo);
 
+//const testClassButton = new ImageOverlayButton( { sizePos: {"h": 40, "w": 200, "x": 295, "y": 95}, text: "Class button test" } );
+//testClassButton.updateDesign();
 
 function openGuabWebsite()
 {
@@ -620,7 +624,7 @@ function refreshDisplay()
           if (iconFilename !== null)
           {
             const iconUrl = 'icons/leaflet/' + iconFilename ;
-            const icon = new CustomIcon({iconUrl: iconUrl, iconSize: [32,32],iconAnchor: [16,16]})
+            const icon = new DefaultIcon({iconUrl: iconUrl, iconSize: [32,32],iconAnchor: [16,16]})
             marker.setIcon(icon);
           }
         }
@@ -903,4 +907,15 @@ async function refreshData()
     if (!ownImageSetRequested.ok) console.error(ownImageSetRequested);
   }
 
+}
+
+
+
+async function refreshAishubData()
+{
+  if ( true ) //Ais.GET_ALL_AND_IMAGES
+  {
+    httpData.post();
+    console.log(new Date());
+  }
 }

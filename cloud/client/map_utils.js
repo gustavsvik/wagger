@@ -24,7 +24,7 @@ class TransparentLabelMarker extends L.Marker
 
 
 
-class CustomIcon extends L.Icon
+class DefaultIcon extends L.Icon
 {
   constructor( { iconUrl = 'icons/leaflet/danger_over_symbol.png', iconSize = [30,54], iconAnchor = [15,48] } = {} ) //iconUrl = 'icons/leaflet/danger_over_symbol.png')
   {
@@ -38,14 +38,9 @@ class FixedMarker extends L.Marker
 {
   constructor( pos = [0.0, 0.0], { iconUrl = 'icons/leaflet/building_symbol.png', iconSize = [32,32], iconAnchor = [16,16] } = {} ) //iconUrl = 'icons/leaflet/building_symbol.png')
   {
-    const symbol = new CustomIcon({iconUrl: iconUrl, iconSize: iconSize, iconAnchor: iconAnchor});
-
+    const symbol = new DefaultIcon({iconUrl: iconUrl, iconSize: iconSize, iconAnchor: iconAnchor});
 	super(pos, {icon: symbol});
-
-
 /*
-    let marker = L.marker(this.pos, {icon: shore01Symbol});
-
 shoreMarker01.addTo(map);
 shoreMarker01.setOpacity( 1.0 );
 shoreMarker01.setRotationOrigin("center");
@@ -70,7 +65,7 @@ class MobileMarker extends FixedMarker
 	super(pos, {icon: symbol})
 */
 
-class WindBarbs
+class WindBarbs //extends L.Marker
 {
 
   #lowerBounds = [0, 1, 3, 8, 13, 18, 23, 28, 33, 38, 43];
@@ -88,7 +83,8 @@ class WindBarbs
     for (let index = 0; index < this.#lowerBounds.length; index++)
     {
       const boundString = this.#lowerBounds[index].toString().padStart(3, '0');
-      this.#icons[index] = new CustomIcon({iconUrl: this.#dirUrl + this.#namePrepend + boundString + this.#nameAppend + '.' + this.#nameExtension, iconSize: this.#size, iconAnchor: this.#anchor, popupAnchor: this.#popupAnchor });
+      const iconUrl = this.#dirUrl + this.#namePrepend + boundString + this.#nameAppend + '.' + this.#nameExtension ;
+      this.#icons[index] = new DefaultIcon({iconUrl: iconUrl, iconSize: this.#size, iconAnchor: this.#anchor, popupAnchor: this.#popupAnchor });
     }
   }
 
@@ -200,6 +196,129 @@ class AisData
 
 }
 
+
+
+class OverlayButton
+{
+
+  #id = "" ;
+  #sizePos = {};
+  #text = "" ;
+  #isToggle = false ;
+
+  #button = {};
+
+  constructor({id = null, sizePos = null, text = null, isToggle = null} = {})
+  {
+    if (id === null) id = "overlay_button" ;
+    if (sizePos === null) sizePos = {"h": 40, "w": 120, "x": 5, "y": 5};
+    if (text === null) text = "Overlay button" ;
+    if (isToggle === null) isToggle = false ;
+
+    this.#id = id ;
+    this.#sizePos = sizePos ;
+    this.#text = text ;
+    this.#isToggle = isToggle ;
+
+    const div = document.createElement("DIV");
+    document.body.appendChild(div);
+    this.#button = document.createElement("BUTTON");
+    div.appendChild(this.#button);
+    this.#button.id = this.id ;
+
+    ElementProps.set( this.#button.style, { "position": "absolute", "padding": "0px", "z-index": "400" , "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } ) ;
+    ElementProps.set( this.#button.style, this.#getSizePosStyle() ) ;
+
+    let self = this;
+
+    this.#button.addEventListener("click", function(){ self.#handleClick(); } ) ;
+  }
+
+  #getSizePosStyle()
+  {
+    let sizePosStyle = {};
+    sizePosStyle["height"] = ElementProps.pxLiteral( GetSafe.byKey(this.#sizePos, "h", 40) ) ;
+    sizePosStyle["width"] = ElementProps.pxLiteral( GetSafe.byKey(this.#sizePos, "w", 120) ) ;
+    sizePosStyle["right"] = ElementProps.pxLiteral( GetSafe.byKey(this.#sizePos, "x", 5) ) ;
+    sizePosStyle["top"] = ElementProps.pxLiteral( GetSafe.byKey(this.#sizePos, "y", 5) ) ;
+    return sizePosStyle;
+  }
+
+  #handleClick()
+  {
+    let self = this ;
+  }
+
+  updateDesign()
+  {
+    const text = document.createTextNode(this.#text);
+    this.#button.appendChild(text);
+  }
+
+  get id() { return this.#id; }
+  get sizePos() { return this.#sizePos; }
+  get text() { return this.#text; }
+  get isToggle() { return this.#isToggle; }
+  get button() { return this.#button; }
+
+}
+
+
+
+class ImageOverlayButton extends OverlayButton
+{
+
+  #relImageUrl = "" ;
+
+  constructor({id = null, sizePos = null, text = null, isToggle = null, relImageUrl = null} = {})
+  {
+    if (id === null) id = "image_overlay_button" ;
+    if (text === null) text = "Image button" ;
+
+    super( {id: id, sizePos: sizePos, text: text, isToggle: isToggle} ) ;
+
+    if (relImageUrl === null) relImageUrl = 'icons/leaflet/' + 'danger_over_symbol.png' ;
+
+    this.#relImageUrl = relImageUrl;
+
+    let self = this ;
+  }
+
+  #getImgHeightPx()
+  {
+    return ElementProps.pxLiteral( Math.trunc( GetSafe.byKey(this.sizePos, "h", 40) * 0.7 ) );
+  }
+
+  updateDesign()
+  {
+    const div = document.createElement("DIV");
+    this.button.appendChild(div);
+    const img = document.createElement("IMG");
+    div.appendChild(img);
+    img.src = this.#relImageUrl;
+    ElementProps.set( img.style, { "height": this.#getImgHeightPx(), "vertical-align": "middle", "margin-left": "-5px" , "margin-right": "5px" } );
+    const span = document.createElement("SPAN");
+    div.appendChild(span);
+    span.textContent = this.text;
+  }
+
+
+}
+
+
+/*
+class ToggleImageOverlayButton extends ImageOverlayButton
+{
+
+  constructor({buttonId = null, buttonSizePos = null, buttonText = null, relImageUrl = null} = {})
+  {
+    super( {buttonId: buttonId, buttonSizePos: buttonSizePos, buttonText: buttonText, isToggle: true, relImageUrl: relImageUrl} );
+
+    let self = this;
+  }
+
+}
+*/
 
 
 class IdInput
@@ -318,12 +437,9 @@ else if (Ais.OWN_LOCATION_POS.length === 2)
     idDiv.appendChild(idInput);
     ElementProps.set( idInput.style, {} );
     self.cookieValue = Cookie.get("mariex_user_id");
-    //if (cookieValue !== null) Ais.OWN_USER_ID = cookieValue;
     if (typeof self.cookieValue !== 'undefined' && self.cookieValue !== null && self.cookieValue !== "") this.ownUserId = self.cookieValue;
     if (typeof self.ownUserId !== 'undefined' && self.ownUserId !== null && self.ownUserId !== "") this.ownUserId = self.ownUserId;
-    //if (Ais.OWN_USER_ID === null) ElementProps.set( idInput, {"placeholder": "My user ID"} );
     if (typeof this.ownUserId === 'undefined' || this.ownUserId === null || this.ownUserId === "") ElementProps.set( idInput, {"placeholder": "My user ID"} );
-    //else ElementProps.set( idInput, {"value": Ais.OWN_USER_ID} );
     else ElementProps.set( idInput, {"value": this.ownUserId} );
     idDiv.appendChild(idInfoButton);
     ElementProps.set( idInfoButton.style, {"height": "30px", "width": "30px", "border-radius": "50%", "border": "1px solid #000", "margin-left": "20px", "padding": "0px"} );
@@ -374,9 +490,7 @@ else if (Ais.OWN_LOCATION_POS.length === 2)
       if (!idIsAvailable) self.shareButton.innerText = idNotAvailablePreambleText;
       ElementProps.set( self.shareButton.style, { "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } );
 
-      //Ais.OWN_USER_ID = idInput.value ;
       self.ownUserId = idInput.value ;
-      //if ( Ais.OWN_POSITION_AVAILABLE && ( !storeCookieCheck.checked || Ais.OWN_USER_ID === null || Ais.OWN_USER_ID === "" ) )
       if ( self.idIsAvailable && ( !storeCookieCheck.checked || self.ownUserId === null || self.ownUserId === "" ) ) //Ais.OWN_POSITION_AVAILABLE
       {
         Cookie.set("mariex_user_id", "", 1000);
@@ -384,22 +498,17 @@ else if (Ais.OWN_LOCATION_POS.length === 2)
         self.shareButton.innerText = idNotFoundPreambleText; //"Sharing position anonymously";
         ElementProps.set( self.shareButton.style, { "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } );
       }
-      //else if (Ais.OWN_USER_ID === "99999") shareButton.innerText = "Sharing position anonymously";
-      //if ( Ais.OWN_POSITION_AVAILABLE && !storeCookieCheck.checked && Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "" )
       if ( self.idIsAvailable && !storeCookieCheck.checked && self.ownUserId !== null && self.ownUserId !== "" ) //Ais.OWN_POSITION_AVAILABLE
       {
-        //this.shareButton.innerText = "Identified as " + Ais.OWN_USER_ID;
         self.shareButton.innerText = idFoundPreambleText + self.ownUserId; //"Identified as "
         ElementProps.set( self.shareButton.style, { "color": ElementProps.rgbaLiteral([127,127,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,0,63]) } ) ;
       }
-      //if (storeCookieCheck.checked && Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "")
       if (storeCookieCheck.checked && self.ownUserId !== null && self.ownUserId !== "")
       {
         Cookie.set("mariex_user_id", idInput.value, 1000);
         self.cookieValue = idInput.value;
-        if (self.idIsAvailable) //Ais.OWN_POSITION_AVAILABLE
+        if (self.idIsAvailable)
         {
-          //this.shareButton.innerText = "Device recognized as " + Ais.OWN_USER_ID;
           self.shareButton.innerText = idStoredPreambleText + self.ownUserId; //"Device recognized as "
           ElementProps.set( self.shareButton.style, { "color": ElementProps.rgbaLiteral([0,127,0,255]), "backgroundColor": ElementProps.rgbaLiteral([0,127,0,63]) } ) ;
         }

@@ -2,12 +2,50 @@
 
 
 
-class GetSafe
+class HttpData
 {
 
-  constructor()
+  #baseUrl = "";
+  #params = "";
+
+  constructor(baseUrl = 'https://' + window.location.hostname + '/client/get_ais_data_records.php', params = {'channels': '154;'})
   {
+	this.#baseUrl = baseUrl;
+	this.#params = params;
   }
+
+  async post()
+  {
+    let response = null;
+    try
+    {
+      response = await fetch(this.#baseUrl, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams(this.#params) });
+    }
+    catch(e)
+    {
+      console.error(e);
+    }
+    let data = "";
+    try
+    {
+      data = await response.json();
+      console.log(data);
+    }
+    catch(e)
+    {
+      console.error(e);
+    }
+
+    return data;
+  }
+
+
+}
+
+
+
+class GetSafe
+{
 
   static byKey(obj, key, def = null)
   {
@@ -35,12 +73,9 @@ class GetSafe
 }
 
 
+
 class Device
 {
-
-  constructor()
-  {
-  }
 
   static isTouch()
   {
@@ -53,10 +88,6 @@ class Device
 
 class ElementProps
 {
-
-  constructor()
-  {
-  }
 
   static set(elem, prop_object)
   {
@@ -77,6 +108,11 @@ class ElementProps
   static rgbaLiteral( rgba_array )
   {
     return "rgba(" + rgba_array[0].toString() + "," + rgba_array[1].toString() + "," + rgba_array[2].toString() + "," + (rgba_array[3]/255).toString() + ")";
+  }
+
+  static pxLiteral( noOfPixels = 0 )
+  {
+	return noOfPixels.toString() + "px";
   }
 
 }
@@ -121,10 +157,6 @@ class Cookie
 
 class Transform
 {
-
-  constructor()
-  {
-  }
 
   static delimitedStringToArrays(data, field_length)
   {
@@ -173,11 +205,6 @@ class Transform
 
 class Help
 {
-
-  constructor()
-  {
-  }
-
 
   static set_properties(elem, prop_object)
   {
@@ -787,40 +814,3 @@ class App
 
 }
 
-/*
-class AisData
-{
-  constructor()
-  {
-    this.OWN_ZOOM_LEVEL = null;
-    this.OWN_POSITION_AVAILABLE = false;
-    this.OWN_POSITION_FOLLOW = false;
-    this.OWN_LOCATION_COORDS = {};
-    this.OWN_LOCATION_POS = [];
-    this.OWN_LOCATION_ACCURACY = null;
-    this.OWN_LOCATION_ALTITUDE = null;
-    this.OWN_LOCATION_ALTITUDE_ACCURACY = null;
-    this.OWN_LOCATION_SPEED = null;
-    this.OWN_LOCATION_HEADING = null;
-    this.OWN_USER_ID = null;
-    this.OWN_DATA_CHANNEL = null;
-    this.OWN_DATA_IMAGE_BYTES = null;
-    this.GET_ALL_AND_IMAGES = false;
-    this.ALL_POS_ARRAY = [];
-    this.ALL_TIME_ARRAY = [];
-    this.ALL_MMSI_ARRAY = [];
-    this.ID_ARRAY = [];
-    this.POS_ARRAY = [];
-    this.MMSI_ARRAY = [];
-    this.MARKER_ARRAY = [];
-    this.WIND_DIR_ARRAY = [];
-    this.WIND_SPEED_ARRAY = [];
-    this.AIR_TEMP_ARRAY = [];
-    this.WATER_TEMP_ARRAY = [];
-    this.SPEED_ARRAY = [];
-    this.COURSE_ARRAY = [];
-    this.TEXT_ARRAY = [];
-    this.TIME_ARRAY = [];
-  }
-}
-*/
