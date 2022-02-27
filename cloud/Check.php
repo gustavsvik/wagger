@@ -21,8 +21,7 @@ class Check
     foreach ($imagemimetypes as $mime => $hexbytes)
     {
       $bytes = get_bytes_from_hex_string($hexbytes);
-      if (substr($imagedata, 0, strlen($bytes)) == $bytes)
-        return $mime;
+      if (substr($imagedata, 0, strlen($bytes)) == $bytes) return $mime;
     }
 
     return NULL;
