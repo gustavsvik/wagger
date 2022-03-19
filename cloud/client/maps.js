@@ -10,9 +10,9 @@ document.body.clientHeight;
 
 let Ais = new AisData();
 
-const center = [62.827, 17.875]; //[62.664450, 18.286383];
+let chart = new ChartContainer({center: [62.827, 17.875], zoom: 14, attribution: false}); //L.Map( 'map', {attributionControl: false} ).setView(center, 12);
+let map = chart.map;
 
-let map = L.map( 'map', {attributionControl: false} ).setView(center, 12);
 Ais.OWN_ZOOM_LEVEL = 14;
 
 
@@ -29,6 +29,8 @@ else
 setInterval(refreshData, 5000);
 setInterval(refreshDisplay, 2000);
 setInterval(refreshAishubData, 30000);
+setInterval(redrawGui, 1000);
+
 const httpData = new HttpData();
 
 /*
@@ -99,9 +101,9 @@ let ownLocationMarker = null;
 let ownAccuracyCircle = null;
 if (geolocationAvailable)
 {
-  ownLocationMarker = L.marker(center, {icon: ownLocationLostIcon});
+  ownLocationMarker = L.marker(chart.center, {icon: ownLocationLostIcon});
   ownLocationMarker.addTo(map);
-  ownAccuracyCircle = L.circle(center, {color: 'steelblue', radius: 0, fillColor: 'steelblue', opacity: 0.2});
+  ownAccuracyCircle = L.circle(chart.center, {color: 'steelblue', radius: 0, fillColor: 'steelblue', opacity: 0.2});
   ownAccuracyCircle.addTo(map);
   const geolocationOptions = { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 };
   //const watchID =
@@ -196,7 +198,7 @@ ElementProps.set( cameraButton.style, { "position": "absolute", "width": "280px"
 cameraButton.addEventListener("click", createImageInput);
 let cameraButtonText = document.createTextNode("Share observation with Test Site Bothnia");
 cameraButton.appendChild(cameraButtonText);
-
+/*
 let guabDiv = document.createElement("DIV");
 document.body.appendChild(guabDiv);
 ElementProps.set( guabDiv.style, { "position": "relative" } );
@@ -207,7 +209,10 @@ ElementProps.set( guabButton.style, { "position": "absolute", "width": "110px", 
 const guab01ImageUrl = 'images/leaflet/' + 'guab_01_image.png' ;
 guabButton.innerHTML = '<img src="' + guab01ImageUrl + '"/>';
 guabButton.addEventListener("click", openGuabWebsite);
-
+*/
+const guabButton = new OpenUrlImageOverlayButton( { sizePos: {"w": 106, "h": 40, "r": 0, "b": 0}, "design": {"enabled":{"button":{"style":{"border":"none","background-color":"transparent","outline":"none","cursor":"pointer"}},"img":{"content":'images/leaflet/guab_01_image.png',"style":{}}} }, "openUrl":'https://gustavsvik.eu' } ); // , "disabled":{"img":{"content":'images/leaflet/guab_01_image.png',"style":{}}}  { text: "Class button test" } );
+guabButton.updateAppearance();
+/*
 let tsbDiv = document.createElement("DIV");
 document.body.appendChild(tsbDiv);
 ElementProps.set( tsbDiv.style, { "position": "relative" } );
@@ -218,7 +223,10 @@ ElementProps.set( tsbButton.style, { "position": "absolute", "width": "110px", "
 const tsb01ImageUrl = 'images/leaflet/' + 'tsb_01_image.png' ;
 tsbButton.innerHTML = '<img src="' + tsb01ImageUrl + '"/>';
 tsbButton.addEventListener("click", openTsbWebsite);
-
+*/
+const tsbButton = new OpenUrlImageOverlayButton( { sizePos: {"w": 98, "h": 40, "r": 107, "b": 0}, "design": {"enabled":{"button":{"style":{"border":"none","background-color":"transparent","outline":"none","cursor":"pointer"}},"img":{"content":'images/leaflet/tsb_01_image.png',"style":{}}} }, "openUrl":'https://testsitebothnia.eu' } ); // , "disabled":{"img":{"content":'images/leaflet/tsb_01_image.png',"style":{}}}  { text: "Class button test" } );
+tsbButton.updateAppearance();
+/*
 let centerDiv = document.createElement("DIV");
 document.body.appendChild(centerDiv);
 let centerButton = document.createElement("BUTTON");
@@ -228,6 +236,20 @@ ElementProps.set( centerButton.style, { "position": "absolute", "height":"40px",
 const center01ImageUrl = 'images/leaflet/' + 'crosshair.png' ;
 centerButton.innerHTML = '<div><img style="vertical-align:middle;margin-left:-5px;margin-right:5px" src="' + center01ImageUrl + '"/><span style="">Centered</span></div>';
 centerButton.addEventListener("click", followPosition);
+*/
+const centerButton = new ImageOverlayButton
+(
+{
+  "sizePos": {"w": 137, "h": 40, "r": 148, "t": 95},
+  "design":
+  {
+    "enabled":{"button":{"style":{"opacity":"1.0","color":ElementProps.rgbaLiteral([0,0,0,255]),"backgroundColor":ElementProps.rgbaLiteral([127,127,127,63]),"cursor":"pointer"}},"img":{"content":'images/leaflet/crosshair.png',"style":{}},"text":{"content":"Center","style":{}}},
+    "disabled":{"button":{"style":{"opacity":"0.5"}},"img":{"content":'images/leaflet/crosshair.png',"style":{}},"text":{"content":"Working...","style":{}}},
+    "toggled":{"button":{"style":{"opacity":"1.0","color":ElementProps.rgbaLiteral([0,127,0,255]),"backgroundColor":ElementProps.rgbaLiteral([0,127,0,63]),"cursor": "pointer"}},"img":{"content":'images/leaflet/crosshair.png',"style":{}},"text":{"content":"Following","style":{}}}
+  }
+}
+); //, "imgSrc": 'images/leaflet/crosshair.png' //{ text: "Class button test" } );
+centerButton.updateAppearance();
 
 let moreInfoDiv = document.createElement("DIV");
 document.body.appendChild(moreInfoDiv);
@@ -238,22 +260,19 @@ ElementProps.set( moreInfoButton.style, { "position": "absolute", "height":"40px
 const moreInfo01ImageUrl = 'icons/leaflet/' + 'ship_symbol_black.png' ;
 moreInfoButton.innerHTML = '<div><img style="height:30px;vertical-align:middle;margin-left:-5px;margin-right:5px" src="' + moreInfo01ImageUrl + '"/><span style="">More info</span></div>';
 moreInfoButton.addEventListener("click", showMoreInfo);
-
-//const testClassButton = new ImageOverlayButton( { sizePos: {"h": 40, "w": 200, "x": 295, "y": 95}, text: "Class button test" } );
-//testClassButton.updateDesign();
-
+/*
 function openGuabWebsite()
 {
   window.open('https://gustavsvik.eu')
 }
-
-
+*/
+/*
 function openTsbWebsite()
 {
   window.open('https://testsitebothnia.eu')
 }
-
-
+*/
+/*
 function followPosition()
 {
   if (!Ais.OWN_POSITION_FOLLOW)
@@ -268,7 +287,7 @@ function followPosition()
     ElementProps.set( centerButton.style, { "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } ) ;
   }
 }
-
+*/
 
 function showMoreInfo()
 {
@@ -481,8 +500,24 @@ function handleGeolocationError()
 }
 
 
+function redrawGui()
+{
+  tsbButton.updateAppearance();
+  tsbButton.resetClicked();
+
+  guabButton.updateAppearance();
+  guabButton.resetClicked();
+
+  centerButton.updateAppearance();
+  if (centerButton.toggled) Ais.OWN_POSITION_FOLLOW = true;
+  else Ais.OWN_POSITION_FOLLOW = false;
+  centerButton.resetClicked();
+}
+
+
 function refreshDisplay()
 {
+
   markersLayer.clearLayers();
 
   let currentTimestamp = parseInt((new Date().valueOf()) / 1000);
@@ -772,7 +807,7 @@ async function refreshData()
     let positionResponse = null;
     try
     {
-      positionResponse = await fetch(positionUrl, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '148;154;'}) });
+      positionResponse = await fetch(positionUrl, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '148;152;', 'duration': '900'}) });
     }
     catch(e)
     {
