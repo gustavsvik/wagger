@@ -85,8 +85,22 @@ class Device
 }
 
 
+class Html
+{
 
-class ElementProps
+  static removeAllElements(container, tag_name_array)
+  {
+    for (let _i = 0, _len = tag_name_array.length; _i != _len; ++_i)
+    {
+      let _all_tag_elements = container.getElementsByTagName(tag_name_array[_i]);
+      for (let _i = 0, _len = _all_tag_elements.length; _i != _len; ++_i) _all_tag_elements[0].parentNode.removeChild(_all_tag_elements[0]) ;
+    }
+  }
+
+}
+
+
+class ElementProps //HtmlProps?
 {
 
   static set(elem, prop_object)
@@ -199,8 +213,29 @@ class Transform
     return [_timestamp_matrix, _value_matrix, _bytestring_matrix] ;
   }
 
-}
+  static svgToImgSrc(svg = null)
+  {
+    let DEFAULT_SVG = document.createElementNS("http://www.w3.org/2000/svg", "CIRCLE") ;
+    DEFAULT_SVG.setAttributeNS(null, 'cx', 10);
+    DEFAULT_SVG.setAttributeNS(null, 'cy', 10);
+    DEFAULT_SVG.setAttributeNS(null, 'r', 50);
+    DEFAULT_SVG.setAttributeNS(null, 'style', 'fill: none; stroke: blue; stroke-width: 1px;');
+    if (svg === null) svg = DEFAULT_SVG ;
+    let xmlSource = new XMLSerializer().serializeToString(svg);
+    if (!xmlSource.match(/^<svg[^>]+xmlns="http:\/\/www\.w3\.org\/2000\/svg"/)) {
+      xmlSource = xmlSource.replace(/^<svg/, '<svg xmlns="http://www.w3.org/2000/svg"');
+    }
+    if (!xmlSource.match(/^<svg[^>]+"http:\/\/www\.w3\.org\/1999\/xlink"/)) {
+      xmlSource = xmlSource.replace(/^<svg/, '<svg xmlns:xlink="http://www.w3.org/1999/xlink"');
+    }
+    xmlSource = `<?xml version="1.0" standalone="no"?>\r\n${xmlSource}`;
+    const svg64 = encodeURIComponent(xmlSource);
+    const b64Start = 'data:image/svg+xml;charset=utf-8,';
+    const src = b64Start + svg64 ; //"data:image/svg+xml;base64," + btoa(decodeURIComponent(encodeURIComponent(xml)));
+    return src;
+  }
 
+}
 
 
 class Help
