@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 
 include_once("CheckIf.php");
@@ -10,7 +10,7 @@ class Log
 
   public static function debug($log_label, $log_var = "")
   {
-    $logged_scripts = [];  // 'DataRecordsSql.php', 'partition_database.php', 'get_own_pos_records.php', 'get_requested.php', 'send_request.php', 'set_requested.php', 'database.php', 'get_static_data.php', 'get_static_records_string.php', 'get_ais_data_records.php', 'update_static_data.php', 'update_devices.php', 'get_uploaded.php', 'get_host_data.php', 'server_time.php', 'network_time.php', 'update_static_data_client.php', 'contributed.php'
+    $logged_scripts = [];  // 'AcquiredRecordsApi.php', 'AcquiredRecordsSql.php', 'partition_database.php', 'get_own_pos_records.php', 'get_requested.php', 'send_request.php', 'set_requested.php', 'database.php', 'get_static_data.php', 'get_static_records_string.php', 'get_ais_data_records.php', 'update_static_data.php', 'update_devices.php', 'get_uploaded.php', 'get_host_data.php', 'server_time.php', 'network_time.php', 'update_static_data_client.php', 'contributed.php'
     if (count($logged_scripts) > 0)
     {
       $logfile = '/srv/wagger/cloud/client/images/debug.log';
