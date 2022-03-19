@@ -406,7 +406,7 @@ function db_get_ais_records($connection, $channels = [], $start_time = -9999, $d
     if (!$select_all) $sql_get_available_values .= " WHERE T.CHANNEL_INDEX=" . $channel_string . " AND T.ACQUIRED_TIME BETWEEN " . strval($start_time) . " AND ". strval($end_time);
     $sql_get_available_values .= " AND T.STATUS >= " . strval($lowest_status) . " AND T.STATUS < " . strval($highest_status) . " AND T.STATUS < " . strval($STATUS_STORED) . " ORDER BY T.ACQUIRED_TIME DESC";
     //debug_log('$sql_get_available_values: ', $sql_get_available_values);
-    $available_values = $conn->query($sql_get_available_values);
+    $available_values = $connection->query($sql_get_available_values);
 
     if ($available_values)
     {
@@ -414,7 +414,7 @@ function db_get_ais_records($connection, $channels = [], $start_time = -9999, $d
       {
         $sql_get_stored_archived_values = $sql_get_all_available_values . " AND T.STATUS >= " . strval($STATUS_STORED) . " ORDER BY T.ACQUIRED_TIME DESC";
         //debug_log('$sql_get_stored_archived_values: ', $sql_get_stored_archived_values);
-        $available_values = $conn->query($sql_get_stored_archived_values);
+        $available_values = $connection->query($sql_get_stored_archived_values);
       }
       if ($available_values->num_rows > 0)
       {
