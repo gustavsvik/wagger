@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 
 include_once("CheckIf.php");
@@ -8,7 +8,7 @@ include_once("CheckIf.php");
 class Transform
 {
 
-  public static function to_string($value, $default = "")
+  public static function to_string($value, string $default = "") : string
   {
     $out_string = $default;
     if ( CheckIf::is_stringy($value) )
@@ -19,19 +19,37 @@ class Transform
       }
       catch (Exception $e)
       {
+        //deliberately ignore any (hopefully not) remaining exceptions in string conversion
       }
       return $out_string;
     }
   }
 
 
-  public static function csv_to_armored_string($string_to_armor)
+  public static function armored_from_separated_string(string $separated_string) : string
   {
-    $string_to_armor = str_replace(",", "|", $string_to_armor) ;
-    $string_to_armor = str_replace(";", "~", $string_to_armor) ;
+    $separated_string = str_replace(",", "|", $separated_string) ;
+    $separated_string = str_replace(";", "~", $separated_string) ;
 
-    return $string_to_armor;
+    return $separated_string;
   }
 
+
+  public static function array_from_channel_string(string $channel_string) : array
+  {
+    $channel_array = [];
+    $channel_string_array = explode(";", $channel_string);
+    foreach($channel_string_array as $channel_string)
+    {
+      if (is_numeric($channel_string)) $channel_array[] = intval($channel_string);
+    }
+    return $channel_array;
+  }
+
+
+  public static function sql_list_from_channel_string(string $channel_string) : string
+  {
+    return implode(',', array_from_channel_string($channel_string));
+  }
 
 }
