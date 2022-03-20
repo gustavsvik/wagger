@@ -40,23 +40,41 @@ class FixedMarker extends L.Marker
   {
     const symbol = new DefaultIcon({iconUrl: iconUrl, iconSize: iconSize, iconAnchor: iconAnchor});
 	super(pos, {icon: symbol});
-/*
-shoreMarker01.addTo(map);
-shoreMarker01.setOpacity( 1.0 );
-shoreMarker01.setRotationOrigin("center");
-shoreMarker01.setRotationAngle(0);
-let shore01HtmlString = '<div style="font-size:10px;line-height:100%;">';
-shore01HtmlString += 'Västby Hamnförening<br>Web site: <a href="https://www.vastbyhamn.com">https://www.vastbyhamn.com</a><br>Position:' + '<br>' ;
-shore01HtmlString += 'Lat: ' + shorePos01[0].toString() + '\u00B0' + '<br>' ;
-shore01HtmlString += 'Lon: ' + shorePos01[1].toString() + '\u00B0' ;  //Disp.jsonToTable(contentJson, {});
-const shore01ImageUrl = 'images/leaflet/' + 'shore_01_image.png' ;
-shore01HtmlString += '<br><br>' + '<img src="' + shore01ImageUrl + '"/>';
-if (!isTouchDevice) shoreMarker01.bindTooltip(shore01HtmlString);
-else shoreMarker01.bindPopup(shore01HtmlString, {closeOnClick: true, autoClose: false});
-*/
+
+    this.setOpacity( 1.0 );
+    this.setRotationOrigin("center");
+    this.setRotationAngle(0);
   }
+
 }
 
+class InfoMarker extends FixedMarker
+{
+  #htmlString = "";
+
+  constructor( pos = [0.0, 0.0], { iconUrl = 'icons/leaflet/building_symbol.png', iconSize = [32,32], iconAnchor = [16,16] } = {}, { imageUrl = "", htmlLabel = "", linkUrl = "" } = {} ) //iconUrl = 'icons/leaflet/building_symbol.png')
+  {
+	super( pos, { iconUrl: iconUrl, iconSize: iconSize, iconAnchor: iconAnchor } )
+
+    this.#htmlString = '<div style="font-size:10px;line-height:100%;">';
+    this.#htmlString += htmlLabel;
+    if (linkUrl) this.#htmlString += '<br>Web site: <a href="' + linkUrl + '">' + linkUrl + '</a>' ;
+    this.#htmlString += '<br>Position: lat: ' + pos[0].toString() + '\u00B0' + ', ' ;
+    this.#htmlString += 'lon: ' + pos[1].toString() + '\u00B0' ;  //Disp.jsonToTable(contentJson, {});
+    this.#htmlString += '<br><br>' + '<img src="' + imageUrl + '"/>';
+  }
+
+  usePopup()
+  {
+    this.bindPopup( this.#htmlString, {closeOnClick: true, autoClose: false} );
+  }
+
+  useTooltip()
+  {
+    this.bindTooltip(this.#htmlString);
+  }
+
+}
 /*
 class MobileMarker extends FixedMarker
 {
@@ -69,7 +87,7 @@ class MobileMarker extends FixedMarker
 }
 */
 
-class WindBarbs //extends (L.Marker) FixedMarker?
+class WindBarbs //extends (L.Marker) FixedMarker? MobileMarker? Fartyg t ex?
 {
 
   #lowerBounds = [0, 1, 3, 8, 13, 18, 23, 28, 33, 38, 43];
@@ -255,6 +273,11 @@ class ChartContainer extends MapContainer
   #setView(center = this.#center, zoom = this.#zoom)
   {
     this.map.setView(center, zoom);
+  }
+
+  add(marker)
+  {
+    marker.addTo(this.map);
   }
 
   get center() { return this.#center; }
