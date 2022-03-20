@@ -74,9 +74,6 @@ const seaStationaryIcon = new DefaultIcon({iconUrl: 'icons/leaflet/ship_stationa
 const shoreStationaryIcon = new DefaultIcon({iconUrl: 'icons/leaflet/building_symbol.png', iconSize: [16,18], iconAnchor: [8,11]});
 const atonSpecialMarkVirtualIcon = new DefaultIcon({iconUrl: 'icons/leaflet/ais_aton_special_mark_virtual.png', iconSize: [24,32], iconAnchor: [12,24]});
 const shoreMobileIcon = new DefaultIcon({iconUrl: 'icons/leaflet/land_vehicle_symbol.png'});
-const dangerIcon = new DefaultIcon({iconUrl: 'icons/leaflet/danger_over_symbol.png', iconSize: [24,24], iconAnchor: [12,12]});
-const shore01Symbol = new DefaultIcon({iconUrl: 'icons/leaflet/shore_01_symbol.png', iconSize: [32,32], iconAnchor: [16,16]});
-const shore02Symbol = new DefaultIcon({iconUrl: 'icons/leaflet/shore_02_symbol.png', iconSize: [40,30], iconAnchor: [20,15]});
 const ownLocationLostIcon = new DefaultIcon({iconUrl: 'icons/leaflet/danger_over_symbol.png', iconSize: [16,16], iconAnchor: [8,8]});
 
 let windBarbs = new WindBarbs();
@@ -112,54 +109,25 @@ if (geolocationAvailable)
 
 const isTouchDevice = Device.isTouch();
 
-const dangerPos01 = [62.664450, 18.286383];
-let dangerMarker01 = L.marker(dangerPos01, {icon: dangerIcon});
-dangerMarker01.addTo(map);
-dangerMarker01.setOpacity( 1.0 );
-dangerMarker01.setRotationOrigin("center");
-dangerMarker01.setRotationAngle(0);
-let dangerHtmlString = '<div style="font-size:10px;line-height:100%;">';
-//dangerHtmlString += 'VARNING! DRIVANDE MINA!<br>Ungefärlig position:' + '<br>' ;
-dangerHtmlString += 'Drivande mina röjd 210617<br>Ungefärlig position:' + '<br>' ;
-dangerHtmlString += 'Lat: ' + dangerPos01[0].toString() + '\u00B0' + '<br>' ;
-dangerHtmlString += 'Lon: ' + dangerPos01[1].toString() + '\u00B0' ;  //Disp.jsonToTable(contentJson, {});
-const dangerImageUrl = 'images/leaflet/' + 'danger_01_image.png' ;
-dangerHtmlString += '<br><br>' + '<img src="' + dangerImageUrl + '"/>';
-if (!isTouchDevice) dangerMarker01.bindTooltip(dangerHtmlString);
-else dangerMarker01.bindPopup(dangerHtmlString, {closeOnClick: true, autoClose: false});
+const dangerMarker01 = new InfoMarker([62.664450, 18.286383], {iconUrl: 'icons/leaflet/danger_over_symbol.png', iconSize: [24,24], iconAnchor: [12,12]}, { imageUrl: "images/leaflet/danger_01_image.png", htmlLabel: "Drivande mina röjd 210617 (ungefärlig pos.)" }) ;
+chart.add(dangerMarker01);
+if (!isTouchDevice) dangerMarker01.usePopup();
+else dangerMarker01.usePopup();
 
-const shorePos01 = [62.83, 17.864]; //[62.664450, 18.286383];
+const shoreMarker01 = new InfoMarker([62.83, 17.864], {iconUrl: 'icons/leaflet/shore_01_symbol.png', iconSize: [32,32], iconAnchor: [16,16]}, { imageUrl: "images/leaflet/shore_01_image.png", htmlLabel: "Västby Hamnförening", linkUrl: "https://www.vastbyhamn.com" }) ;
+chart.add(shoreMarker01);
+if (!isTouchDevice) shoreMarker01.usePopup();
+else shoreMarker01.usePopup();
 
-//let shoreMarker01 = L.marker(shorePos01, {icon: shore01Symbol});
-let shoreMarker01 = new FixedMarker(shorePos01, { iconUrl: 'icons/leaflet/shore_01_symbol.png' } );
+const shoreMarker02 = new InfoMarker([62.8323, 17.874], {iconUrl: 'icons/leaflet/shore_02_symbol.png', iconSize: [40,30], iconAnchor: [20,15]}, { imageUrl: "images/leaflet/shore_02_image.png", htmlLabel: "Höga Kusten Varvet", linkUrl: "https://hagakustenvarvet.se" }) ;
+chart.add(shoreMarker02);
+if (!isTouchDevice) shoreMarker02.usePopup();
+else shoreMarker02.usePopup();
 
-shoreMarker01.addTo(map);
-shoreMarker01.setOpacity( 1.0 );
-shoreMarker01.setRotationOrigin("center");
-shoreMarker01.setRotationAngle(0);
-let shore01HtmlString = '<div style="font-size:10px;line-height:100%;">';
-shore01HtmlString += 'Västby Hamnförening<br>Web site: <a href="https://www.vastbyhamn.com">https://www.vastbyhamn.com</a><br>Position:' + '<br>' ;
-shore01HtmlString += 'Lat: ' + shorePos01[0].toString() + '\u00B0' + '<br>' ;
-shore01HtmlString += 'Lon: ' + shorePos01[1].toString() + '\u00B0' ;  //Disp.jsonToTable(contentJson, {});
-const shore01ImageUrl = 'images/leaflet/' + 'shore_01_image.png' ;
-shore01HtmlString += '<br><br>' + '<img src="' + shore01ImageUrl + '"/>';
-if (!isTouchDevice) shoreMarker01.bindTooltip(shore01HtmlString);
-else shoreMarker01.bindPopup(shore01HtmlString, {closeOnClick: true, autoClose: false});
-
-const shorePos02 = [62.832, 17.874]; //[62.664450, 18.286383];
-let shoreMarker02 = L.marker(shorePos02, {icon: shore02Symbol});
-shoreMarker02.addTo(map);
-shoreMarker02.setOpacity( 1.0 );
-shoreMarker02.setRotationOrigin("center");
-shoreMarker02.setRotationAngle(0);
-let shore02HtmlString = '<div style="font-size:10px;line-height:100%;">';
-shore02HtmlString += 'Höga Kusten Varvet<br>Web site: <a href="https://www.hagakustenvarvet.se">https://www.hagakustenvarvet.se</a><br>Position:' + '<br>' ;
-shore02HtmlString += 'Lat: ' + shorePos02[0].toString() + '\u00B0' + '<br>' ;
-shore02HtmlString += 'Lon: ' + shorePos02[1].toString() + '\u00B0' ;  //Disp.jsonToTable(contentJson, {});
-const shore02ImageUrl = 'images/leaflet/' + 'shore_02_image.png' ;
-shore02HtmlString += '<br><br>' + '<img src="' + shore02ImageUrl + '"/>';
-if (!isTouchDevice) shoreMarker02.bindTooltip(shore02HtmlString);
-else shoreMarker02.bindPopup(shore02HtmlString, {closeOnClick: true, autoClose: false});
+const shoreMarker03 = new InfoMarker([62.8311, 17.873], {iconUrl: 'icons/leaflet/shore_03_symbol.png', iconSize: [32,30], iconAnchor: [16,15] }, { imageUrl: "images/leaflet/shore_03_image.png", htmlLabel: "Green City Ferries", linkUrl: "https://greencityferries.com" }) ;
+chart.add(shoreMarker03);
+if (!isTouchDevice) shoreMarker03.usePopup();
+else shoreMarker03.usePopup();
 
 let idButtonText = 'Share position with Test Site Bothnia';
 if (!Ais.OWN_POSITION_AVAILABLE) idButtonText = 'No own position to share';
@@ -198,45 +166,13 @@ ElementProps.set( cameraButton.style, { "position": "absolute", "width": "280px"
 cameraButton.addEventListener("click", createImageInput);
 let cameraButtonText = document.createTextNode("Share observation with Test Site Bothnia");
 cameraButton.appendChild(cameraButtonText);
-/*
-let guabDiv = document.createElement("DIV");
-document.body.appendChild(guabDiv);
-ElementProps.set( guabDiv.style, { "position": "relative" } );
-let guabButton = document.createElement("BUTTON");
-guabDiv.appendChild(guabButton);
-guabButton.id = "guab_button";
-ElementProps.set( guabButton.style, { "position": "absolute", "width": "110px", "bottom": "0px", "right": "0px", "padding": "0px", "z-index": "400" , "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } ) ;
-const guab01ImageUrl = 'images/leaflet/' + 'guab_01_image.png' ;
-guabButton.innerHTML = '<img src="' + guab01ImageUrl + '"/>';
-guabButton.addEventListener("click", openGuabWebsite);
-*/
+
 const guabButton = new OpenUrlImageOverlayButton( { sizePos: {"w": 106, "h": 40, "r": 0, "b": 0}, "design": {"enabled":{"button":{"style":{"border":"none","background-color":"transparent","outline":"none","cursor":"pointer"}},"img":{"content":'images/leaflet/guab_01_image.png',"style":{}}} }, "openUrl":'https://gustavsvik.eu' } ); // , "disabled":{"img":{"content":'images/leaflet/guab_01_image.png',"style":{}}}  { text: "Class button test" } );
 guabButton.updateAppearance();
-/*
-let tsbDiv = document.createElement("DIV");
-document.body.appendChild(tsbDiv);
-ElementProps.set( tsbDiv.style, { "position": "relative" } );
-let tsbButton = document.createElement("BUTTON");
-tsbDiv.appendChild(tsbButton);
-tsbButton.id = "tsb_button";
-ElementProps.set( tsbButton.style, { "position": "absolute", "width": "110px", "bottom": "0px", "right": "113px", "padding": "0px", "z-index": "400" , "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } ) ;
-const tsb01ImageUrl = 'images/leaflet/' + 'tsb_01_image.png' ;
-tsbButton.innerHTML = '<img src="' + tsb01ImageUrl + '"/>';
-tsbButton.addEventListener("click", openTsbWebsite);
-*/
+
 const tsbButton = new OpenUrlImageOverlayButton( { sizePos: {"w": 98, "h": 40, "r": 107, "b": 0}, "design": {"enabled":{"button":{"style":{"border":"none","background-color":"transparent","outline":"none","cursor":"pointer"}},"img":{"content":'images/leaflet/tsb_01_image.png',"style":{}}} }, "openUrl":'https://testsitebothnia.eu' } ); // , "disabled":{"img":{"content":'images/leaflet/tsb_01_image.png',"style":{}}}  { text: "Class button test" } );
 tsbButton.updateAppearance();
-/*
-let centerDiv = document.createElement("DIV");
-document.body.appendChild(centerDiv);
-let centerButton = document.createElement("BUTTON");
-centerDiv.appendChild(centerButton);
-centerButton.id = "center_button";
-ElementProps.set( centerButton.style, { "position": "absolute", "height":"40px", "width": "137px", "top": "95px", "right": "148px", "padding": "0px", "z-index": "400" , "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } ) ;
-const center01ImageUrl = 'images/leaflet/' + 'crosshair.png' ;
-centerButton.innerHTML = '<div><img style="vertical-align:middle;margin-left:-5px;margin-right:5px" src="' + center01ImageUrl + '"/><span style="">Centered</span></div>';
-centerButton.addEventListener("click", followPosition);
-*/
+
 const centerButton = new ImageOverlayButton
 (
 {
@@ -260,18 +196,7 @@ ElementProps.set( moreInfoButton.style, { "position": "absolute", "height":"40px
 const moreInfo01ImageUrl = 'icons/leaflet/' + 'ship_symbol_black.png' ;
 moreInfoButton.innerHTML = '<div><img style="height:30px;vertical-align:middle;margin-left:-5px;margin-right:5px" src="' + moreInfo01ImageUrl + '"/><span style="">More info</span></div>';
 moreInfoButton.addEventListener("click", showMoreInfo);
-/*
-function openGuabWebsite()
-{
-  window.open('https://gustavsvik.eu')
-}
-*/
-/*
-function openTsbWebsite()
-{
-  window.open('https://testsitebothnia.eu')
-}
-*/
+
 /*
 function followPosition()
 {
