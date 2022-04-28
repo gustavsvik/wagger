@@ -382,7 +382,7 @@ function populate_display_variables(timestamp_matrix, value_matrix)
             _latest_value = parseFloat( GetSafe.byKey(_byte_string_json[0][3], _channelKey) ) ;
           }
           _channel.val = _latest_value * _channel.scale;
-          if ( App.isValidNumber(_channel.val) ) _channel.str_val = Help.rounded_string(_channel.val, _channel.disp.len) + " " + _channel.unit;
+          if ( App.isValidNumber(_channel.val) ) _channel.str_val = Help.rounded_string(_channel.val * _channel.scale, _channel.disp.len) + " " + _channel.unit;
           //_channel.str_val = (_channel.val).toString().substring(0,_channel.disp.len)
           else _channel.str_val = A.WAIT_MESSAGE;
         }
@@ -578,7 +578,7 @@ function display_label(_element)
     A.hovered_clicked_label = _element ;
 
     _element.style.visibility = "visible";
-    let [_tag, _index] = Disp.getTagChannelIndex(_element);
+    let [_tag, _index, _key] = Disp.getTagChannelIndex(_element);
 
     if (_tag === "timebkg")
     {
@@ -592,7 +592,7 @@ function display_label(_element)
       }
     }
 
-    let _setval = Disp.getChannelElement (["setval", _index]);
+    let _setval = Disp.getChannelElement (["setval", _index, _key]);
     if (_setval !== null)
     {
       let _ctrl_channels = (D.data[A.display_index]).screens[0].ctrl_channels;
@@ -617,22 +617,20 @@ function display_label(_element)
           _slider.value = _ctrl_channel.val;
         }
       }
-      let _send = Disp.getChannelElement (["send", _index]);
+      let _send = Disp.getChannelElement (["send", _index, _key]);
       if (_send !== null) _send.style.visibility = "visible";
     }
 
-    let _label = Disp.getChannelElement (["label", _index]);
+    let _label = Disp.getChannelElement (["label", _index, _key]);
     if (_label !== null)
     {
       _label.style.visibility = "visible";
       let _channels = (D.data[A.display_index]).screens[0].channels;
-      let _chan_index = GetSafe.indexByAttrs(_channels, ["index"], [parseInt(_index)] );
+      let _chan_index = GetSafe.indexByAttrs(_channels, ["index", "key"], [parseInt(_index), _key] );
       let _channel = _channels[_chan_index];
       let _value_unit_string = "";
-      //if ( _channel.str_val !== "" ) _value_unit_string = _channel.str_val;
-      //else
-      _value_unit_string = Help.rounded_string(_channel.val, A.MAX_DISPLAY_DIGITS) + " " + _channel.unit;
-      // (_channel.val).toString().substring(0, A.MAX_DISPLAY_DIGITS)
+      if ( App.isValidNumber(_channel.val) ) _value_unit_string = Help.rounded_string(_channel.val * _channel.scale, _channel.disp.len) + " " + _channel.unit; //_channel.str_val = Help.rounded_string(_channel.val, _channel.disp.len) + " " + _channel.unit;
+      else _channel.str_val = A.WAIT_MESSAGE;
       let _str_val = _value_unit_string + _channel.info;
       _label.innerHTML = _str_val;
     }
