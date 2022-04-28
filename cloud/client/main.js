@@ -303,17 +303,16 @@ function handle_get_data(data)
 
     let _timestamp_array = [];
     let _value_array = [];
-    let _subsamples_string_array = [];
-    let _base64_string_array = [];
+    let _byte_string_array = [];
     for (let _sample_index = 0; _sample_index < _field_data_array_length ; _sample_index++)
     {
       _timestamp_array[_sample_index] = parseInt( _channel_data_array[_sample_index*4+0] );
       _value_array[_sample_index] = parseFloat(_channel_data_array[_sample_index*4+1]);
-      _base64_string_array[_sample_index] = _channel_data_array[_sample_index*4+3];
+      _byte_string_array[_sample_index] = Transform.fromArmoredString(_channel_data_array[_sample_index*4+3]);
     }
     _timestamp_matrix.push(_timestamp_array);
-    let _channel_int = parseInt(_channel_string);
-    _value_matrix.push([_channel_int, _value_array]);
+    const _channelInt = parseInt(_channel_string);
+    _value_matrix.push([_channelInt, _value_array, _byte_string_array]);
   }
   populate_display_variables(_timestamp_matrix, _value_matrix);
 
@@ -369,11 +368,19 @@ function populate_display_variables(timestamp_matrix, value_matrix)
       for (let _channel_index = 0; _channel_index < _screen.channels.length; _channel_index++)
       {
         let _channel = _screen.channels[_channel_index];
-        let _found_values_index = App.findWithAttr(value_matrix, 0, _channel.index);
+        let _found_values_index = GetSafe.indexByAttrs(value_matrix, [0], [_channel.index]);
         if (_found_values_index > -1)
         {
-          let _channel_values = (value_matrix[_found_values_index])[1];
-          let _latest_value = _channel_values[_channel_values.length - 1];
+          const _channel_values = (value_matrix[_found_values_index])[1];
+          const _latestIndex = _channel_values.length - 1 ;
+          let _latest_value = _channel_values[_latestIndex];
+          const _channelKey = GetSafe.byKey(_channel, "key", "");
+          if (_channelKey !== null)
+          {
+            const _channel_byte_strings = (value_matrix[_found_values_index])[2];
+            const _byte_string_json = GetSafe.json( _channel_byte_strings[_latestIndex] );
+            _latest_value = parseFloat( GetSafe.byKey(_byte_string_json[0][3], _channelKey) ) ;
+          }
           _channel.val = _latest_value * _channel.scale;
           if ( App.isValidNumber(_channel.val) ) _channel.str_val = Help.rounded_string(_channel.val, _channel.disp.len) + " " + _channel.unit;
           //_channel.str_val = (_channel.val).toString().substring(0,_channel.disp.len)
@@ -383,7 +390,7 @@ function populate_display_variables(timestamp_matrix, value_matrix)
       for (let _ctrl_index = 0; _ctrl_index < _screen.ctrl_channels.length; _ctrl_index++)
       {
         let _ctrl = _screen.ctrl_channels[_ctrl_index];
-        let _found_values_index = App.findWithAttr(value_matrix, 0, _ctrl.index);
+        let _found_values_index = GetSafe.indexByAttrs(value_matrix, [0], [_ctrl.index]);
         if (_found_values_index > -1)
         {
           let _ctrl_values = (value_matrix[_found_values_index])[1];
@@ -524,7 +531,7 @@ function label_listener()
     {
       _setval.style.visibility = "visible";
       let _ctrl_channels = (D.data[A.display_index]).screens[0].ctrl_channels;
-      let _ctrl_index = App.findWithAttr(_ctrl_channels, "index", parseInt(_index) );
+      let _ctrl_index = GetSafe.indexByAttrs(_ctrl_channels, ["index"], [parseInt(_index)] );
       let _ctrl_channel = _ctrl_channels[_ctrl_index];
       let _value_unit_string = "";
       if ( _ctrl_channel.str_val !== "" ) _value_unit_string = _ctrl_channel.str_val;
@@ -552,7 +559,7 @@ function label_listener()
     {
       _label.style.visibility = "visible";
       let _channels = (D.data[A.display_index]).screens[0].channels;
-      let _chan_index = App.findWithAttr(_channels, "index", parseInt(_index) );
+      let _chan_index = GetSafe.indexByAttrs(_channels, ["index"], [parseInt(_index)] );
       let _channel = _channels[_chan_index];
       let _value_unit_string = "";
       //if ( _channel.str_val !== "" ) _value_unit_string = _channel.str_val;
@@ -589,7 +596,7 @@ function display_label(_element)
     if (_setval !== null)
     {
       let _ctrl_channels = (D.data[A.display_index]).screens[0].ctrl_channels;
-      let _ctrl_index = App.findWithAttr(_ctrl_channels, "index", parseInt(_index) );
+      let _ctrl_index = GetSafe.indexByAttrs(_ctrl_channels, ["index"], [parseInt(_index)] );
       let _ctrl_channel = _ctrl_channels[_ctrl_index];
       let _value_unit_string = "";
       if ( _ctrl_channel.str_val !== "" ) _value_unit_string = _ctrl_channel.str_val;
@@ -619,7 +626,7 @@ function display_label(_element)
     {
       _label.style.visibility = "visible";
       let _channels = (D.data[A.display_index]).screens[0].channels;
-      let _chan_index = App.findWithAttr(_channels, "index", parseInt(_index) );
+      let _chan_index = GetSafe.indexByAttrs(_channels, ["index"], [parseInt(_index)] );
       let _channel = _channels[_chan_index];
       let _value_unit_string = "";
       //if ( _channel.str_val !== "" ) _value_unit_string = _channel.str_val;
@@ -639,7 +646,7 @@ function outside_label_listener()
   {
     A.hovered_clicked_label = null ;
 
-    let [_tag, _index] = Disp.getTagChannelIndex(_element);
+    let [_tag, _index, _key] = Disp.getTagChannelIndex(_element);
 
     if (_tag === "timebkg")
     {
@@ -655,20 +662,21 @@ function outside_label_listener()
 
     if (_tag === "chanbkg")
     {
-      let _label = Disp.getChannelElement (["label", _index]);
+      let _label = Disp.getChannelElement (["label", _index, _key]);
       let _channels = (D.data[A.display_index]).screens[0].channels;
-      let _chan_index = App.findWithAttr(_channels, "index", parseInt(_index) );
+      let _chan_index = GetSafe.indexByAttrs(_channels, ["index"], [parseInt(_index)] );
       let _channel = _channels[_chan_index];
       let _value_unit_string = "";
       _value_unit_string = Help.rounded_string(_channel.val, _channel.disp.len) + " " + _channel.unit;  // .substring(0,12)
       let _str_val = _value_unit_string + ""; //_channel.info;
-      _label.innerHTML = _str_val;
+      if (typeof _key !== "string")
+        _label.innerHTML = _str_val;
 
       _element.style.visibility = "hidden";
     }
 
     let _ctrl_channels = (D.data[A.display_index]).screens[0].ctrl_channels;
-    let _ctrl_index = App.findWithAttr(_ctrl_channels, "index", parseInt(_index) );
+    let _ctrl_index = GetSafe.indexByAttrs(_ctrl_channels, ["index"], [parseInt(_index)] );
     let _ctrl_channel = _ctrl_channels[_ctrl_index];
 
     if ( typeof _ctrl_channel !== 'undefined' && !(_ctrl_channel.show == true && _ctrl_channel.lock == true) )
@@ -692,7 +700,7 @@ function outside_label_listener()
       if (_label !== null)
       {
         let _channels = (D.data[A.display_index]).screens[0].channels;
-        let _chan_index = App.findWithAttr(_channels, "index", parseInt(_index) );
+        let _chan_index = GetSafe.indexByAttrs(_channels, ["index"], [parseInt(_index)] );
         let _channel = _channels[_chan_index];
         let _value_unit_string = "";
         if ( _channel.str_val !== "" ) _value_unit_string = _channel.str_val;
@@ -908,6 +916,8 @@ function display_select_listener()
       let _chan_index_string = (_channel.index).toString();
       A.chan_index_string += _chan_index_string + ";";
 
+      const _chanElemKey = (GetSafe.byKey(_channel, "key", "")).toString();
+
       let _chanbkg = document.createElement("DIV");
       A.CONTAINER.appendChild(_chanbkg);
 
@@ -919,10 +929,11 @@ function display_select_listener()
       _active_label.appendChild(_active_label_text);
 
       _chanbkg.title = "";
+      //height: (_disp.size * 4.1 + 4).toString() + "px",
       Disp.setProperties( _chanbkg.style,
       {
         width: (_disp.size * 13.9).toString() + "px",
-        height: (_disp.size * 4.1 + 4).toString() + "px",
+        height: (_disp.size * 2.8 + 3).toString() + "px",
         position: "absolute",
         left: (_disp.pos.x * A.display_img_scale + A.CANVAS_POS_X + A.canvas_shift_x - _disp.size/2 + 1).toString() + "px",
         top: (_disp.pos.y * A.display_img_scale + A.CANVAS_POS_Y + A.canvas_shift_y - _disp.size + 1).toString() + "px",
@@ -949,13 +960,15 @@ function display_select_listener()
         textAlign: "left"
       } ) ;
 
-      _chanbkg.id = "chanbkg_" + _chan_index_string;
+      _chanbkg.id = "chanbkg_" + _chan_index_string ;
+      if (_chanElemKey !== null) _chanbkg.id += "_" + _chanElemKey ;
       _active_label.id = "label_" + _chan_index_string;
+      if (_chanElemKey !== null && _chanElemKey !== "") _active_label.id += "_" + _chanElemKey ;
       _chanbkg.addEventListener("mouseover", label_listener);
       _chanbkg.addEventListener("mouseleave", outside_label_listener);
 
-      _channel.info = Disp.htmlSpaces(0) + "<br>" + (_channel.label).toString() + "<br>" + "Measurement channel " + _chan_index_string ;
-      _channel.padding = Disp.htmlSpaces(5) + "<br>" + Disp.htmlSpaces(10);
+      _channel.info = Disp.htmlSpaces(0) + "<br>" + (_channel.label).toString() ; //+ "<br>" + "Measurement channel " + _chan_index_string ;
+      _channel.padding = Disp.htmlSpaces(5) ; //+ "<br>" + Disp.htmlSpaces(10);
     }
 
     let _no_of_img_channels = (_screen.img_channels).length;
