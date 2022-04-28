@@ -1,0 +1,42 @@
+{
+
+"disp_timeout": 900,
+"disp_viewport_size": {"w": 1067, "h": 600},
+"disp_override_font": {"filename": "arimo-regular.woff", "path": "/fonts/"},
+
+
+"displays":
+
+[
+
+  {
+    "title": "Diesel genset (view)",
+    "show": true,
+    "screens":
+    [
+      {
+        "label": "View",
+        "imgs":
+        [
+          { "file": "20.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+        ],
+        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 0, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+        "channels":
+        [
+          { "index": 156, "key": "PF", "show": true, "label": "Avg. Power Factor", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "", "disp": {"len": 4, "size": 16, "pos": { "x": 650, "y": 150 }, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} },
+          { "index": 156, "key": "P", "show": true, "label": "Avg. Active Power", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "kW", "disp": {"len": 4, "size": 16, "pos": { "x": 650, "y": 195 }, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} },
+          { "index": 156, "key": "Q", "show": true, "label": "Avg. Reactive Power", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "kVAr", "disp": {"len": 4, "size": 16, "pos": { "x": 650, "y": 240 }, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} },
+          { "index": 156, "key": "IL1", "show": true, "label": "Line Current, Ph. 1", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "A", "disp": {"len": 4, "size": 16, "pos": { "x": 650, "y": 285 }, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} },
+          { "index": 156, "key": "VLL", "show": true, "label": "Avg. Line-Line Voltage", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "V", "disp": {"len": 4 , "size": 16, "pos": { "x": 650, "y": 465 }, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} },
+          { "index": 156, "key": "VLN", "show": true, "label": "Avg. Line-Neutral Voltage", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "V", "disp": {"len": 4 , "size": 16, "pos": { "x": 650, "y": 420 }, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} },
+          { "index": 156, "key": "F", "show": true, "label": "Grid Frequency", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "Hz", "disp": {"len": 3, "size": 16, "pos": {"x": 650, "y": 510}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} }
+        ],
+        "img_channels": [],
+        "ctrl_channels": []
+      }
+    ]
+  }
+
+]
+
+}
