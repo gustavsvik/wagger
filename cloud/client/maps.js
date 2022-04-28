@@ -71,6 +71,7 @@ const ownLocationMobileIcon = new DefaultIcon({iconUrl: 'icons/leaflet/own_ship_
 const ownLocationStationaryIcon = new DefaultIcon({iconUrl: 'icons/leaflet/own_ship_stationary_symbol.png', iconSize: [16,16], iconAnchor: [8,8]}); //000_kt.png', iconSize: [45,81],iconAnchor: [22.5,72]});
 const seaMobileIcon = new DefaultIcon({iconUrl: 'icons/leaflet/ship_symbol.png', iconSize: [16,24],iconAnchor: [8,12]});
 const seaStationaryIcon = new DefaultIcon({iconUrl: 'icons/leaflet/ship_stationary_symbol.png', iconSize: [12,12], iconAnchor: [6,6]});
+const seaLostContactIcon = new DefaultIcon({iconUrl: 'icons/leaflet/ship_lost_contact_symbol.png', iconSize: [8,8], iconAnchor: [4,4]});
 const shoreStationaryIcon = new DefaultIcon({iconUrl: 'icons/leaflet/building_symbol.png', iconSize: [16,18], iconAnchor: [8,11]});
 const atonSpecialMarkVirtualIcon = new DefaultIcon({iconUrl: 'icons/leaflet/ais_aton_special_mark_virtual.png', iconSize: [24,32], iconAnchor: [12,24]});
 const shoreMobileIcon = new DefaultIcon({iconUrl: 'icons/leaflet/land_vehicle_symbol.png'});
@@ -306,36 +307,37 @@ function createImageInput()
     imageDialog.close();
   }
 
-}
 
-
-function getImage()
-{
-  let imageDiv = document.createElement("DIV");
-  document.body.appendChild(imageDiv);
-  let imageInput = document.createElement("INPUT");
-  imageInput.addEventListener("change", getImageFile);
-  imageDiv.appendChild(imageInput);
-
-  ElementProps.set( imageInput, {"id": "image_input", "type": "file", "accept": "image/*", "style": "display:none"} );   // ,audio/*,video/* "capture": "user" //force camera input only
-
-  imageInput.click();
-
-  function getImageFile(event)
+  function getImage()
   {
-    //const image = document.createElement("IMG");
-    const imageFile = event.target.files[0];
-    const reader = new FileReader();
-    reader.addEventListener('load', imageReader)
-    reader.readAsDataURL(imageFile);
+    let imageDiv = document.createElement("DIV");
+    document.body.appendChild(imageDiv);
+    let imageInput = document.createElement("INPUT");
+    imageInput.addEventListener("change", getImageFile);
+    imageDiv.appendChild(imageInput);
 
-    function imageReader(event)
+    ElementProps.set( imageInput, {"id": "image_input", "type": "file", "accept": "image/*", "style": "display:none"} );   // ,audio/*,video/* "capture": "user" //force camera input only
+
+    imageInput.click();
+
+    function getImageFile(event)
     {
-      const ownDataImageBytes = event.target.result.split(',')[1];
-      Ais.OWN_DATA_IMAGE_BYTES = ownDataImageBytes;
+      //const image = document.createElement("IMG");
+      const imageFile = event.target.files[0];
+      const reader = new FileReader();
+      reader.addEventListener('load', imageReader)
+      reader.readAsDataURL(imageFile);
+
+      function imageReader(event)
+      {
+        const ownDataImageBytes = event.target.result.split(',')[1];
+        Ais.OWN_DATA_IMAGE_BYTES = ownDataImageBytes;
+      }
     }
   }
+
 }
+
 
 /*
 let imageDiv = document.createElement("DIV");
@@ -520,9 +522,18 @@ function refreshDisplay()
       let timeOpacity = (1200-(age-600))/1200 ;
       if (timeOpacity > 1) timeOpacity = 1;
       if (timeOpacity < 0) timeOpacity = 0;
-      marker.setOpacity( timeOpacity );
-      marker.setRotationOrigin("center");
-      marker.setRotationAngle(course);
+      if (timeOpacity > 0.1)
+      {
+        marker.setOpacity(timeOpacity);
+        marker.setRotationOrigin("center");
+        marker.setRotationAngle(course);
+      }
+      else
+      {
+        marker.setIcon(seaLostContactIcon);
+        marker.setOpacity(0.2);
+        marker.setRotationAngle(0.0);
+      }
 
       const contentJson = GetSafe.json(content);
       if (contentJson !== null)
@@ -666,10 +677,11 @@ async function refreshData()
     let aisString = dataStringArray[_aisStringCounter]
     if (aisString.length > 0)
     {
-      const regexComma = /\|/g;
-      const regexSemicolon = /\~/g;
-      let aisJsonString = aisString.replace(regexSemicolon, ";");
-      aisJsonString = aisJsonString.replace(regexComma, ",");
+      //const regexComma = /\|/g;
+      //const regexSemicolon = /\~/g;
+      //let aisJsonString = aisString.replace(regexSemicolon, ";");
+      //aisJsonString = aisJsonString.replace(regexComma, ",");
+      const aisJsonString = Transform.fromArmoredString(aisString);
       //console.log("aisJsonString", aisJsonString);
 	  //try
 	  //{
@@ -796,9 +808,10 @@ async function refreshData()
 
       if (positionString.length > 0)
       {
-        const regexComma = /\|/g;
-        const regexSemicolon = /\~/g;
-        const positionJsonString = positionString.replace(regexSemicolon, ";").replace(regexComma, ",");
+        //const regexComma = /\|/g;
+        //const regexSemicolon = /\~/g;
+        //const positionJsonString = positionString.replace(regexSemicolon, ";").replace(regexComma, ",");
+        const positionJsonString = Transform.fromArmoredString(positionString);
 
         const positionJson = GetSafe.json(positionJsonString); //[0];
         if (positionJson !== null)
@@ -823,8 +836,8 @@ async function refreshData()
 
   let ownPositionJsonString = JSON.stringify(Ais.OWN_LOCATION_COORDS);
 
-  const regexPipe = new RegExp(',', 'g');
-  const regexTilde = new RegExp(';', 'g');
+  //const regexPipe = new RegExp(',', 'g');
+  //const regexTilde = new RegExp(';', 'g');
 
   let userId = null;
   if (Ais.OWN_POSITION_AVAILABLE && typeof Ais.OWN_USER_ID !== 'undefined' && Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "") userId = Ais.OWN_USER_ID;
@@ -845,9 +858,8 @@ async function refreshData()
     {
       console.error(e);
     }
-
-    ownPositionJsonString = ownPositionJsonString.replace(regexTilde, '~');
-    ownPositionJsonString = ownPositionJsonString.replace(regexPipe, '|');
+    //ownPositionJsonString = ownPositionJsonString.replace(regexTilde, '~');
+    ownPositionJsonString = Transform.fromUnarmoredString(ownPositionJsonString); //ownPositionJsonString.replace(regexPipe, '|');
     const ownPositionUploadRequest = await fetch( 'https://' + window.location.hostname + '/client/send_request.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '99999;;'}) } );
     if (!ownPositionUploadRequest.ok) console.error(ownPositionUploadRequest);
     const ownPositionTransferString = "99999;" + currentTimestamp.toString() + ",-9999.0,," + ownPositionJsonString + ",;" ;
