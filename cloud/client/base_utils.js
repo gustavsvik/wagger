@@ -29,15 +29,15 @@ class GetSafe
   {
     for (let _i = 0; _i < arr.length; _i += 1)
     {
+      let _all_attrs_equal = true ;
       for(let _j = 0; _j < attrs.length; _j += 1)
       {
-        let _all_attrs_equal = true ;
         if (arr[_i][attrs[_j]] !== vals[_j])
         {
           _all_attrs_equal = false;
         }
-        if (_all_attrs_equal) return _i ;
       }
+      if (_all_attrs_equal) return _i ;
     }
     return [-1];
   }
