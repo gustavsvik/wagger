@@ -2,6 +2,7 @@
 
 
 include_once("Log.php");
+include_once("Status.php");
 include_once("GetSafe.php");
 include_once("RecordsSql.php");
 
@@ -19,12 +20,12 @@ class AcquiredRecordsSql extends RecordsSql
   }
 
 
-  public function get_data_by_time_interval_status(array|null $channels = [], int|null $start_time = -9999, int|null $duration = -9999, int|null $unit = 1, int|null $end_time = -9999, int|null $lowest_status = 0, int|null $highest_status = 1)
+  public function get_data_by_time_interval_status(array|null $channels = [], int|null $start_time = -9999, int|null $duration = -9999, int|null $unit = 1, int|null $end_time = -9999, Status|null $lowest_status = Status::FULFILLED, Status|null $highest_status = Status::STORED)
   {
   }
 
 
-  public function get_latest_channel_update_time(array|null $channel_array = [], int|null $lowest_status = 0) : int|null
+  public function get_latest_channel_update_time(array|null $channel_array = [], Status|null $lowest_status = Status::FULFILLED) : int|null
   {
     $latest_update_time = 0 ;//time();
 
@@ -32,7 +33,7 @@ class AcquiredRecordsSql extends RecordsSql
     {
       $channel_string = strval($channel);
       $sql_latest_available = "SELECT MAX(AD.ACQUIRED_TIME) FROM " . self::ACQUIRED_DATA_TABLE_NAME . " AD WHERE AD.CHANNEL_INDEX = " . $channel_string;
-      $sql_latest_available .= " AND AD.STATUS>=" . strval($lowest_status);
+      $sql_latest_available .= " AND AD.STATUS>=" . $lowest_status->str();
       Log::debug('$sql_latest_available: ' . $sql_latest_available);
       $latest_available = $this->connection->query($sql_latest_available);
       if (is_object($latest_available) && $latest_available->num_rows > 0)
@@ -49,7 +50,7 @@ class AcquiredRecordsSql extends RecordsSql
   }
 
 
-  public function get_by_channels_time_range_status_range(array|null $column_names = [], array|null $channel_array = [], int|null $start_time = -9999, int|null $end_time = -9999, int|null $lowest_status = 0, int|null $highest_status = 1, bool|null $select_all = FALSE) : array|null
+  public function get_by_channels_time_range_status_range(array|null $column_names = [], array|null $channel_array = [], int|null $start_time = -9999, int|null $end_time = -9999, Status|null $lowest_status = Status::FULFILLED, Status|null $highest_status = Status::STORED, bool|null $select_all = FALSE) : array|null
   {
     $ais_message_json_array = [];
 
@@ -69,13 +70,13 @@ class AcquiredRecordsSql extends RecordsSql
       //$sql_get_available_records = $sql_get_all_available_records . " WHERE ";
       if (!$select_all) $sql_get_available_records .= " AND T.ACQUIRED_TIME BETWEEN " . strval($start_time) . " AND " . strval($end_time);
       //if (!$select_all) $sql_get_available_records .= "T.CHANNEL_INDEX=" . $channel_string . " AND T.ACQUIRED_TIME BETWEEN " . strval($start_time) . " AND " . strval($end_time) . " AND ";
-      $sql_get_available_records .= " AND T.STATUS >= " . strval($lowest_status) . " AND T.STATUS < " . strval($highest_status) . " AND T.STATUS < " . self::$STATUS::STORED->str() . " ORDER BY T.ACQUIRED_TIME DESC";
+      $sql_get_available_records .= " AND T.STATUS >= " . $lowest_status->str() . " AND T.STATUS < " . $highest_status->str() . " AND T.STATUS < " . Status::STORED->str() . " ORDER BY T.ACQUIRED_TIME DESC";
       Log::debug('$sql_get_available_records: ', $sql_get_available_records);
       $available_records = $this->connection->query($sql_get_available_records);
 
       if (is_object($available_records) && $available_records->num_rows <= 0)
       {
-        $sql_get_stored_archived_records = $sql_get_all_available_records . " AND T.STATUS >= " . self::$STATUS::STORED->str() . " ORDER BY T.ACQUIRED_TIME DESC";
+        $sql_get_stored_archived_records = $sql_get_all_available_records . " AND T.STATUS >= " . Status::STORED->str() . " ORDER BY T.ACQUIRED_TIME DESC";
         //debug_log('$sql_get_stored_archived_records: ', $sql_get_stored_archived_records);
         $available_records = $this->connection->query($sql_get_stored_archived_records);
       }

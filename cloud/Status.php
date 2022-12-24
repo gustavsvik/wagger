@@ -19,4 +19,17 @@ enum Status: int
     };
   }
 
+
+  public function int(): int
+  {
+    return match ($this)
+    {
+      self::REQUESTED => intval(self::REQUESTED->value),
+      self::FULFILLED => intval(self::FULFILLED->value),
+      self::STORED => intval(self::STORED->value),
+      self::ARCHIVED => intval(self::ARCHIVED->value)
+    };
+  }
+
+
 }
