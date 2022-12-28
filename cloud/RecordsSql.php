@@ -1,27 +1,23 @@
-<?php
+<?php declare(strict_types=1);
 
 
 include_once("Log.php");
-include_once("MySql.php");
+include_once("Status.php");
+include_once("Sql.php");
 
 
-
-class RecordsSql extends MySql
+class RecordsSql extends Sql
 {
-
-  const STATUS_REQUESTED = -1;
-  const STATUS_FULFILLED = 0;
-  const STATUS_STORED = 1;
-  const STATUS_ARCHIVED = 2;
+  //protected static Status $STATUS = Status::REQUESTED ;
 
 
-  public function __construct ($server_name = NULL, $user_name = NULL, $password = NULL, $db_name = NULL)
+  public function __construct (string|null $server_name = NULL, string|null $user_name = NULL, string|null $password = NULL, string|null $db_name = NULL)
   {
     parent::__construct($server_name, $user_name, $password, $db_name);
   }
 
 
-  public function db_get_indices($table_label, $column_label, $select_value)
+  public function get_indices($table_label, $column_label, $select_value)
   {
     $table_name = "t_" . strtolower($table_label);
     $column_name = strtoupper($table_label)  . "_" . strtoupper($column_label);
@@ -40,15 +36,15 @@ class RecordsSql extends MySql
   }
 
 
-  public function db_get_static_by_indices($table_label, $column_label, $select_indices)
+  public function get_by_indices($table_label, $column_label, $select_indices)
   {
     return NULL;
   }
 
 
-  public function db_get_index($table_label, $column_label, $select_value)
+  public function get_index($table_label, $column_label, $select_value)
   {
-    $existing_indices = db_get_indices($table_label, $column_label, $select_value);
+    $existing_indices = $this->get_indices($this->connection, $table_label, $column_label, $select_value);
 
     $unique_index = -1;
     if (count($existing_indices) > 0) $unique_index = $existing_indices[0];
@@ -57,7 +53,7 @@ class RecordsSql extends MySql
   }
 
 
-  public function db_get_max_value($table_name, $column_name)
+  public function get_max_value($table_name, $column_name)
   {
     $max_value = NULL;
     $sql_max_value = "SELECT MAX(T." . $column_name . ") FROM " . $table_name . " T";
@@ -73,18 +69,18 @@ class RecordsSql extends MySql
   }
 
 
-  public function db_get_new_index($table_name)
+  public function get_new_index($table_name)
   {
     $table_label = mb_substr(strtoupper($table_name), 2);
     $column_name = $table_label . "_UNIQUE_INDEX";
-    $max_index = db_get_max_value($table_name, $column_name);
+    $max_index = $this->get_max_value($this->connection, $table_name, $column_name);
     $new_index = NULL;
     if (!is_null($max_index)) $new_index = $max_index + 1;
     return $new_index;
   }
 
   /*
-  function db_reserve_new_index($connection, $table_label)
+  function reserve_new_index($connection, $table_label)
   {
     $table_name_string = "t_" . strtolower(strval($table_label)) ;
     $column_name_string = strtoupper(strval($table_label)) . "_UNIQUE_INDEX";
@@ -108,7 +104,7 @@ class RecordsSql extends MySql
   }
   */
 
-  public function db_get_full_rows($table_name, $index_array) //db_get_all_data_by_index_list
+  public function get_full_rows($table_name, $index_array) //db_get_all_data_by_index_list
   {
     $table_label = mb_substr(strtoupper($table_name), 2);
     $sql_get_full_rows = "SELECT * FROM " . $table_name;
@@ -119,6 +115,7 @@ class RecordsSql extends MySql
     }
     $full_rows = $this->connection->query($sql_get_full_rows);
 
+    $rows = [];
     if ($full_rows->num_rows > 0)
     {
       while ($row = $full_rows->fetch_assoc())
@@ -126,11 +123,11 @@ class RecordsSql extends MySql
         $rows[] = $row;
       }
     }
-    return rows;
+    return $rows;
   }
 
 
-  public function db_get_static_by_id($table_label, $hardware_id = NULL, $text_id = NULL, $unique_index = NULL, $parent_table_label = NULL )
+  public function get_static_by_id($table_label, $hardware_id = NULL, $text_id = NULL, $unique_index = NULL, $parent_table_label = NULL )
   {
     //Log::debug(' $table_label:' . $table_label . ' $hardware_id:' . $hardware_id . ' $text_id:' . $text_id . ' $unique_index:' . strval($unique_index) . ' $parent_table_label:' . $parent_table_label);
 
@@ -207,14 +204,14 @@ class RecordsSql extends MySql
   }
 
 
-  public function db_get_parent_index_by_id($table_label, $hardware_id, $text_id = NULL, $parent_table_label = NULL )
+  public function get_parent_index_by_id($table_label, $hardware_id, $text_id = NULL, $parent_table_label = NULL )
   {
     $return_data_array = NULL;
 
     if (!is_null($this->connection))
     {
       Log::debug(' $table_label:' . $table_label . ' $hardware_id:' . $hardware_id . ' $text_id:' . $text_id . ' $parent_table_label:' . $parent_table_label);
-      $return_data_array = db_get_static_by_id($table_label, $hardware_id, $text_id, NULL, $parent_table_label);
+      $return_data_array = $this->get_static_by_id($table_label, $hardware_id, $text_id, NULL, $parent_table_label);
       Log::debug('$return_data_array: ', $return_data_array);
     }
 
@@ -227,7 +224,7 @@ class RecordsSql extends MySql
   }
 
 
-  public function db_update_single_by_index($table_label, $unique_index, $column_name, $column_value)
+  public function update_single_by_index($table_label, $unique_index, $column_name, $column_value)
   {
     $table_name_string = "t_" . strtolower(strval($table_label)) ;
 
@@ -252,7 +249,7 @@ class RecordsSql extends MySql
   }
 
 
-  public function db_update_static_by_index($table_label, $unique_index, $hardware_id, $text_id, $address, $description)
+  public function update_static_by_index($table_label, $unique_index, $hardware_id, $text_id, $address, $description)
   {
     //Log::debug('$unique_index: ', $unique_index, '$hardware_id: ', $hardware_id, '$text_id: ', $text_id, '$address: ', $address, '$description: ', $description );
     $table_name_string = "t_" . strtolower(strval($table_label)) ;
@@ -265,7 +262,7 @@ class RecordsSql extends MySql
       $this->connection->autocommit(FALSE);
       $this->connection->begin_transaction();
       $stmt = NULL;
-      $stmt_string = "UPDATE " . $table_name_string . " SET " . $column_label_string . "_HARDWARE_ID" . "=?, " . $column_label_string . "_TEXT_ID=?, " . $column_label_string . "_ADDRESS=?," . $column_label_string . "_DESCRIPTION=?, " . $column_label_string . "_TIME=UNIX_TIMESTAMP(CURRENT_TIMESTAMP()), " . $column_label_string . "_UPDATED_TIMESTAMP=CURRENT_TIMESTAMP(), " . $column_label_string . "_STATUS=0 WHERE " . $column_label_string . "_UNIQUE_INDEX=?";
+      $stmt_string = "UPDATE " . $table_name_string . " SET " . $column_label_string . "_HARDWARE_ID" . " = ?, " . $column_label_string . "_TEXT_ID = ?, " . $column_label_string . "_ADDRESS = ?," . $column_label_string . "_DESCRIPTION = ?, " . $column_label_string . "_TIME = UNIX_TIMESTAMP(CURRENT_TIMESTAMP()), " . $column_label_string . "_UPDATED_TIMESTAMP = CURRENT_TIMESTAMP(), " . $column_label_string . "_STATUS = " . STATUS::FULFILLED->str() . " WHERE " . $column_label_string . "_UNIQUE_INDEX=?";
       //Log::debug('$stmt_string: ', $stmt_string);
       $stmt = $this->connection->prepare($stmt_string);
       $stmt->bind_param('sssss', $hardware_id, $text_id, $address, $description, $unique_index);
@@ -289,7 +286,7 @@ class RecordsSql extends MySql
       //Log::debug('$stmt_string: ', $stmt_string);
 
       $new_index = NULL;
-      if (!is_null($unique_index)) $new_index = db_get_new_index($table_name_string);
+      if (!is_null($unique_index)) $new_index = $this->get_new_index($this->connection, $table_name_string);
 
       $this->connection->autocommit(FALSE);
       $this->connection->begin_transaction();
@@ -312,7 +309,7 @@ class RecordsSql extends MySql
   }
 
 
-  public function db_get_static_by_time_interval_status($table_label, $start_time = -9999, $duration = -9999, $unit = 1, $end_time = -9999, $lowest_status = 0, $highest_status = 1)
+  public function get_static_by_time_interval_status($table_label, $start_time = -9999, $duration = -9999, $unit = 1, $end_time = -9999, $lowest_status = Status::FULFILLED, $highest_status = Status::STORED)
   {
     //Log::debug('$start_time: ', $start_time);
     //Log::debug('$duration: ', $duration);
@@ -354,13 +351,13 @@ class RecordsSql extends MySql
     $sql_get_all_available_values = "SELECT T." . $column_label_string . "_UNIQUE_INDEX, T." . $column_label_string . "_HARDWARE_ID, T." . $column_label_string . "_TEXT_ID, T." . $column_label_string . "_ADDRESS, T." . $column_label_string . "_DESCRIPTION, T." . $column_label_string . "_TIME FROM " . $table_name_string . " T";
     $sql_get_records = $sql_get_all_available_values ;
     if (!$select_all) $sql_get_records .= " WHERE T." . $column_label_string . "_TIME BETWEEN " . strval($start_time) . " AND ". strval($end_time);
-    $sql_get_records .= " AND T." . $column_label_string . "_STATUS >= " . strval($lowest_status) . " AND T." . $column_label_string . "_STATUS < " . strval($highest_status) . " ORDER BY T." . $column_label_string . "_TIME DESC";
+    $sql_get_records .= " AND T." . $column_label_string . "_STATUS >= " . $lowest_status->str() . " AND T." . $column_label_string . "_STATUS < " . $highest_status->str() . " ORDER BY T." . $column_label_string . "_TIME DESC";
     //Log::debug('$sql_get_records: ', $sql_get_records);
     $records = $this->connection->query($sql_get_records);
     //Log::debug('$records->num_rows: ', $records->num_rows);
     if (!is_object($records) || $records->num_rows <= 0)
     {
-      $sql_get_stored_archived_values = $sql_get_all_available_values . " AND T." . $column_label_string . "_STATUS >= " . strval($highest_status) . " ORDER BY T." . $column_label_string . "_TIME DESC";
+      $sql_get_stored_archived_values = $sql_get_all_available_values . " AND T." . $column_label_string . "_STATUS >= " . $highest_status->str() . " ORDER BY T." . $column_label_string . "_TIME DESC";
       $records = $this->connection->query($sql_get_stored_archived_values);
     }
     if (is_object($records) && $records->num_rows > 0)
