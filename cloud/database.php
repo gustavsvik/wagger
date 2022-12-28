@@ -2,6 +2,7 @@
 
 
 include_once("../CheckIf.php");
+include_once("../Status.php");
 
 
 function db_get_connection($server_name, $user_name, $password, $db_name)
@@ -114,6 +115,7 @@ function db_get_full_rows($connection, $table_name, $index_array) //db_get_all_d
   }
   $full_rows = $connection->query($sql_get_full_rows);
 
+  $rows = [];
   if ($full_rows->num_rows > 0)
   {
     while ($row = $full_rows->fetch_assoc())
@@ -121,7 +123,7 @@ function db_get_full_rows($connection, $table_name, $index_array) //db_get_all_d
       $rows[] = $row;
     }
   }
-  return rows;
+  return $rows;
 }
 
 
@@ -404,7 +406,7 @@ function db_get_ais_records($connection, $channels = [], $start_time = -9999, $d
     $sql_get_all_available_values = "SELECT T.ACQUIRED_TIME,T.ACQUIRED_BYTES FROM t_acquired_data T";
     $sql_get_available_values = $sql_get_all_available_values ;
     if (!$select_all) $sql_get_available_values .= " WHERE T.CHANNEL_INDEX=" . $channel_string . " AND T.ACQUIRED_TIME BETWEEN " . strval($start_time) . " AND ". strval($end_time);
-    $sql_get_available_values .= " AND T.STATUS >= " . strval($lowest_status) . " AND T.STATUS < " . strval($highest_status) . " AND T.STATUS < " . strval($STATUS_STORED) . " ORDER BY T.ACQUIRED_TIME DESC";
+    $sql_get_available_values .= " AND T.STATUS >= " . strval($lowest_status) . " AND T.STATUS < " . strval($highest_status) . " AND T.STATUS < " . Status::STORED->str() . " ORDER BY T.ACQUIRED_TIME DESC";
     //debug_log('$sql_get_available_values: ', $sql_get_available_values);
     $available_values = $connection->query($sql_get_available_values);
 
@@ -412,7 +414,7 @@ function db_get_ais_records($connection, $channels = [], $start_time = -9999, $d
     {
       if ($available_values->num_rows <= 0)
       {
-        $sql_get_stored_archived_values = $sql_get_all_available_values . " AND T.STATUS >= " . strval($STATUS_STORED) . " ORDER BY T.ACQUIRED_TIME DESC";
+        $sql_get_stored_archived_values = $sql_get_all_available_values . " AND T.STATUS >= " . Status::STORED->str() . " ORDER BY T.ACQUIRED_TIME DESC";
         //debug_log('$sql_get_stored_archived_values: ', $sql_get_stored_archived_values);
         $available_values = $connection->query($sql_get_stored_archived_values);
       }
