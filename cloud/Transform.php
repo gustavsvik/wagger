@@ -21,8 +21,8 @@ class Transform
       {
         //deliberately ignore any (hopefully not) remaining exceptions in string conversion
       }
-      return $out_string;
     }
+    return $out_string;
   }
 
 
@@ -49,7 +49,7 @@ class Transform
 
   public static function sql_list_from_channel_string(string $channel_string) : string
   {
-    return implode(',', array_from_channel_string($channel_string));
+    return implode(',', static::array_from_channel_string($channel_string));
   }
 
 }

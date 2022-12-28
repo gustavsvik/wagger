@@ -12,10 +12,10 @@ enum Status: int
   {
     return match ($this)
     {
-      self::REQUESTED => strval(self::REQUESTED->value),
-      self::FULFILLED => strval(self::FULFILLED->value),
-      self::STORED => strval(self::STORED->value),
-      self::ARCHIVED => strval(self::ARCHIVED->value)
+      static::REQUESTED => strval(static::REQUESTED->value),
+      static::FULFILLED => strval(static::FULFILLED->value),
+      static::STORED => strval(static::STORED->value),
+      static::ARCHIVED => strval(static::ARCHIVED->value)
     };
   }
 
@@ -24,10 +24,10 @@ enum Status: int
   {
     return match ($this)
     {
-      self::REQUESTED => intval(self::REQUESTED->value),
-      self::FULFILLED => intval(self::FULFILLED->value),
-      self::STORED => intval(self::STORED->value),
-      self::ARCHIVED => intval(self::ARCHIVED->value)
+      static::REQUESTED => intval(static::REQUESTED->value),
+      static::FULFILLED => intval(static::FULFILLED->value),
+      static::STORED => intval(static::STORED->value),
+      static::ARCHIVED => intval(static::ARCHIVED->value)
     };
   }
 

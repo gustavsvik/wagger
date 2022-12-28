@@ -13,17 +13,19 @@ class Sql //extends mysqli
   private static string|null $password = DbIni::PASSWORD;
   private static string|null $db_name = DbIni::DBNAME;
 
+  protected static MySQLi|null $connection = NULL;
+
   public function __construct (string|null $server_name = NULL, string|null $user_name = NULL, string|null $password = NULL, string|null $db_name = NULL)
   {
-    self::$server_name = $server_name ?? self::$server_name;
-    self::$user_name = $user_name ?? self::$user_name;
-    self::$password = $password ?? self::$password;
-    self::$db_name = $db_name ?? self::$db_name;
+    static::$server_name = $server_name ?? static::$server_name;
+    static::$user_name = $user_name ?? static::$user_name;
+    static::$password = $password ?? static::$password;
+    static::$db_name = $db_name ?? static::$db_name;
 
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
     try
     {
-      $this->connection = new mysqli(self::$server_name , self::$user_name, self::$password, self::$db_name, 3306);
+      $this->connection = new mysqli(static::$server_name , static::$user_name, static::$password, static::$db_name, 3306);
       $this->connection->set_charset('utf8');
       $this->connection->options(MYSQLI_OPT_INT_AND_FLOAT_NATIVE, 1);
       $this->connection->options(MYSQLI_OPT_CONNECT_TIMEOUT, 5);

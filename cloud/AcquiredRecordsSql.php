@@ -32,7 +32,7 @@ class AcquiredRecordsSql extends RecordsSql
     foreach ($channel_array as $channel)
     {
       $channel_string = strval($channel);
-      $sql_latest_available = "SELECT MAX(AD.ACQUIRED_TIME) FROM " . self::ACQUIRED_DATA_TABLE_NAME . " AD WHERE AD.CHANNEL_INDEX = " . $channel_string;
+      $sql_latest_available = "SELECT MAX(AD.ACQUIRED_TIME) FROM " . static::ACQUIRED_DATA_TABLE_NAME . " AD WHERE AD.CHANNEL_INDEX = " . $channel_string;
       $sql_latest_available .= " AND AD.STATUS>=" . $lowest_status->str();
       Log::debug('$sql_latest_available: ' . $sql_latest_available);
       $latest_available = $this->connection->query($sql_latest_available);
@@ -64,7 +64,7 @@ class AcquiredRecordsSql extends RecordsSql
         $sql_get_all_available_records .= 'T.' . $column_name . ',';
       }
       $sql_get_all_available_records = substr($sql_get_all_available_records, 0, -1);
-      $sql_get_all_available_records .= " FROM " . self::ACQUIRED_DATA_TABLE_NAME . " T WHERE T.CHANNEL_INDEX=" . $channel_string ;
+      $sql_get_all_available_records .= " FROM " . static::ACQUIRED_DATA_TABLE_NAME . " T WHERE T.CHANNEL_INDEX=" . $channel_string ;
       //$sql_get_all_available_records = "SELECT T.ACQUIRED_TIME,T.ACQUIRED_BYTES FROM t_acquired_data T";
       $sql_get_available_records = $sql_get_all_available_records;
       //$sql_get_available_records = $sql_get_all_available_records . " WHERE ";
