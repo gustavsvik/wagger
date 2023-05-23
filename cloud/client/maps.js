@@ -84,9 +84,13 @@ L.control.scale().addTo(map);
 let markersLayer = new L.LayerGroup();
 markersLayer.addTo(map);
 
-const staticUrl = 'https://' + window.location.hostname + '/client/get_static_records_string.php?web_api_table_label=device' ; //'http://labremote.net/client/get_static_records.php?web_api_table=host&web_api_column=host_description' ;
+const staticUrl = 'https://' + window.location.hostname + '/client/get_static_records_string.php'; //?web_api_table_label=device' ; //'http://labremote.net/client/get_static_records.php?web_api_table=host&web_api_column=host_description' ;
+//const staticBrowserUrl = 'https://' + window.location.hostname + '/client/get_static_records_string.php?web_api_table_label=module' ; 
 const positionUrl = 'https://' + window.location.hostname + '/client/get_ais_data_records.php';
 const ownPositionUrl = 'https://' + window.location.hostname + '/client/get_own_pos_records.php';
+const updateStaticUrl = 'https://' + window.location.hostname + '/client/update_static_data_client.php'
+const sendRequestUrl = 'https://' + window.location.hostname + '/client/send_request.php';
+const setRequestedUrl = 'https://' + window.location.hostname + '/host/set_requested.php';
 
 //const noIcon = new TransparentDivIcon( { html: "Example" } );
 //let noMarker = new TransparentLabelMarker([0.7800052024755708, -12.135975261193327], {label: '1.2'});
@@ -110,7 +114,7 @@ if (geolocationAvailable)
 
 const isTouchDevice = Device.isTouch();
 
-const dangerMarker01 = new InfoMarker([62.664450, 18.286383], {iconUrl: 'icons/leaflet/danger_over_symbol.png', iconSize: [24,24], iconAnchor: [12,12]}, { imageUrl: "images/leaflet/danger_01_image.png", htmlLabel: "Drivande mina röjd 210617 (ungefärlig pos.)" }) ;
+const dangerMarker01 = new InfoMarker([62.664450, 18.286383], {iconUrl: 'icons/leaflet/danger_over_symbol.png', iconSize: [24,24], iconAnchor: [12,12]}, { imageUrl: "images/leaflet/danger_01_image.png", htmlLabel: "Drivande mina röjd 210617<br>Ungefärlig position:" }) ;
 chart.add(dangerMarker01);
 if (!isTouchDevice) dangerMarker01.usePopup();
 else dangerMarker01.usePopup();
@@ -165,7 +169,7 @@ cameraDiv.appendChild(cameraButton);
 cameraButton.id = "camera_button";
 ElementProps.set( cameraButton.style, { "position": "absolute", "width": "280px", "top": "50px", "right": "5px", "padding": "10px", "z-index": "400" , "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } ) ;
 cameraButton.addEventListener("click", createImageInput);
-let cameraButtonText = document.createTextNode("Share observation with Test Site Bothnia");
+let cameraButtonText = document.createTextNode("Share observation");
 cameraButton.appendChild(cameraButtonText);
 
 const guabButton = new OpenUrlImageOverlayButton( { sizePos: {"w": 106, "h": 40, "r": 0, "b": 0}, "design": {"enabled":{"button":{"style":{"border":"none","background-color":"transparent","outline":"none","cursor":"pointer"}},"img":{"content":'images/leaflet/guab_01_image.png',"style":{}}} }, "openUrl":'https://gustavsvik.eu' } ); // , "disabled":{"img":{"content":'images/leaflet/guab_01_image.png',"style":{}}}  { text: "Class button test" } );
@@ -575,7 +579,7 @@ function refreshDisplay()
           }
           else
           {
-            if (speed !== null) htmlString += 'Speed: ' + speed.toString() + ' kt.' + '<br>' ;
+            if (speed !== null) htmlString += 'Speed: ' + speed.toString().substring(0,6) + ' kt.' + '<br>' ;
             if (course !== null) htmlString += 'Course: ' + course.toString() + '' + '<br>' ;
             const shipname = GetSafe.byKey(contentJson, "shipname");
             if (shipname !== null) htmlString += 'Name: ' + shipname.toString() + '<br>' ;
@@ -588,8 +592,8 @@ function refreshDisplay()
           }
           if (mmsi !== null) htmlString += 'MMSI: ' + mmsi.toString() + '<br>' ;
           if (id !== null) htmlString += 'ID: ' + id.toString() + '<br>' ;
-          if (lat !== null) htmlString += 'Lat: ' + lat.toString() + '\u00B0' + '<br>' ;
-          if (lon !== null) htmlString += 'Lon: ' + lon.toString() + '\u00B0' ;  //Disp.jsonToTable(contentJson, {});
+          if (lat !== null) htmlString += 'Lat: ' + lat.toString().substring(0,8) + '\u00B0' + '<br>' ;
+          if (lon !== null) htmlString += 'Lon: ' + lon.toString().substring(0,8) + '\u00B0' ;  //Disp.jsonToTable(contentJson, {});
 
           const iconFilename = GetSafe.byKey(contentJson, "icon_filename");
           if (iconFilename !== null)
@@ -629,7 +633,9 @@ function refreshDisplay()
       let marker_2 = L.circleMarker([ lat, lon ], {opacity: 0.5, color: "#00c600"});
       if (id === "99999") marker_2 = L.circleMarker([ lat, lon ], {opacity: 0.5, color: "#ff0000"});
       marker_2.setRadius(4 - 4 * age/900);
-      let htmlString = '<div style="font-size:10px;line-height:100%;">' + (age/60).toString().substring(0,3)  + ' min. ago' + '<br>' + 'ID: ' + id.toString() + '<br>' + 'Lat: ' + lat.toString() + '<br>' + 'Lon: ' + lon.toString() + '</div>'; // + ' m.'
+      const id_label = id;
+      if (id_label === "99999") id_label = "Anonymous";
+      let htmlString = '<div style="font-size:10px;line-height:100%;">' + (age/60).toString().substring(0,3)  + ' min. ago' + '<br>' + 'ID: ' + id.toString() + '<br>' + 'Lat: ' + lat.toString().substring(0,8) + '<br>' + 'Lon: ' + lon.toString().substring(0,8) + '</div>'; // + ' m.'
       if (!isTouchDevice) marker_2.bindTooltip(htmlString);
       else marker_2.bindPopup(htmlString, {closeOnClick: true, autoClose: false});
 
@@ -685,19 +691,29 @@ async function refreshData()
       //console.log("aisJsonString", aisJsonString);
 	  //try
 	  //{
-        const aisJson = GetSafe.json(aisJsonString); //[0];
+        let aisJson = GetSafe.json(aisJsonString); //[0];
+        let aisJsonDict = aisJson;
+
+        let id = GetSafe.byKey(aisJsonDict, "host_hardware_id");
+
+        if (Array.isArray(aisJson))
+        {
+          id = aisJson[0][2]
+          aisJsonDict = aisJson[0][3];
+        }
+
         //console.log("aisJson", aisJson);
-        const mmsi = GetSafe.byKey(aisJson, "mmsi");
-        const lon = GetSafe.byKey(aisJson, "lon");
-        const lat = GetSafe.byKey(aisJson, "lat");
-        const wdir = GetSafe.byKey(aisJson, "wdir");
-        const wspeed = GetSafe.byKey(aisJson, "wspeed");
-        const airtemp = GetSafe.byKey(aisJson, "airtemp");
-        const watertemp = GetSafe.byKey(aisJson, "watertemp");
-        const waveheight = GetSafe.byKey(aisJson, "waveheight");
-        const speed = GetSafe.byKey(aisJson, "speed");
-        const course = GetSafe.byKey(aisJson, "course");
-        const id = GetSafe.byKey(aisJson, "host_hardware_id");
+        const mmsi = GetSafe.byKey(aisJsonDict, "mmsi");
+        const lon = GetSafe.byKey(aisJsonDict, "lon");
+        const lat = GetSafe.byKey(aisJsonDict, "lat");
+        const wdir = GetSafe.byKey(aisJsonDict, "wdir");
+        const wspeed = GetSafe.byKey(aisJsonDict, "wspeed");
+        const airtemp = GetSafe.byKey(aisJsonDict, "airtemp");
+        const watertemp = GetSafe.byKey(aisJsonDict, "watertemp");
+        const waveheight = GetSafe.byKey(aisJsonDict, "waveheight");
+        const speed = GetSafe.byKey(aisJsonDict, "speed");
+        const course = GetSafe.byKey(aisJsonDict, "course");
+        const heading = GetSafe.byKey(aisJsonDict, "heading");
 
         const idIndex = Ais.ID_ARRAY.indexOf(id);
 
@@ -744,7 +760,7 @@ async function refreshData()
     let positionResponse = null;
     try
     {
-      positionResponse = await fetch(positionUrl, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '148;152;', 'duration': '900'}) });
+      positionResponse = await fetch(positionUrl, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '148;154;', 'duration': '900'}) });
     }
     catch(e)
     {
@@ -797,6 +813,7 @@ async function refreshData()
   for (let _positionDataCounter = 0; _positionDataCounter < positionStringArray.length; _positionDataCounter++)
   {
     const positionDataArray = Transform.delimitedStringToArrays(positionStringArray[_positionDataCounter]);
+    //console.log("positionDataArray", positionDataArray);
     let positionDataStringArray = [];
     if (positionDataArray[2].length > 0) positionDataStringArray = positionDataArray[2][0];
     let positionTimestampArray = [];
@@ -846,7 +863,7 @@ async function refreshData()
   {
     ownPositionJsonString = '[[null, null, ' + '"' + userId + '"' + ', ' + ownPositionJsonString + ']]' ;
 
-    const newChannelResponse = await fetch( 'https://' + window.location.hostname + '/client/update_static_data_client.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'common_description': ownPositionJsonString, 'module_address': userId}) } );
+    const newChannelResponse = await fetch( updateStaticUrl, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'common_description': ownPositionJsonString, 'module_address': userId}) } );
     //body: "common_description=" + encodeURIComponent(ownPositionJsonString) } );
     let newChannelData = null;
     try
@@ -860,10 +877,10 @@ async function refreshData()
     }
     //ownPositionJsonString = ownPositionJsonString.replace(regexTilde, '~');
     ownPositionJsonString = Transform.fromUnarmoredString(ownPositionJsonString); //ownPositionJsonString.replace(regexPipe, '|');
-    const ownPositionUploadRequest = await fetch( 'https://' + window.location.hostname + '/client/send_request.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '99999;;'}) } );
+    const ownPositionUploadRequest = await fetch( sendRequestUrl, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '99999;;'}) } );
     if (!ownPositionUploadRequest.ok) console.error(ownPositionUploadRequest);
     const ownPositionTransferString = "99999;" + currentTimestamp.toString() + ",-9999.0,," + ownPositionJsonString + ",;" ;
-    const ownPositionSetRequested = await fetch( 'https://' + window.location.hostname + '/host/set_requested.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'returnstring': ownPositionTransferString}) } );
+    const ownPositionSetRequested = await fetch( setRequestedUrl, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'returnstring': ownPositionTransferString}) } );
     if (!ownPositionSetRequested.ok) console.error(ownPositionSetRequested);
   }
 
@@ -872,10 +889,10 @@ async function refreshData()
     const ownDataChannelString = (Ais.OWN_DATA_CHANNEL).toString(); //"99999";
     const ownDataImageBytes = Ais.OWN_DATA_IMAGE_BYTES;
     Ais.OWN_DATA_IMAGE_BYTES = null;
-    const ownImageUploadRequest = await fetch( 'https://' + window.location.hostname + '/client/send_request.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': ownDataChannelString + ';;'}) } );
+    const ownImageUploadRequest = await fetch( sendRequestUrl, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': ownDataChannelString + ';;'}) } );
     if (!ownImageUploadRequest.ok) console.error(ownImageUploadRequest);
     const ownImageTransferString = ownDataChannelString + ";" + currentTimestamp.toString() + ",-9999.0,," + ownDataImageBytes + ",;" ;
-    const ownImageSetRequested = await fetch( 'https://' + window.location.hostname + '/host/set_requested.php', { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'returnstring': ownImageTransferString}) } );
+    const ownImageSetRequested = await fetch( setRequestedUrl, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'returnstring': ownImageTransferString}) } );
     if (!ownImageSetRequested.ok) console.error(ownImageSetRequested);
   }
 
