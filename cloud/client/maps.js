@@ -379,6 +379,7 @@ cameraButton.addEventListener('click', event => {
 function handleGeolocationSuccess(position)
 {
   const ownCoords = position.coords;
+  //console.log("ownCoords", ownCoords);
 
   //ownLocationMarker = L.marker(center, {icon: ownLocationStationaryIcon});
   //ownLocationMarker.addTo(map);
@@ -458,7 +459,7 @@ function refreshDisplay()
     ownLocationMarker.setIcon(ownLocationStationaryIcon);
     ownLocationMarker.setLatLng(Ais.OWN_LOCATION_POS);
     let ownLocationHtmlString = '<div style="font-size:10px;line-height:100%;">';
-    if (Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "") ownLocationHtmlString += 'User ID: ' + Ais.OWN_USER_ID + '<br>' ;
+    if (Ais.OWN_USER_ID !== null && Ais.OWN_USER_ID !== "") ownLocationHtmlString += 'My ID: ' + Ais.OWN_USER_ID + '<br>' ;
     ownLocationHtmlString += 'Lat: ' + Ais.OWN_LOCATION_POS[0].toString().substring(0,8) + '\u00B0' + '<br>' ;
     ownLocationHtmlString += 'Lon: ' + Ais.OWN_LOCATION_POS[1].toString().substring(0,8) + '\u00B0' + '<br>' ;
     if (Ais.OWN_LOCATION_ACCURACY !== null)
@@ -468,7 +469,7 @@ function refreshDisplay()
       ownAccuracyCircle.setRadius(parseInt(Ais.OWN_LOCATION_ACCURACY));
     }
     if (Ais.OWN_LOCATION_ALTITUDE !== null) ownLocationHtmlString += '<br>Altitude: ' + Ais.OWN_LOCATION_ALTITUDE.toString().substring(0,6) + ' m' ;
-    if (Ais.OWN_LOCATION_ALTITUDE_ACCURACY !== null) ownLocationHtmlString += '<br>Altitude: ' + Ais.OWN_LOCATION_ALTITUDE_ACCURACY.toString().substring(0,6) + ' m' ;
+    if (Ais.OWN_LOCATION_ALTITUDE_ACCURACY !== null) ownLocationHtmlString += '<br>Alt. acc.: ' + Ais.OWN_LOCATION_ALTITUDE_ACCURACY.toString().substring(0,5) + ' m' ;
     if (Ais.OWN_LOCATION_SPEED !== null)
     {
       ownLocationHtmlString += '<br>Speed: ' + Ais.OWN_LOCATION_SPEED.toString().substring(0,6) + ' m/s' ;
@@ -512,14 +513,16 @@ function refreshDisplay()
     const waveheight = Ais.WAVE_HEIGHT_ARRAY[_idCounter];
     const speed = Ais.SPEED_ARRAY[_idCounter];
     const course = Ais.COURSE_ARRAY[_idCounter];
+    const heading = Ais.HEADING_ARRAY[_idCounter];
     const content = Ais.TEXT_ARRAY[_idCounter];
     const age = currentTimestamp - Ais.TIME_ARRAY[_idCounter];
 
-    if (lat !== null && lon !== null)
+    if (lat !== null && lon !== null && id !== Ais.OWN_USER_ID )
     {
+      //console.log(id, lat, lon, speed, course);
       let marker = L.marker([ lat, lon ], {icon: seaStationaryIcon});
 
-      if (speed > 0)
+      if (speed !== null && speed > 0)
       {
         marker.setIcon(seaMobileIcon);
       }
@@ -530,7 +533,8 @@ function refreshDisplay()
       {
         marker.setOpacity(timeOpacity);
         marker.setRotationOrigin("center");
-        marker.setRotationAngle(course);
+         if (course !== null) marker.setRotationAngle(course);
+         else if (heading !== null) marker.setRotationAngle(heading);
       }
       else
       {
@@ -567,6 +571,12 @@ function refreshDisplay()
         }
         else
         {
+          if (id !== null) 
+          {
+            let id_label = id;
+            if (id_label === "99999") id_label = "Anonymous";  
+            htmlString += 'ID: ' + id_label.toString() + '<br>' ;
+          }
           if (type === 4)
           {
             marker.setIcon(shoreStationaryIcon);
@@ -579,8 +589,9 @@ function refreshDisplay()
           }
           else
           {
-            if (speed !== null) htmlString += 'Speed: ' + speed.toString().substring(0,6) + ' kt.' + '<br>' ;
-            if (course !== null) htmlString += 'Course: ' + course.toString() + '' + '<br>' ;
+            if (speed !== null) htmlString += 'Speed: ' + speed.toString().substring(0,5) + ' kt.' + '<br>' ;
+            if (course !== null) htmlString += 'Course: ' + course.toString().substring(0,5) + '\u00B0' + '<br>' ;
+            if (heading !== null) htmlString += 'Heading: ' + heading.toString().substring(0,5) + '\u00B0' + '<br>' ;
             const shipname = GetSafe.byKey(contentJson, "shipname");
             if (shipname !== null) htmlString += 'Name: ' + shipname.toString() + '<br>' ;
             const callsign = GetSafe.byKey(contentJson, "callsign");
@@ -591,7 +602,6 @@ function refreshDisplay()
             if (imo !== null) htmlString += 'IMO: ' + imo.toString() + '<br>' ;
           }
           if (mmsi !== null) htmlString += 'MMSI: ' + mmsi.toString() + '<br>' ;
-          if (id !== null) htmlString += 'ID: ' + id.toString() + '<br>' ;
           if (lat !== null) htmlString += 'Lat: ' + lat.toString().substring(0,8) + '\u00B0' + '<br>' ;
           if (lon !== null) htmlString += 'Lon: ' + lon.toString().substring(0,8) + '\u00B0' ;  //Disp.jsonToTable(contentJson, {});
 
@@ -633,7 +643,7 @@ function refreshDisplay()
       let marker_2 = L.circleMarker([ lat, lon ], {opacity: 0.5, color: "#00c600"});
       if (id === "99999") marker_2 = L.circleMarker([ lat, lon ], {opacity: 0.5, color: "#ff0000"});
       marker_2.setRadius(4 - 4 * age/900);
-      const id_label = id;
+      let id_label = id;
       if (id_label === "99999") id_label = "Anonymous";
       let htmlString = '<div style="font-size:10px;line-height:100%;">' + (age/60).toString().substring(0,3)  + ' min. ago' + '<br>' + 'ID: ' + id.toString() + '<br>' + 'Lat: ' + lat.toString().substring(0,8) + '<br>' + 'Lon: ' + lon.toString().substring(0,8) + '</div>'; // + ' m.'
       if (!isTouchDevice) marker_2.bindTooltip(htmlString);
@@ -729,6 +739,7 @@ async function refreshData()
           Ais.WAVE_HEIGHT_ARRAY.push( waveheight );
           Ais.SPEED_ARRAY.push( speed );
           Ais.COURSE_ARRAY.push( course );
+          Ais.HEADING_ARRAY.push( course );
           Ais.TEXT_ARRAY.push( aisJsonString );
           Ais.TIME_ARRAY.push( time ) ;
         }
@@ -743,6 +754,7 @@ async function refreshData()
           if (waveheight !== null) Ais.WAVE_HEIGHT_ARRAY[idIndex] = waveheight;
           if (speed !== null) Ais.SPEED_ARRAY[idIndex] = speed;
           if (course !== null) Ais.COURSE_ARRAY[idIndex] = course;
+          if (heading !== null) Ais.HEADING_ARRAY[idIndex] = heading;
           Ais.TEXT_ARRAY[idIndex] = aisJsonString;
           Ais.TIME_ARRAY[idIndex] = time;
         }
@@ -905,6 +917,6 @@ async function refreshAishubData()
   if ( true ) //Ais.GET_ALL_AND_IMAGES
   {
     httpData.post();
-    console.log(new Date());
+    //console.log(new Date());
   }
 }
