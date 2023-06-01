@@ -136,7 +136,7 @@ else shoreMarker03.usePopup();
 
 let idButtonText = 'Share position with Test Site Bothnia';
 if (!Ais.OWN_POSITION_AVAILABLE) idButtonText = 'No own position to share';
-const idInputDescription = '<br>Please enter a specific user ID (up to 10 characters will be displayed):';
+const idInputDescription = '<br>Please enter a specific user ID (display may be truncated to 10 characters but more may be entered here):';
 const idInfoDescription = 'Welcome to the MarIEx position reporting tool of Test Site Bothnia! We try to take all precautions possible to keep our test sites safe and secure, and your help is greatly appreciated. By adding a user ID to identify your position marker on the chart (either an arbitrary one of your choice or your name, ship name, call sign, MMSI, or other presumably unique identifier) when present in or near one of our test areas, you can improve your visibility not only to our test management team but to your fellow seafarers and land travellers as well. Please consider when choosing your ID that it will be sent back (securely) to Test Site Bothnia and stored (securely) in our database before being publicly shared in this application, and take note that your ID may be shortened to its first 10 characters when displayed.';
 const cookieInfoDescription = 'To be able to link your device to your position unambiguously for the benefit of the Test Site Bothnia team and your fellow seafarers and land travellers, you can permit the MarIEx app to set a single cookie containing your user ID only (which is non-shareable with other sites). If you uncheck the box no new cookie will be set on the device and any cookies previously set by MarIEx will be removed.';
 const idIsAvailable = Ais.OWN_POSITION_AVAILABLE ;
@@ -174,9 +174,14 @@ cameraButton.appendChild(cameraButtonText);
 
 const guabButton = new OpenUrlImageOverlayButton( { sizePos: {"w": 106, "h": 40, "r": 0, "b": 0}, "design": {"enabled":{"button":{"style":{"border":"none","background-color":"transparent","outline":"none","cursor":"pointer"}},"img":{"content":'images/leaflet/guab_01_image.png',"style":{}}} }, "openUrl":'https://gustavsvik.eu' } ); // , "disabled":{"img":{"content":'images/leaflet/guab_01_image.png',"style":{}}}  { text: "Class button test" } );
 guabButton.updateAppearance();
-
-const tsbButton = new OpenUrlImageOverlayButton( { sizePos: {"w": 98, "h": 40, "r": 107, "b": 0}, "design": {"enabled":{"button":{"style":{"border":"none","background-color":"transparent","outline":"none","cursor":"pointer"}},"img":{"content":'images/leaflet/tsb_01_image.png',"style":{}}} }, "openUrl":'https://testsitebothnia.eu' } ); // , "disabled":{"img":{"content":'images/leaflet/tsb_01_image.png',"style":{}}}  { text: "Class button test" } );
+const tsbButton = new OpenUrlImageOverlayButton( { sizePos: {"w": 98, "h": 40, "r": 107, "b": 0}, "design": {"enabled":{"button":{"style":{"border":"none","background-color":"transparent","outline":"none","cursor":"pointer"}},"img":{"content":'images/leaflet/tsb_01_image.png',"style":{}}} }, "openUrl":'https://harnosand.se/naringsliv-och-foretag/foretagscenter-harnosand/foretagstjanster/samverkan-inom-bothnia-sweden.html' } ); // , "disabled":{"img":{"content":'images/leaflet/tsb_01_image.png',"style":{}}}  { text: "Class button test" } );
 tsbButton.updateAppearance();
+const smtfButton = new OpenUrlImageOverlayButton( { sizePos: {"w": 97, "h": 40, "r": 200, "b": 0}, "design": {"enabled":{"button":{"style":{"border":"none","background-color":"transparent","outline":"none","cursor":"pointer"}},"img":{"content":'images/leaflet/smtf_01_image.png',"style":{}}} }, "openUrl":'https://smtf.se' } ); // , "disabled":{"img":{"content":'images/leaflet/tsb_01_image.png',"style":{}}}  { text: "Class button test" } );
+smtfButton.updateAppearance();
+const hittamigButton = new OpenUrlImageOverlayButton( { sizePos: {"w": 85, "h": 40, "r": 300, "b": 0}, "design": {"enabled":{"button":{"style":{"border":"none","background-color":"transparent","outline":"none","cursor":"pointer"}},"img":{"content":'images/leaflet/hittamig_01_image.png',"style":{}}} }, "openUrl":'https://www.ri.se/sv/vad-vi-gor/projekt/hitta-mig2' } ); // , "disabled":{"img":{"content":'images/leaflet/tsb_01_image.png',"style":{}}}  { text: "Class button test" } );
+hittamigButton.updateAppearance();
+const netmoreButton = new OpenUrlImageOverlayButton( { sizePos: {"w": 45, "h": 40, "r": 380, "b": 0}, "design": {"enabled":{"button":{"style":{"border":"none","background-color":"transparent","outline":"none","cursor":"pointer"}},"img":{"content":'images/leaflet/netmore_01_image.png',"style":{}}} }, "openUrl":'https://netmoregroup.com/' } ); // , "disabled":{"img":{"content":'images/leaflet/tsb_01_image.png',"style":{}}}  { text: "Class button test" } );
+netmoreButton.updateAppearance();
 
 const centerButton = new ImageOverlayButton
 (
@@ -436,9 +441,14 @@ function redrawGui()
 {
   tsbButton.updateAppearance();
   tsbButton.resetClicked();
-
   guabButton.updateAppearance();
   guabButton.resetClicked();
+  smtfButton.updateAppearance();
+  smtfButton.resetClicked();
+  hittamigButton.updateAppearance();
+  hittamigButton.resetClicked();
+  netmoreButton.updateAppearance();
+  netmoreButton.resetClicked();
 
   centerButton.updateAppearance();
   if (centerButton.toggled) Ais.OWN_POSITION_FOLLOW = true;
@@ -645,7 +655,7 @@ function refreshDisplay()
       marker_2.setRadius(4 - 4 * age/900);
       let id_label = id;
       if (id_label === "99999") id_label = "Anonymous";
-      let htmlString = '<div style="font-size:10px;line-height:100%;">' + (age/60).toString().substring(0,3)  + ' min. ago' + '<br>' + 'ID: ' + id.toString() + '<br>' + 'Lat: ' + lat.toString().substring(0,8) + '<br>' + 'Lon: ' + lon.toString().substring(0,8) + '</div>'; // + ' m.'
+      let htmlString = '<div style="font-size:10px;line-height:100%;">' + (age/60).toString().substring(0,3)  + ' min. ago' + '<br>' + 'ID: ' + id_label.toString() + '<br>' + 'Lat: ' + lat.toString().substring(0,8) + '<br>' + 'Lon: ' + lon.toString().substring(0,8) + '</div>'; // + ' m.'
       if (!isTouchDevice) marker_2.bindTooltip(htmlString);
       else marker_2.bindPopup(htmlString, {closeOnClick: true, autoClose: false});
 
