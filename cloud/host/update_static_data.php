@@ -1,46 +1,34 @@
 <?php
 
 
-include("../header.php");
-include("../db_ini.php");
-include("../utils.php");
-include("../database.php");
-include("header.php");
+include_once("../Log.php");
+include_once("../StaticRecordsApi.php");
+include_once("../StaticRecordsSql.php");
 
+$log = new Log();
+$sql = new StaticRecordsSql();
+$api = new StaticRecordsApi();
 
-//debug_log('$host_hardware_id: ', $host_hardware_id);
-//debug_log('$host_text_id: ', $host_text_id);
-//debug_log('$device_hardware_id: ', $device_hardware_id);
-//debug_log('$device_text_id: ', $device_text_id);
-//debug_log('$device_address: ', $device_address);
-//debug_log('$module_hardware_id: ', $module_hardware_id);
-//debug_log('$module_text_id: ', $module_text_id);
-//debug_log('$channel_hardware_id: ', $channel_hardware_id);
-//debug_log('$channel_text_id: ', $channel_text_id);
-//debug_log('$common_address: ', $common_address);
-debug_log('$common_description: ', $common_description);
+$host_hardware_id = $api::get_host_hardware_id();
+$host_text_id = $api::get_host_text_id();
+$device_hardware_id = $api::get_device_hardware_id();
+$device_text_id = $api::get_device_text_id();
+$device_address = $api::get_device_address();
+$module_hardware_id = $api::get_module_hardware_id();
+$module_text_id = $api::get_module_text_id();
+$module_address = $api::get_module_address();
+$common_address = $api::get_common_address();
+$common_description = $api::get_common_description();
 
-$conn = db_get_connection($SERVERNAME, $USERNAME, $PASSWORD, $DBNAME);
+$log::debug('$common_description: ', $common_description);
 
-if (!is_null($conn))
-{
-  //$host_unique_index = db_get_index($conn, "HOST", "HARDWARE_ID", $host_hardware_id);
-  $host_unique_index = NULL; // Auto-incremented table
-  $new_host_index = db_update_static_by_index($conn, "HOST", $host_unique_index, $host_hardware_id, $host_text_id, $common_address, $common_description);
-  //$device_unique_index = db_get_index($conn, "DEVICE", "HARDWARE_ID", $device_hardware_id);
-  $device_unique_index = NULL; // Auto-incremented table
-  $new_device_index = db_update_static_by_index($conn, "DEVICE", $device_unique_index, $device_hardware_id, $device_text_id, $device_address, $common_description);
-  if ($new_device_index > -1) db_update_single_by_index($conn, "DEVICE", $new_device_index, "HOST_INDEX", $new_host_index);
-  //$device_unique_index = db_get_index($conn, "MODULE", "HARDWARE_ID", $module_hardware_id);
-  $module_unique_index = NULL; // Auto-incremented table
-  $new_module_index = db_update_static_by_index($conn, "MODULE", $module_unique_index, $module_hardware_id, $module_text_id, $module_address, $common_description);
-  if ($new_module_index > -1) db_update_single_by_index($conn, "MODULE", $new_module_index, "DEVICE_INDEX", $new_device_index);
+$host_unique_index = NULL; // Unspecified index, requires auto-incremented database table
+$new_host_index = $sql::update_static_by_index("HOST", $host_unique_index, $host_hardware_id, $host_text_id, $common_address, $common_description);
 
-  $conn->close();
-}
+$device_unique_index = NULL; // Unspecified index, requires auto-incremented database table
+$new_device_index = $sql::update_static_by_index("DEVICE", $device_unique_index, $device_hardware_id, $device_text_id, $device_address, $common_description);
+if ($new_device_index > -1) $sql::update_single_by_index("DEVICE", $new_device_index, "HOST_INDEX", $new_host_index);
 
-/*
-header("Content-type: application/json");
-$json_array = array('returnstring' => $return_string);
-echo json_encode($json_array);
-*/
+$module_unique_index = NULL; // Unspecified index, requires auto-incremented database table
+$new_module_index = $sql::update_static_by_index("MODULE", $module_unique_index, $module_hardware_id, $module_text_id, $module_address, $common_description);
+if ($new_module_index > -1) $sql::update_single_by_index("MODULE", $new_module_index, "DEVICE_INDEX", $new_device_index);

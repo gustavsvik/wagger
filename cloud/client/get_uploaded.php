@@ -6,11 +6,17 @@ include("../db_ini.php");
 include("../utils.php");
 include("../database.php");
 include("header.php");
+include_once("../Log.php");
+include_once("../ClientAcquiredRecordsApi.php");
 
-debug_log('$DBNAME: ', $DBNAME);
+
+Log::debug('$DBNAME: ', $DBNAME);
 
 
-if ($web_api_channel > 0) $channels = strval($web_api_channel) . ';' ;
+$api = new ClientAcquiredRecordsApi();
+
+$channel_array = $api::get_channel_array();
+//if ($web_api_channel > 0) $channels = strval($web_api_channel) . ';' ;
 
 
 $select_all = FALSE;

@@ -70,7 +70,8 @@ foreach($files as $file)
   }
 }
 
-array_multisort(array_column($file_data, 'timestamp'), SORT_DESC, $file_data);
+$timestamp_column = array_column($file_data, 'timestamp');
+array_multisort($timestamp_column, SORT_DESC, $file_data);
 
 header("Content-type: application/json");
 $json_array = array('file_data' => $file_data) ;

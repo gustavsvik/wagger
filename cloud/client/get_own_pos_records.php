@@ -2,6 +2,7 @@
 
 
 include_once("../Log.php");
+include_once("../Status.php");
 include_once("../CheckIf.php");
 include_once("../GetSafe.php");
 include_once("../Transform.php");
@@ -12,17 +13,17 @@ $api = new ClientAcquiredRecordsApi();
 
 $channel_array = $api::get_channel_array();
 
-$lowest_status = 0 ;
+//$lowest_status = 0 ;
 
 $sql = new AcquiredRecordsSql();
-$latest_stored_update_time = $sql->get_latest_channel_update_time($channel_array, $lowest_status); // time(); //db_get_max_value($conn, $table_name_string, $column_name_string);
+$latest_stored_update_time = $sql->get_latest_channel_update_time(channel_array: $channel_array, lowest_status: Status::FULFILLED); // time(); //db_get_max_value($conn, $table_name_string, $column_name_string);
 
 $api::update_time_horizon($latest_stored_update_time);
 
 $start_time = $api::get_start_time();
 $end_time = $api::get_end_time();
 
-$acquired_records = $sql->get_by_channels_time_range_status_range(['ACQUIRED_TIME','ACQUIRED_BYTES'], $channel_array, $start_time, $end_time, $lowest_status);
+$acquired_records = $sql->get_by_channels_time_range_status_range(column_names: ['ACQUIRED_TIME','ACQUIRED_BYTES'], channel_array: $channel_array, start_time: $start_time, end_time: $end_time, lowest_status: Status::FULFILLED);
 
 Log::debug('$acquired_records: ', $acquired_records);
 $acquired_string = "";

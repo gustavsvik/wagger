@@ -25,10 +25,10 @@ class Sql //extends mysqli
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
     try
     {
-      $this->connection = new mysqli(static::$server_name , static::$user_name, static::$password, static::$db_name, 3306);
-      $this->connection->set_charset('utf8');
-      $this->connection->options(MYSQLI_OPT_INT_AND_FLOAT_NATIVE, 1);
-      $this->connection->options(MYSQLI_OPT_CONNECT_TIMEOUT, 5);
+      static::$connection = new mysqli(static::$server_name , static::$user_name, static::$password, static::$db_name, 3306);
+      static::$connection->set_charset('utf8');
+      static::$connection->options(MYSQLI_OPT_INT_AND_FLOAT_NATIVE, 1);
+      static::$connection->options(MYSQLI_OPT_CONNECT_TIMEOUT, 5);
     }
     catch (\mysqli_sql_exception $e)
     {
@@ -37,9 +37,9 @@ class Sql //extends mysqli
   }
 
 
-  public function close()
+  public static function close()
   {
-    $this->connection->close();
+    static::$connection->close();
   }
 
 }

@@ -10,8 +10,10 @@ class Transform
 
   public static function to_string($value, string $default = "") : string
   {
+    $check_if = new CheckIf();
+
     $out_string = $default;
-    if ( CheckIf::is_stringy($value) )
+    if ( $check_if::is_stringy($value) )
     {
       try
       {
@@ -49,7 +51,7 @@ class Transform
 
   public static function sql_list_from_channel_string(string $channel_string) : string
   {
-    return implode(',', static::array_from_channel_string($channel_string));
+    return implode(',', array_from_channel_string($channel_string));
   }
 
 }

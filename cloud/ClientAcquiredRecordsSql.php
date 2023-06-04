@@ -14,10 +14,10 @@ class ClientAcquiredRecordsSql extends AcquiredRecordsSql
     parent::__construct($server_name, $user_name, $password, $db_name);
   }
 
-
-  public function get_latest_channel_update_time(array|null $channel_array = [], Status|null $lowest_status = Status::FULFILLED) : int|null
+/*
+  public static function get_latest_channel_update_time(array|null $channel_array = [], Status|null $lowest_status = Status::FULFILLED) : int|null
   {
     return parent::get_latest_channel_update_time(channel_array: $channel_array, lowest_status: STATUS::FULFILLED);
   }
-
+*/
 }
