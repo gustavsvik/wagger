@@ -112,11 +112,14 @@ class StaticRecordsSql extends RecordsSql
   }
 
 
-  public static function update_static_by_index($table_label, $unique_index, $hardware_id, $text_id, $address, $description) : int|null
+  public static function update_static_by_index(string|null $table_label = null, int|null $unique_index = null, string|null $hardware_id = null, string|null $text_id = null, string|null $address = null, string|null $description = null, int|null $time = null, Status|null $status = STATUS::FULFILLED) : int|null
   {
-    //Log::debug('$unique_index: ', $unique_index, '$hardware_id: ', $hardware_id, '$text_id: ', $text_id, '$address: ', $address, '$description: ', $description );
+    Log::debug('$unique_index: ', $unique_index, '$hardware_id: ', $hardware_id, '$text_id: ', $text_id, '$address: ', $address, '$description: ', $description );
     $table_name_string = "t_" . strtolower(strval($table_label)) ;
     $column_label_string = strtoupper(strval($table_label));
+    $time_int = time();
+    if (!is_null($time)) $time_int = intval($time);
+    $status_int = $status->int();
 
     $new_index = -1;
 
@@ -125,10 +128,10 @@ class StaticRecordsSql extends RecordsSql
       static::$connection->autocommit(false);
       static::$connection->begin_transaction();
       $stmt = null;
-      $stmt_string = "UPDATE " . $table_name_string . " SET " . $column_label_string . "_HARDWARE_ID" . " = ?, " . $column_label_string . "_TEXT_ID = ?, " . $column_label_string . "_ADDRESS = ?," . $column_label_string . "_DESCRIPTION = ?, " . $column_label_string . "_TIME = UNIX_TIMESTAMP(CURRENT_TIMESTAMP()), " . $column_label_string . "_UPDATED_TIMESTAMP = CURRENT_TIMESTAMP(), " . $column_label_string . "_STATUS = " . STATUS::FULFILLED->str() . " WHERE " . $column_label_string . "_UNIQUE_INDEX=?";
+      $stmt_string = "UPDATE " . $table_name_string . " SET " . $column_label_string . "_HARDWARE_ID" . " = ?, " . $column_label_string . "_TEXT_ID = ?, " . $column_label_string . "_ADDRESS = ?," . $column_label_string . "_DESCRIPTION = ?, " . $column_label_string . "_TIME = ?, " . $column_label_string . "_UPDATED_TIMESTAMP = CURRENT_TIMESTAMP(), " . $column_label_string . "_STATUS = ? WHERE " . $column_label_string . "_UNIQUE_INDEX = ?";
       Log::debug('$stmt_string: ', $stmt_string);
       $stmt = static::$connection->prepare($stmt_string);
-      $stmt->bind_param('sssss', $hardware_id, $text_id, $address, $description, $unique_index);
+      $stmt->bind_param('sssssss', $hardware_id, $text_id, $address, $description, $time_int, $status_int, $unique_index);
   
       if(!$stmt->execute())
       {
@@ -143,8 +146,8 @@ class StaticRecordsSql extends RecordsSql
       $stmt_string = "INSERT INTO " . $table_name_string . " (";
       if (!is_null($unique_index)) $stmt_string .= $column_label_string . "_UNIQUE_INDEX, ";
       $stmt_string .= $column_label_string . "_HARDWARE_ID, " . $column_label_string . "_TEXT_ID, " . $column_label_string . "_ADDRESS, " . $column_label_string . "_DESCRIPTION, " . $column_label_string . "_TIME, " . $column_label_string . "_STATUS) ";
-      if (!is_null($unique_index)) $stmt_string .= "VALUES (?,?,?,?,?,UNIX_TIMESTAMP(CURRENT_TIMESTAMP()),0) ";
-      else $stmt_string .= "VALUES (?,?,?,?,UNIX_TIMESTAMP(CURRENT_TIMESTAMP()),0) ";
+      if (!is_null($unique_index)) $stmt_string .= "VALUES (?,?,?,?,?,?,?)";
+      else $stmt_string .= "VALUES (?,?,?,?,?,?)";
       $stmt_string .= "ON DUPLICATE KEY UPDATE " . $column_label_string . "_TEXT_ID = VALUES(" . $column_label_string . "_TEXT_ID), " . $column_label_string . "_ADDRESS = VALUES(" . $column_label_string . "_ADDRESS), " . $column_label_string . "_DESCRIPTION = VALUES(" . $column_label_string . "_DESCRIPTION), " . $column_label_string . "_TIME = VALUES(" . $column_label_string . "_TIME), " . $column_label_string . "_STATUS = VALUES(" . $column_label_string . "_STATUS)";
       Log::debug('$stmt_string: ', $stmt_string);
   
@@ -156,8 +159,8 @@ class StaticRecordsSql extends RecordsSql
       $stmt = null;
       $stmt = static::$connection->prepare($stmt_string);
   
-      if (!is_null($new_index) && $new_index > -1) $stmt->bind_param('sssss', $new_index, $hardware_id, $text_id, $address, $description);
-      else $stmt->bind_param('ssss', $hardware_id, $text_id, $address, $description);
+      if (!is_null($new_index) && $new_index > -1) $stmt->bind_param('sssssss', $new_index, $hardware_id, $text_id, $address, $description, $time_int, $status_int);
+      else $stmt->bind_param('ssssss', $hardware_id, $text_id, $address, $description, $time_int, $status_int);
 
       if(!$stmt->execute())
       {
