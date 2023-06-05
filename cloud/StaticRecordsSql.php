@@ -10,19 +10,19 @@ class StaticRecordsSql extends RecordsSql
 {
 
 
-  public function __construct (string|null $server_name = NULL, string|null $user_name = NULL, string|null $password = NULL, string|null $db_name = NULL)
+  public function __construct (string|null $server_name = null, string|null $user_name = null, string|null $password = null, string|null $db_name = null)
   {
     parent::__construct($server_name, $user_name, $password, $db_name);
   }
   
   
-  public static function get_static_by_id($table_label, $hardware_id = NULL, $text_id = NULL, $unique_index = NULL, $parent_table_label = NULL )
+  public static function get_static_by_id($table_label, $hardware_id = null, $text_id = null, $unique_index = null, $parent_table_label = null )
   {
     //Log::debug(' $table_label:' . $table_label . ' $hardware_id:' . $hardware_id . ' $text_id:' . $text_id . ' $unique_index:' . strval($unique_index) . ' $parent_table_label:' . $parent_table_label);
   
     $table_name_string = "t_" . strtolower(strval($table_label)) ;
     $column_label_string = strtoupper(strval($table_label));
-    $parent_column_label_string = NULL;
+    $parent_column_label_string = null;
     if ( !is_null($parent_table_label) ) $parent_column_label_string = strtoupper(strval($parent_table_label));
 
     $unique_indices = array();
@@ -37,7 +37,7 @@ class StaticRecordsSql extends RecordsSql
     if ( !is_null($parent_column_label_string) ) $sql_get_records .= ", T." . $parent_column_label_string . "_INDEX ";
     $sql_get_records .= "FROM " . $table_name_string . " T WHERE T." . $column_label_string ;
     //Log::debug('sql_get_records: ', $sql_get_records);
-    $records = NULL;
+    $records = null;
     if (!is_null($hardware_id))
     {
       $sql_get_records_by_hardware_id = $sql_get_records . "_HARDWARE_ID='" . $hardware_id . "'";
@@ -92,14 +92,14 @@ class StaticRecordsSql extends RecordsSql
   }
   
   
-  public static function get_parent_index_by_id($table_label, $hardware_id, $text_id = NULL, $parent_table_label = NULL )
+  public static function get_parent_index_by_id($table_label, $hardware_id, $text_id = null, $parent_table_label = null )
   {
-    $return_data_array = NULL;
+    $return_data_array = null;
   
     if (!is_null(static::$connection))
     {
       Log::debug(' $table_label:' . $table_label . ' $hardware_id:' . $hardware_id . ' $text_id:' . $text_id . ' $parent_table_label:' . $parent_table_label);
-      $return_data_array = static::get_static_by_id($table_label, $hardware_id, $text_id, NULL, $parent_table_label);
+      $return_data_array = static::get_static_by_id($table_label, $hardware_id, $text_id, null, $parent_table_label);
       Log::debug('$return_data_array: ', $return_data_array);
     }
 
@@ -122,9 +122,9 @@ class StaticRecordsSql extends RecordsSql
 
     if (!is_null($unique_index) && $unique_index > -1)
     {
-      static::$connection->autocommit(FALSE);
+      static::$connection->autocommit(false);
       static::$connection->begin_transaction();
-      $stmt = NULL;
+      $stmt = null;
       $stmt_string = "UPDATE " . $table_name_string . " SET " . $column_label_string . "_HARDWARE_ID" . " = ?, " . $column_label_string . "_TEXT_ID = ?, " . $column_label_string . "_ADDRESS = ?," . $column_label_string . "_DESCRIPTION = ?, " . $column_label_string . "_TIME = UNIX_TIMESTAMP(CURRENT_TIMESTAMP()), " . $column_label_string . "_UPDATED_TIMESTAMP = CURRENT_TIMESTAMP(), " . $column_label_string . "_STATUS = " . STATUS::FULFILLED->str() . " WHERE " . $column_label_string . "_UNIQUE_INDEX=?";
       Log::debug('$stmt_string: ', $stmt_string);
       $stmt = static::$connection->prepare($stmt_string);
@@ -148,12 +148,12 @@ class StaticRecordsSql extends RecordsSql
       $stmt_string .= "ON DUPLICATE KEY UPDATE " . $column_label_string . "_TEXT_ID = VALUES(" . $column_label_string . "_TEXT_ID), " . $column_label_string . "_ADDRESS = VALUES(" . $column_label_string . "_ADDRESS), " . $column_label_string . "_DESCRIPTION = VALUES(" . $column_label_string . "_DESCRIPTION), " . $column_label_string . "_TIME = VALUES(" . $column_label_string . "_TIME), " . $column_label_string . "_STATUS = VALUES(" . $column_label_string . "_STATUS)";
       Log::debug('$stmt_string: ', $stmt_string);
   
-      $new_index = NULL;
+      $new_index = null;
       if (!is_null($unique_index)) $new_index = static::get_new_index($table_name_string);
   
-      static::$connection->autocommit(FALSE);
+      static::$connection->autocommit(false);
       static::$connection->begin_transaction();
-      $stmt = NULL;
+      $stmt = null;
       $stmt = static::$connection->prepare($stmt_string);
   
       if (!is_null($new_index) && $new_index > -1) $stmt->bind_param('sssss', $new_index, $hardware_id, $text_id, $address, $description);
@@ -189,8 +189,8 @@ class StaticRecordsSql extends RecordsSql
     $descriptions = array();
     $times = array();
   
-    $select_all = FALSE;
-    if ($duration === -9999) $select_all = TRUE;
+    $select_all = false;
+    if ($duration === -9999) $select_all = true;
   
     //$return_string = "";
   
