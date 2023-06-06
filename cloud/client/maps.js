@@ -525,6 +525,7 @@ function refreshDisplay()
     const course = Ais.COURSE_ARRAY[_idCounter];
     const heading = Ais.HEADING_ARRAY[_idCounter];
     const content = Ais.TEXT_ARRAY[_idCounter];
+    const status = Ais.STATUS_ARRAY[_idCounter];
     const age = currentTimestamp - Ais.TIME_ARRAY[_idCounter];
 
     if (lat !== null && lon !== null && id !== Ais.OWN_USER_ID )
@@ -539,7 +540,8 @@ function refreshDisplay()
       let timeOpacity = (1200-(age-600))/1200 ;
       if (timeOpacity > 1) timeOpacity = 1;
       if (timeOpacity < 0) timeOpacity = 0;
-      if (timeOpacity > 0.1)
+      if (status >= 1) timeOpacity = 1;
+      if (timeOpacity > 0.1) 
       {
         marker.setOpacity(timeOpacity);
         marker.setRotationOrigin("center");
@@ -734,6 +736,7 @@ async function refreshData()
         const speed = GetSafe.byKey(aisJsonDict, "speed");
         const course = GetSafe.byKey(aisJsonDict, "course");
         const heading = GetSafe.byKey(aisJsonDict, "heading");
+        const device_status = GetSafe.byKey(aisJsonDict, "device_status");
 
         const idIndex = Ais.ID_ARRAY.indexOf(id);
 
@@ -752,6 +755,7 @@ async function refreshData()
           Ais.HEADING_ARRAY.push( course );
           Ais.TEXT_ARRAY.push( aisJsonString );
           Ais.TIME_ARRAY.push( time ) ;
+          Ais.STATUS_ARRAY.push( device_status ) ;
         }
         else
         {
@@ -767,6 +771,7 @@ async function refreshData()
           if (heading !== null) Ais.HEADING_ARRAY[idIndex] = heading;
           Ais.TEXT_ARRAY[idIndex] = aisJsonString;
           Ais.TIME_ARRAY[idIndex] = time;
+          if (device_status !== null) Ais.STATUS_ARRAY[idIndex] = device_status;
         }
       //}
       //catch(e)
