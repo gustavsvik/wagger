@@ -112,7 +112,7 @@ class StaticRecordsSql extends RecordsSql
   }
 
 
-  public static function update_static_by_index(string|null $table_label = null, int|null $unique_index = null, string|null $hardware_id = null, string|null $text_id = null, string|null $address = null, string|null $description = null, int|null $time = null, Status|null $status = STATUS::FULFILLED) : int|null
+  public static function update_static_by_index(string|null $table_label = null, int|null $unique_index = null, string|null $hardware_id = null, string|null $text_id = null, string|null $address = null, string|null $description = null, int|null $time = null, Status $status = STATUS::FULFILLED) : int|null
   {
     Log::debug('$unique_index: ', $unique_index, '$hardware_id: ', $hardware_id, '$text_id: ', $text_id, '$address: ', $address, '$description: ', $description );
     $table_name_string = "t_" . strtolower(strval($table_label)) ;
@@ -175,7 +175,7 @@ class StaticRecordsSql extends RecordsSql
   }
   
   
-  public static function get_static_by_time_interval_status(string $table_label, int $start_time = -9999, int $duration = -9999, int $unit = 1, int $end_time = -9999, Status $lowest_status = Status::FULFILLED, Status $highest_status = Status::STORED)
+  public static function get_static_by_time_interval_status(string $table_label, int $start_time = -9999, int $duration = -9999, int $unit = 1, int $end_time = -9999, Status|null $lowest_status = Status::FULFILLED, Status $highest_status = Status::STORED, Status|null $persistent_status = null)
   {
     //Log::debug('$start_time: ', $start_time);
     //Log::debug('$duration: ', $duration);
@@ -191,6 +191,7 @@ class StaticRecordsSql extends RecordsSql
     $addresses = array();
     $descriptions = array();
     $times = array();
+    $statuses = array();
   
     $select_all = false;
     if ($duration === -9999) $select_all = true;
@@ -211,10 +212,10 @@ class StaticRecordsSql extends RecordsSql
     //Log::debug('$start_time: ', $start_time);
     //Log::debug('$end_time: ', $end_time);
   
-    $dummy_channel_string = "1";
-    $dummy_channel = intval($dummy_channel_string);
+    //$dummy_channel_string = "1";
+    //$dummy_channel = intval($dummy_channel_string);
   
-    $sql_get_all_available_values = "SELECT T." . $column_label_string . "_UNIQUE_INDEX, T." . $column_label_string . "_HARDWARE_ID, T." . $column_label_string . "_TEXT_ID, T." . $column_label_string . "_ADDRESS, T." . $column_label_string . "_DESCRIPTION, T." . $column_label_string . "_TIME FROM " . $table_name_string . " T";
+    $sql_get_all_available_values = "SELECT T." . $column_label_string . "_UNIQUE_INDEX, T." . $column_label_string . "_HARDWARE_ID, T." . $column_label_string . "_TEXT_ID, T." . $column_label_string . "_ADDRESS, T." . $column_label_string . "_DESCRIPTION, T." . $column_label_string . "_TIME, T." . $column_label_string . "_STATUS FROM " . $table_name_string . " T";
     $sql_get_records = $sql_get_all_available_values ;
     if (!$select_all) $sql_get_records .= " WHERE T." . $column_label_string . "_TIME BETWEEN " . strval($start_time) . " AND ". strval($end_time);
     $sql_get_records .= " AND T." . $column_label_string . "_STATUS >= " . $lowest_status->str() . " AND T." . $column_label_string . "_STATUS < " . $highest_status->str() . " ORDER BY T." . $column_label_string . "_TIME DESC";
@@ -227,6 +228,14 @@ class StaticRecordsSql extends RecordsSql
       Log::debug('$sql_get_stored_archived_values: ', $sql_get_stored_archived_values);
       $records = static::$connection->query($sql_get_stored_archived_values);
     }
+    $persistent_records = null;
+    if (!is_null($persistent_status))
+    {
+      $sql_get_persistent_values = $sql_get_all_available_values . " WHERE T." . $column_label_string . "_STATUS >= " . $persistent_status->str() . " ORDER BY T." . $column_label_string . "_TIME DESC";
+      Log::debug('$sql_get_persistent_values: ', $sql_get_persistent_values);
+      $persistent_records = static::$connection->query($sql_get_persistent_values);
+    }
+
     if (is_object($records) && $records->num_rows > 0)
     {
       while ($record = $records->fetch_array(MYSQLI_NUM))
@@ -237,9 +246,24 @@ class StaticRecordsSql extends RecordsSql
         if (!is_null($record[3])) $addresses[] = $record[3];
         if (!is_null($record[4])) $descriptions[] = $record[4];
         if (!is_null($record[5])) $times[] = $record[5];
+        if (!is_null($record[6])) $statuses[] = $record[6];
       }
     }
-    return array("unique_indices" => $unique_indices, "hardware_ids" => $hardware_ids, "text_ids" => $text_ids, "addresses" => $addresses, "descriptions" => $descriptions, "times" => $times);
+    if (is_object($persistent_records) && $persistent_records->num_rows > 0)
+    {
+      while ($record = $persistent_records->fetch_array(MYSQLI_NUM))
+      {
+        if (!is_null($record[0])) $unique_indices[] = $record[0];
+        if (!is_null($record[1])) $hardware_ids[] = $record[1];
+        if (!is_null($record[2])) $text_ids[] = $record[2];
+        if (!is_null($record[3])) $addresses[] = $record[3];
+        if (!is_null($record[4])) $descriptions[] = $record[4];
+        if (!is_null($record[5])) $times[] = $record[5]; //time();
+        if (!is_null($record[6])) $statuses[] = $record[6];
+      }
+    }
+
+    return array("unique_indices" => $unique_indices, "hardware_ids" => $hardware_ids, "text_ids" => $text_ids, "addresses" => $addresses, "descriptions" => $descriptions, "times" => $times, "statuses" => $statuses);
   }
 
 
