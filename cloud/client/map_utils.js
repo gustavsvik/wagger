@@ -39,7 +39,7 @@ class FixedMarker extends L.Marker
   constructor( pos = [0.0, 0.0], { iconUrl = 'icons/leaflet/building_symbol.png', iconSize = [32,32], iconAnchor = [16,16] } = {} ) //iconUrl = 'icons/leaflet/building_symbol.png')
   {
     const symbol = new DefaultIcon({iconUrl: iconUrl, iconSize: iconSize, iconAnchor: iconAnchor});
-	super(pos, {icon: symbol});
+	  super(pos, {icon: symbol});
 
     this.setOpacity( 1.0 );
     this.setRotationOrigin("center");
@@ -54,7 +54,7 @@ class InfoMarker extends FixedMarker
 
   constructor( pos = [0.0, 0.0], { iconUrl = 'icons/leaflet/building_symbol.png', iconSize = [32,32], iconAnchor = [16,16] } = {}, { imageUrl = "", htmlLabel = "", linkUrl = "" } = {} ) //iconUrl = 'icons/leaflet/building_symbol.png')
   {
-	super( pos, { iconUrl: iconUrl, iconSize: iconSize, iconAnchor: iconAnchor } )
+	  super( pos, { iconUrl: iconUrl, iconSize: iconSize, iconAnchor: iconAnchor } )
 
     this.#htmlString = '<div style="font-size:10px;line-height:100%;">';
     this.#htmlString += htmlLabel;
@@ -75,17 +75,18 @@ class InfoMarker extends FixedMarker
   }
 
 }
-/*
+
+
 class MobileMarker extends FixedMarker
 {
   constructor(pos = [0.0, 0.0], iconUrl = 'icons/leaflet/land_vehicle_symbol.png')
   {
-	super(pos, {icon: symbol});
+	  super(pos, {iconUrl: iconUrl});
   }
 
   setPosition() {}
 }
-*/
+
 
 class WindBarbs //extends (L.Marker) FixedMarker? MobileMarker? Fartyg t ex?
 {
@@ -211,8 +212,10 @@ class AisData
     this.WAVE_HEIGHT_ARRAY = [];
     this.SPEED_ARRAY = [];
     this.COURSE_ARRAY = [];
+    this.HEADING_ARRAY = [];
     this.TEXT_ARRAY = [];
     this.TIME_ARRAY = [];
+    this.STATUS_ARRAY = [];
   }
 
 
@@ -611,6 +614,17 @@ else if (Ais.OWN_LOCATION_POS.length === 2)
   ElementProps.set( this.shareButton.style, { "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } );
 }
 */
+/*
+  self.geolocationAvailable = false ;
+  if('geolocation' in navigator)
+  {
+    self.geolocationAvailable = true;
+  }
+  else
+  {
+    self.ownPositionAvailable = false ;
+  }
+*/
   }
 
   getId()
@@ -733,6 +747,13 @@ else if (Ais.OWN_LOCATION_POS.length === 2)
 
     function submitData()
     {
+      /*
+      if (self.geolocationAvailable)
+      {
+        const geolocationOptions = { enableHighAccuracy: true, maximumAge: 30000, timeout: 27000 };
+        navigator.geolocation.watchPosition(handleGeolocationSuccess, handleGeolocationError, geolocationOptions);
+      }
+      */
       //Are these really necessary? No setting in this dialog can disable positioning.
       if (!idIsAvailable) self.shareButton.innerText = idNotAvailablePreambleText;
       ElementProps.set( self.shareButton.style, { "color": ElementProps.rgbaLiteral([0,0,0,255]), "backgroundColor": ElementProps.rgbaLiteral([127,127,127,63]) } );
