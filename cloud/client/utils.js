@@ -29,7 +29,7 @@ class HttpData
     try
     {
       data = await response.json();
-      console.log(data);
+      //console.log(data);
     }
     catch(e)
     {
@@ -214,10 +214,11 @@ class Disp
       if (_fields.length > 1)
       {
         _indexString = _fields[1];
-        if (_fields.length > 2)
+        if (_fields.length > 2 && _fields[2] !== "")
           _keyString = _fields[2];
       }
     }
+    if (_keyString === null) _keyString = "";
     return [_tagString, _indexString, _keyString];
   }
 
@@ -233,7 +234,7 @@ class Disp
       if (elementIds.length > 1)
       {
         _indexString = elementIds[1];
-        if (elementIds.length > 2)
+        if (elementIds.length > 2 && elementIds[2] !== null)
           _keyString = elementIds[2];
       }
     }
@@ -405,7 +406,7 @@ class App
     this.CLIENT_URL = window.location.protocol + "//" + this.BROWSER_URL  + "/client/";
     this.FILES_DIR = "images/";
     this.FILES_URL = this.CLIENT_URL + this.FILES_DIR;
-    this.WAIT_MESSAGE = "Retrieving data...";
+    this.WAIT_MESSAGE = "Requesting...";
     this.last_get = 5;
     this.last_request = 0;
     this.last_time_sync = 0;
