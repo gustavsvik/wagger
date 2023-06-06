@@ -13,15 +13,37 @@ class GetSafe
 
   static json(json_string)
   {
+
+    function reviver( key, value )
+    {
+      if ( value === '***NaN***' )
+      {
+        return NaN;
+      }
+      if ( value === '***Infinity***' )
+      {
+        return Infinity;
+      }
+      if ( value === '***-Infinity***' )
+      {
+        return -Infinity;
+      }
+      return value;
+    }
+
+    const tmp_string = json_string.replace( /(NaN|-?Infinity)/g, '***$1***' );
     let json = null;
     try
     {
-      json = JSON.parse(json_string);
+      json = JSON5.parse(json_string);
+      //json = JSON.parse(tmp_string, reviver);
     }
     catch(e)
     {
+      console.log(e);
     }
     return json;
+
   }
 
 
@@ -257,13 +279,16 @@ class Help
 
   static rounded_string(value, display_length)
   {
-    if (value === 0.0) value += Number.EPSILON ;
-    const decades = Math.floor( Math.log10( Math.abs(value) ) ) ;
+    let float_value = parseFloat(value) ;
+    if (float_value === 0.0) float_value += Number.EPSILON ;
+    const decades = Math.floor( Math.log10( Math.abs(float_value) ) ) ;
     let decimal_places = 0;
+    let prefixLength = 2;
+    if (float_value < 0.0) prefixLength = 3
     decimal_places = display_length - Math.abs(decades) - 2 ;
     if (decades < 0) decimal_places += 1 ;
     if (decimal_places < 0) decimal_places = 0 ;
-    const rounded_value_string = value.toFixed(decimal_places);
+    const rounded_value_string = float_value.toFixed(decimal_places);
     return rounded_value_string;
   }
 
