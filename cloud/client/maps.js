@@ -562,7 +562,10 @@ function refreshDisplay()
         if ( type !== null) type = parseInt(type);
 
         let htmlString = '<div style="font-size:10px;line-height:100%;">';
-        htmlString += (age/60).toString().substring(0,3) + ' min. ago' + '<br>';
+        let age_string = "";
+        if (age <= 60*60) age_string = (age/60).toString().substring(0,3) + ' min. ago';
+        else age_string = (age/60/60).toString().substring(0,3) + ' h ago';
+        htmlString += age_string + '<br>';
 
         if (type === 8)
         {
@@ -657,7 +660,10 @@ function refreshDisplay()
       marker_2.setRadius(4 - 4 * age/900);
       let id_label = id;
       if (id_label === "99999") id_label = "Anonymous";
-      let htmlString = '<div style="font-size:10px;line-height:100%;">' + (age/60).toString().substring(0,3)  + ' min. ago' + '<br>' + 'ID: ' + id_label.toString() + '<br>' + 'Lat: ' + lat.toString().substring(0,8) + '<br>' + 'Lon: ' + lon.toString().substring(0,8) + '</div>'; // + ' m.'
+      let age_string = "";
+      if (age <= 60*60) age_string = (age/60).toString().substring(0,3) + ' min. ago';
+      else age_string = (age/60/60).toString().substring(0,3) + ' h ago';
+      let htmlString = '<div style="font-size:10px;line-height:100%;">' + age_string + '<br>' + 'ID: ' + id_label.toString() + '<br>' + 'Lat: ' + lat.toString().substring(0,8) + '<br>' + 'Lon: ' + lon.toString().substring(0,8) + '</div>'; // + ' m.'
       if (!isTouchDevice) marker_2.bindTooltip(htmlString);
       else marker_2.bindPopup(htmlString, {closeOnClick: true, autoClose: false});
 
