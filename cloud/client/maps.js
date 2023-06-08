@@ -10,7 +10,7 @@ document.body.clientHeight;
 
 let Ais = new AisData();
 
-let chart = new ChartContainer({center: [62.827, 17.875], zoom: 14, attribution: false}); //L.Map( 'map', {attributionControl: false} ).setView(center, 12);
+let chart = new ChartContainer({center: [58.72734,11.22460], zoom: 10, attribution: false}); //L.Map( 'map', {attributionControl: false} ).setView(center, 12); 62.827, 17.875
 let map = chart.map;
 
 Ais.OWN_ZOOM_LEVEL = 14;
@@ -133,6 +133,11 @@ const shoreMarker03 = new InfoMarker([62.8311, 17.873], {iconUrl: 'icons/leaflet
 chart.add(shoreMarker03);
 if (!isTouchDevice) shoreMarker03.usePopup();
 else shoreMarker03.usePopup();
+
+const shoreMarker04 = new InfoMarker([58.72734,11.22460], {iconUrl: 'icons/leaflet/shore_04_symbol.png', iconSize: [30,30], iconAnchor: [16,15] }, { imageUrl: "images/leaflet/shore_04_image.png", htmlLabel: "Havstens fiskelag" }) ;
+chart.add(shoreMarker04);
+if (!isTouchDevice) shoreMarker04.usePopup();
+else shoreMarker04.usePopup();
 
 let idButtonText = 'Share position with Test Site Bothnia';
 if (!Ais.OWN_POSITION_AVAILABLE) idButtonText = 'No own position to share';
@@ -649,25 +654,51 @@ function refreshDisplay()
     const lat = Ais.ALL_POS_ARRAY[_posCounter][1];
     const lon = Ais.ALL_POS_ARRAY[_posCounter][0];
     const id = Ais.ALL_ID_ARRAY[_posCounter];
+    const channel = Ais.ALL_CHANNEL_ARRAY[_posCounter];
     //console.log("mmsi", mmsi);
     const age = currentTimestamp - parseInt(Ais.ALL_TIME_ARRAY[_posCounter]);
     if (lat !== null && lon !== null)
     {
       // && parseFloat(id) > 0.0 let marker_2 = new TransparentLabelMarker([ lat, lon ], {label: id.toString().substring(0,4)});
 
-      let marker_2 = L.circleMarker([ lat, lon ], {opacity: 0.5, color: "#00c600"});
-      if (id === "99999") marker_2 = L.circleMarker([ lat, lon ], {opacity: 0.5, color: "#ff0000"});
-      marker_2.setRadius(4 - 4 * age/900);
-      let id_label = id;
-      if (id_label === "99999") id_label = "Anonymous";
+      let marker_2 = null;
+      let htmlString = "";
       let age_string = "";
       if (age <= 60*60) age_string = (age/60).toString().substring(0,3) + ' min. ago';
       else age_string = (age/60/60).toString().substring(0,3) + ' h ago';
-      let htmlString = '<div style="font-size:10px;line-height:100%;">' + age_string + '<br>' + 'ID: ' + id_label.toString() + '<br>' + 'Lat: ' + lat.toString().substring(0,8) + '<br>' + 'Lon: ' + lon.toString().substring(0,8) + '</div>'; // + ' m.'
-      if (!isTouchDevice) marker_2.bindTooltip(htmlString);
-      else marker_2.bindPopup(htmlString, {closeOnClick: true, autoClose: false});
+      htmlString += '<div style="font-size:10px;line-height:100%;">' + age_string ;
 
-      markersLayer.addLayer(marker_2);
+      if (channel === 154)
+      {
+        let wave_height = parseFloat(id);
+        if (wave_height > 0.0)
+        {
+          let hue = (1.0 - wave_height)*240;
+          if (hue < 0.0) hue = 0.0;
+          let hex_color_string = Help.hslToHex(hue, 100, 50);
+          marker_2 = L.circleMarker([ lat, lon ], {weight: 0, opacity: 0.01, color: hex_color_string});
+          marker_2.setRadius(10);
+          htmlString += '<br>' + 'Wave height: ' + id.toString().substring(0,4) + ' m.';
+        }
+      }
+      else
+      {
+        marker_2 = L.circleMarker([ lat, lon ], {opacity: 0.5, color: "#00c600"});
+        if (id === "99999") marker_2 = L.circleMarker([ lat, lon ], {opacity: 0.5, color: "#ff0000"});
+        marker_2.setRadius(4 - 4 * age/900);
+        let id_label = id;
+        if (id_label === "99999") id_label = "Anonymous";  
+        htmlString += '<br>' + 'ID: ' + id_label.toString() ; // + ' m.'
+      }
+      htmlString += '<br>' + 'Lat: ' + lat.toString().substring(0,8) + '<br>' + 'Lon: ' + lon.toString().substring(0,8) + '</div>'
+
+
+      if (marker_2 !== null) 
+      {
+        if (!isTouchDevice) marker_2.bindTooltip(htmlString);
+        else marker_2.bindPopup(htmlString, {closeOnClick: true, autoClose: false});
+        markersLayer.addLayer(marker_2);
+      }
     }
   }
 }
@@ -847,6 +878,7 @@ async function refreshData()
   {
     const positionDataArray = Transform.delimitedStringToArrays(positionStringArray[_positionDataCounter]);
     //console.log("positionDataArray", positionDataArray);
+    let positionDataChannel = positionDataArray[1][0][0];
     let positionDataStringArray = [];
     if (positionDataArray[2].length > 0) positionDataStringArray = positionDataArray[2][0];
     let positionTimestampArray = [];
@@ -876,6 +908,7 @@ async function refreshData()
             }
             const positionTime = parseInt(positionTimestampArray[_positionStringCounter]);
             Ais.ALL_TIME_ARRAY.push( positionTime ) ;
+            Ais.ALL_CHANNEL_ARRAY.push( positionDataChannel );
           }
         }
       }
