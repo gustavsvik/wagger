@@ -201,6 +201,7 @@ class AisData
     this.ALL_POS_ARRAY = [];
     this.ALL_TIME_ARRAY = [];
     this.ALL_MMSI_ARRAY = [];
+    this.ALL_CHANNEL_ARRAY = [];
     this.ID_ARRAY = [];
     this.POS_ARRAY = [];
     this.MMSI_ARRAY = [];
