@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 
+include_once("Log.php");
 include_once("CheckIf.php");
 
 
@@ -37,12 +38,13 @@ class Transform
   }
 
 
-  public static function array_from_channel_string(string $channel_string) : array
+  public static function array_from_channel_string(string $channels_string) : array
   {
     $channel_array = [];
-    $channel_string_array = explode(";", $channel_string);
+    $channel_string_array = explode(";", $channels_string);
     foreach($channel_string_array as $channel_string)
     {
+      Log::debug('$channel_string: ', $channel_string);
       if (is_numeric($channel_string)) $channel_array[] = intval($channel_string);
     }
     return $channel_array;
