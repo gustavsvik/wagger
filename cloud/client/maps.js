@@ -10,7 +10,7 @@ document.body.clientHeight;
 
 let Ais = new AisData();
 
-let chart = new ChartContainer({center: [58.72734,11.22460], zoom: 10, attribution: false}); //L.Map( 'map', {attributionControl: false} ).setView(center, 12); 62.827, 17.875
+let chart = new ChartContainer({center: [58.72734,11.22460], zoom: 9, attribution: false}); //L.Map( 'map', {attributionControl: false} ).setView(center, 12); 62.827, 17.875
 let map = chart.map;
 
 Ais.OWN_ZOOM_LEVEL = 14;
@@ -91,6 +91,11 @@ const ownPositionUrl = 'https://' + window.location.hostname + '/client/get_own_
 const updateStaticUrl = 'https://' + window.location.hostname + '/client/update_static_data_client.php'
 const sendRequestUrl = 'https://' + window.location.hostname + '/client/send_request.php';
 const setRequestedUrl = 'https://' + window.location.hostname + '/host/set_requested.php';
+
+let lastSlowFetchTimestamp = 0;
+let lastLargeSizeFetchTimestamp = 0;
+
+let positionStringArray = [];
 
 //const noIcon = new TransparentDivIcon( { html: "Example" } );
 //let noMarker = new TransparentLabelMarker([0.7800052024755708, -12.135975261193327], {label: '1.2'});
@@ -568,8 +573,10 @@ function refreshDisplay()
 
         let htmlString = '<div style="font-size:10px;line-height:100%;">';
         let age_string = "";
-        if (age <= 60*60) age_string = (age/60).toString().substring(0,3) + ' min. ago';
-        else age_string = (age/60/60).toString().substring(0,3) + ' h ago';
+        if (Math.abs(age) <= 60*60) age_string = (Math.abs(age)/60).toString().substring(0,3) + ' min. ';
+        else age_string = (Math.abs(age)/60/60).toString().substring(0,3) + ' h ';
+        if (age < 0.0) age_string += 'ahead';
+        else age_string += 'ago'
         htmlString += age_string + '<br>';
 
         if (type === 8)
@@ -655,31 +662,39 @@ function refreshDisplay()
     const lon = Ais.ALL_POS_ARRAY[_posCounter][0];
     const id = Ais.ALL_ID_ARRAY[_posCounter];
     const channel = Ais.ALL_CHANNEL_ARRAY[_posCounter];
-    //console.log("mmsi", mmsi);
     const age = currentTimestamp - parseInt(Ais.ALL_TIME_ARRAY[_posCounter]);
     if (lat !== null && lon !== null)
     {
       // && parseFloat(id) > 0.0 let marker_2 = new TransparentLabelMarker([ lat, lon ], {label: id.toString().substring(0,4)});
 
       let marker_2 = null;
-      let htmlString = "";
+
+      let htmlString = '<div style="font-size:10px;line-height:100%;">';
       let age_string = "";
-      if (age <= 60*60) age_string = (age/60).toString().substring(0,3) + ' min. ago';
-      else age_string = (age/60/60).toString().substring(0,3) + ' h ago';
-      htmlString += '<div style="font-size:10px;line-height:100%;">' + age_string ;
+      if (Math.abs(age) <= 60*60) age_string = (Math.abs(age)/60).toString().substring(0,3) + ' min. ';
+      else age_string = (Math.abs(age)/60/60).toString().substring(0,3) + ' h ';
+      if (age < 0.0) age_string += 'ahead';
+      else age_string += 'ago'
+      htmlString += age_string; // + '<br>';
 
       if (channel === 154)
       {
         let wave_height = parseFloat(id);
         if (wave_height > 0.0)
         {
-          let hue = (1.0 - wave_height)*240;
+          let hue = (1.0 - wave_height*1.0)*240;
           if (hue < 0.0) hue = 0.0;
           let hex_color_string = Help.hslToHex(hue, 100, 50);
-          marker_2 = L.circleMarker([ lat, lon ], {weight: 0, opacity: 0.01, color: hex_color_string});
-          marker_2.setRadius(10);
+          marker_2 = L.circleMarker([ lat, lon ], {radius: 10, stroke: true, weight: 0, color: hex_color_string, opacity: 0.5, fill: true, fillColor: hex_color_string, fillOpacity: 0.2});
+          //marker_2.setRadius(10);
           htmlString += '<br>' + 'Wave height: ' + id.toString().substring(0,4) + ' m.';
         }
+      }
+      else if (channel === 21458 || channel === 21462)
+      {
+        marker_2 = L.circleMarker([ lat, lon ], {opacity: 0.5, color: "#00c600"});
+        marker_2.setRadius(4 - 4 * age/7200);
+        htmlString += '<br>' + 'ID: ' + id.toString() ;
       }
       else
       {
@@ -688,7 +703,7 @@ function refreshDisplay()
         marker_2.setRadius(4 - 4 * age/900);
         let id_label = id;
         if (id_label === "99999") id_label = "Anonymous";  
-        htmlString += '<br>' + 'ID: ' + id_label.toString() ; // + ' m.'
+        htmlString += '<br>' + 'ID: ' + id_label.toString() ;
       }
       htmlString += '<br>' + 'Lat: ' + lat.toString().substring(0,8) + '<br>' + 'Lon: ' + lon.toString().substring(0,8) + '</div>'
 
@@ -817,14 +832,13 @@ async function refreshData()
     }
   }
 
-  let positionStringArray = []
 
   if ( Ais.GET_ALL_AND_IMAGES )
   {
     let positionResponse = null;
     try
     {
-      positionResponse = await fetch(positionUrl, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '148;154;', 'duration': '900'}) });
+      positionResponse = await fetch(positionUrl, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '148;', 'duration': '900'}) });
     }
     catch(e)
     {
@@ -839,7 +853,59 @@ async function refreshData()
     {
       console.error(e);
     }
-    positionStringArray[0] = positionData
+    positionStringArray[0] = positionData;
+    //console.log("positionData", positionData);
+
+    if (parseInt((new Date().valueOf()) / 1000) > lastSlowFetchTimestamp + 60)
+    {
+    lastSlowFetchTimestamp = parseInt((new Date().valueOf()) / 1000);
+    let slowPositionResponse = null;
+    try
+    {
+      slowPositionResponse = await fetch(positionUrl, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '21458;21462;', 'duration': '7200'}) });
+    }
+    catch(e)
+    {
+      console.error(e);
+    }
+    let slowPositionData = "";
+    try
+    {
+      slowPositionData = await slowPositionResponse.json();
+    }
+    catch(e)
+    {
+      console.error(e);
+    }
+    positionStringArray[2] = slowPositionData;
+    }
+
+    if (parseInt((new Date().valueOf()) / 1000) > lastLargeSizeFetchTimestamp + 60)
+    {
+    lastLargeSizeFetchTimestamp = parseInt((new Date().valueOf()) / 1000);
+    let forecastStartString = lastLargeSizeFetchTimestamp.toString();
+    let forecastEndString = (lastLargeSizeFetchTimestamp + 5400).toString();
+    let largeSizePositionResponse = null;
+    try
+    {
+      largeSizePositionResponse = await fetch(positionUrl, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '154;', 'start_time': forecastStartString, 'end_time': forecastEndString}) });
+    }
+    catch(e)
+    {
+      console.error(e);
+    }
+    let largeSizePositionData = "";
+    try
+    {
+      largeSizePositionData = await largeSizePositionResponse.json();
+    }
+    catch(e)
+    {
+      console.error(e);
+    }
+    positionStringArray[3] = largeSizePositionData;
+    }
+
   }
 
   const ownPositionResponse = await fetch( ownPositionUrl, { method: 'POST', headers: { 'Accept': 'application/json, text/plain, */*', 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8' }, body: new URLSearchParams({'channels': '99999;', 'duration': '300'}) } );
@@ -870,51 +936,53 @@ async function refreshData()
   Ais.ALL_POS_ARRAY = [];
   Ais.ALL_TIME_ARRAY = [];
   Ais.ALL_ID_ARRAY = [];
+  Ais.ALL_CHANNEL_ARRAY = [];
 
   if ( Ais.GET_ALL_AND_IMAGES )
   {
 
-  for (let _positionDataCounter = 0; _positionDataCounter < positionStringArray.length; _positionDataCounter++)
-  {
-    const positionDataArray = Transform.delimitedStringToArrays(positionStringArray[_positionDataCounter]);
-    //console.log("positionDataArray", positionDataArray);
-    let positionDataChannel = positionDataArray[1][0][0];
-    let positionDataStringArray = [];
-    if (positionDataArray[2].length > 0) positionDataStringArray = positionDataArray[2][0];
-    let positionTimestampArray = [];
-    if (positionDataArray[0].length > 0) positionTimestampArray = positionDataArray[0][0];
-
-    for (let _positionStringCounter = 0; _positionStringCounter < positionDataStringArray.length; _positionStringCounter++)
+    for (let _positionDataCounter = 0; _positionDataCounter < positionStringArray.length; _positionDataCounter++)
     {
-      let positionString = positionDataStringArray[_positionStringCounter];
+      console.log("positionStringArray[_positionDataCounter]", positionStringArray[_positionDataCounter]);
+      const positionDataArray = Transform.delimitedStringToArrays(positionStringArray[_positionDataCounter]);
+      console.log("positionDataArray", positionDataArray);
+      let noOfChannels = positionDataArray[1].length;
 
-      if (positionString.length > 0)
+      for (let _noOfChannelsCounter = 0; _noOfChannelsCounter < noOfChannels; _noOfChannelsCounter++)
       {
-        //const regexComma = /\|/g;
-        //const regexSemicolon = /\~/g;
-        //const positionJsonString = positionString.replace(regexSemicolon, ";").replace(regexComma, ",");
-        const positionJsonString = Transform.fromArmoredString(positionString);
+        let positionDataChannel = positionDataArray[1][_noOfChannelsCounter][0];
+        let positionDataStringArray = [];
+        if (positionDataArray[2].length > 0) positionDataStringArray = positionDataArray[2][_noOfChannelsCounter];
+        let positionTimestampArray = [];
+        if (positionDataArray[0].length > 0) positionTimestampArray = positionDataArray[0][_noOfChannelsCounter];
 
-        const positionJson = GetSafe.json(positionJsonString); //[0];
-        if (positionJson !== null)
+        for (let _positionStringCounter = 0; _positionStringCounter < positionDataStringArray.length; _positionStringCounter++)
         {
-          for (let _positionJsonCounter = 0; _positionJsonCounter < positionJson.length; _positionJsonCounter++)
+          let positionString = positionDataStringArray[_positionStringCounter];
+
+          if (positionString.length > 0)
           {
-            const type = GetSafe.byKey(positionJson[_positionJsonCounter], "type");
-            if ( [1,2,3,18,9].includes(parseInt(type)) )
+            const positionJsonString = Transform.fromArmoredString(positionString);
+            const positionJson = GetSafe.json(positionJsonString); //[0];
+            if (positionJson !== null)
             {
-              Ais.ALL_POS_ARRAY.push( [ GetSafe.byKey(positionJson[_positionJsonCounter], "lon"), GetSafe.byKey(positionJson[_positionJsonCounter], "lat") ] ) ;
-              Ais.ALL_ID_ARRAY.push( GetSafe.byKey(positionJson[_positionJsonCounter], "mmsi") );
+              for (let _positionJsonCounter = 0; _positionJsonCounter < positionJson.length; _positionJsonCounter++)
+              {
+                const type = GetSafe.byKey(positionJson[_positionJsonCounter], "type");
+                if ( [1,2,3,18,9].includes(parseInt(type)) )
+                {
+                  Ais.ALL_POS_ARRAY.push( [ GetSafe.byKey(positionJson[_positionJsonCounter], "lon"), GetSafe.byKey(positionJson[_positionJsonCounter], "lat") ] ) ;
+                  Ais.ALL_ID_ARRAY.push( GetSafe.byKey(positionJson[_positionJsonCounter], "mmsi") );
+                }
+                const positionTime = parseInt(positionTimestampArray[_positionStringCounter]);
+                Ais.ALL_TIME_ARRAY.push( positionTime ) ;
+                Ais.ALL_CHANNEL_ARRAY.push( positionDataChannel );
+              }
             }
-            const positionTime = parseInt(positionTimestampArray[_positionStringCounter]);
-            Ais.ALL_TIME_ARRAY.push( positionTime ) ;
-            Ais.ALL_CHANNEL_ARRAY.push( positionDataChannel );
           }
         }
       }
     }
-  }
-
   }
 
   let ownPositionJsonString = JSON.stringify(Ais.OWN_LOCATION_COORDS);
@@ -970,7 +1038,7 @@ async function refreshAishubData()
 {
   if ( true ) //Ais.GET_ALL_AND_IMAGES
   {
-    httpData.post();
+    //httpData.post();
     //console.log(new Date());
   }
 }
