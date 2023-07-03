@@ -113,16 +113,24 @@ if ($data_end > 0)
           }
           else
           {
-            $stmt=$conn->prepare("INSERT INTO " . $ACQUIRED_DATA_TABLE_NAME . " (ACQUIRED_TIME,CHANNEL_INDEX,ACQUIRED_VALUE,STATUS) VALUES (?,?,?,-1)");
-            if ($stmt)
+            try
             {
-              $stmt->bind_param('iid',$point,$channel,$value);
-              if (!$stmt->execute())
+              $stmt=$conn->prepare("INSERT INTO " . $ACQUIRED_DATA_TABLE_NAME . " (ACQUIRED_TIME,CHANNEL_INDEX,ACQUIRED_VALUE,STATUS) VALUES (?,?,?,-1)");
+              if ($stmt)
               {
-                $conn->rollback();
-                die();
+                $stmt->bind_param('iid',$point,$channel,$value);
+                if (!$stmt->execute())
+                {
+                  $conn->rollback();
+                  die();
+                }
+                $stmt->close();
               }
-              $stmt->close();
+            }
+            catch (Exception $e)
+            {
+              if ($conn->errno === 1062) {} // No need for handling of duplicate entries
+              else error_log($e->getMessage());
             }
           }
         }
