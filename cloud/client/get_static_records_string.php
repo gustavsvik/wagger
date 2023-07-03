@@ -72,11 +72,14 @@ if ( $check_if::is_iterable($times) && $check_if::is_iterable($descriptions)) //
     if ($descriptions[$index])
     {
       $description_json = json_decode(preg_replace('.Infinity.', '"Infinity"', $descriptions[$index]), true);
-      $status_key = $web_api_table_label . "_status";
-      if (array_is_list($description_json)) $description_json[0][3][$status_key] = $statuses[$index];
-      else $description_json[$status_key] = $statuses[$index];
-      $description = json_encode($description_json);
-      $description_string = preg_replace('."Infinity".', 'Infinity', $description);
+      if ($description_json)
+      {
+        $status_key = $web_api_table_label . "_status";
+        if (array_is_list($description_json)) $description_json[0][3][$status_key] = $statuses[$index];
+        else $description_json[$status_key] = $statuses[$index];
+        $description = json_encode($description_json);
+        $description_string = preg_replace('."Infinity".', 'Infinity', $description);
+      }
     }
     Log::debug('$description_string', $description_string);
     if (strlen($description_string) > 0) $return_string .= $tr::armored_from_separated_string($description_string) ;
