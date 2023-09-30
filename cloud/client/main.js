@@ -192,7 +192,7 @@ function draw()
         }
         else if (!A.display_is_static) // display is not static
         {
-          _lag_text = "Out of date (>" + Disp.getTimeLagText(_view_lag) + "), ";
+          _lag_text = "Out of date (" + Disp.getTimeLagText(_view_lag) + "), ";
           _status_text = "requested new...";
           if (A.display_image_loading) _status_text = "loading image..." ;
         }
@@ -375,14 +375,14 @@ function populate_display_variables(timestamp_matrix, value_matrix)
           const _latestIndex = _channel_values.length - 1 ;
           let _latest_value = _channel_values[_latestIndex];
           const _channelKey = GetSafe.byKey(_channel, "key", "");
-          if (_channelKey !== null)
+          if (_channelKey !== null && _channelKey !== "")
           {
             const _channel_byte_strings = (value_matrix[_found_values_index])[2];
             const _byte_string_json = GetSafe.json( _channel_byte_strings[_latestIndex] );
             _latest_value = parseFloat( GetSafe.byKey(_byte_string_json[0][3], _channelKey) ) ;
           }
           _channel.val = _latest_value * _channel.scale;
-          if ( App.isValidNumber(_channel.val) ) _channel.str_val = Help.rounded_string(_channel.val * _channel.scale, _channel.disp.len) + " " + _channel.unit;
+          if ( App.isValidNumber(_channel.val) ) _channel.str_val = Help.rounded_string(_channel.val, _channel.disp.len) + " " + _channel.unit;
           //_channel.str_val = (_channel.val).toString().substring(0,_channel.disp.len)
           else _channel.str_val = A.WAIT_MESSAGE;
         }
@@ -626,10 +626,14 @@ function display_label(_element)
     {
       _label.style.visibility = "visible";
       let _channels = (D.data[A.display_index]).screens[0].channels;
-      let _chan_index = GetSafe.indexByAttrs(_channels, ["index", "key"], [parseInt(_index), _key] );
+      let _chan_index = null
+      if (_key !== null && _key !== "")
+        _chan_index = GetSafe.indexByAttrs(_channels, ["index", "key"], [parseInt(_index), _key] );
+      else
+        _chan_index = GetSafe.indexByAttrs(_channels, ["index"], [parseInt(_index)] );
       let _channel = _channels[_chan_index];
       let _value_unit_string = "";
-      if ( App.isValidNumber(_channel.val) ) _value_unit_string = Help.rounded_string(_channel.val * _channel.scale, _channel.disp.len) + " " + _channel.unit; //_channel.str_val = Help.rounded_string(_channel.val, _channel.disp.len) + " " + _channel.unit;
+      if ( App.isValidNumber(_channel.val) ) _value_unit_string = Help.rounded_string(_channel.val, _channel.disp.len) + " " + _channel.unit; //_channel.str_val = Help.rounded_string(_channel.val, _channel.disp.len) + " " + _channel.unit;
       else _channel.str_val = A.WAIT_MESSAGE;
       let _str_val = _value_unit_string + _channel.info;
       _label.innerHTML = _str_val;
@@ -662,14 +666,16 @@ function outside_label_listener()
     {
       let _label = Disp.getChannelElement (["label", _index, _key]);
       let _channels = (D.data[A.display_index]).screens[0].channels;
-      let _chan_index = GetSafe.indexByAttrs(_channels, ["index"], [parseInt(_index)] );
+      let _chan_index = null
+      if (_key !== null && _key !== "")
+        _chan_index = GetSafe.indexByAttrs(_channels, ["index", "key"], [parseInt(_index), _key] );
+      else
+        _chan_index = GetSafe.indexByAttrs(_channels, ["index"], [parseInt(_index)] );
       let _channel = _channels[_chan_index];
       let _value_unit_string = "";
       _value_unit_string = Help.rounded_string(_channel.val, _channel.disp.len) + " " + _channel.unit;  // .substring(0,12)
       let _str_val = _value_unit_string + ""; //_channel.info;
-      if (typeof _key !== "string")
-        _label.innerHTML = _str_val;
-
+      _label.innerHTML = _str_val; //if (typeof _key !== "string")
       _element.style.visibility = "hidden";
     }
 
@@ -702,7 +708,7 @@ function outside_label_listener()
         let _channel = _channels[_chan_index];
         let _value_unit_string = "";
         if ( _channel.str_val !== "" ) _value_unit_string = _channel.str_val;
-        else _value_unit_string = Help.rounded_string(_channel.val * _channel.scale, _channel.disp.len) + " " + _channel.unit;
+        else _value_unit_string = Help.rounded_string(_channel.val, _channel.disp.len) + " " + _channel.unit;
         // (_channel.val  *_channel.scale).toString().substring(0,_channel.disp.len)
         _label.innerHTML = _value_unit_string + Disp.htmlSpaces(0) + "<br>" + Disp.htmlSpaces(10) ;
       }
@@ -862,13 +868,16 @@ function display_select_listener()
       _time_active_label.appendChild(_time_active_label_text);
 
       _timebkg.title = "";
+
+      const _left_time = _time_disp.pos.x * A.display_img_scale + A.CANVAS_POS_X + A.canvas_shift_x - _time_disp.size/2 + 1 ;
+      const _top_time = _time_disp.pos.y * A.display_img_scale + A.CANVAS_POS_Y + A.canvas_shift_y - _time_disp.size + 1 ;
       Disp.setProperties( _timebkg.style,
       {
         width: (_time_disp.size * 14.3).toString() + "px",
         height: (_time_disp.size * 4.1 + 4).toString() + "px",
         position: "absolute",
-        left: (_time_disp.pos.x * A.display_img_scale + A.CANVAS_POS_X + A.canvas_shift_x - _time_disp.size/2 + 1).toString() + "px",
-        top: (_time_disp.pos.y * A.display_img_scale + A.CANVAS_POS_Y + A.canvas_shift_y - _time_disp.size + 1).toString() + "px",
+        left: _left_time.toString() + "px",
+        top: _top_time.toString() + "px",
         visibility: "hidden",
         fontSize: (parseInt(_time_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
         fontFamily: A.all_font_families,
@@ -877,11 +886,13 @@ function display_select_listener()
       } ) ;
 
       _time_active_label.title = "";
+      const _left_time_active_label = _time_disp.size * 0.33 ;
+      const _top_time_active_label = _time_disp.size * 0.34 ;
       Disp.setProperties( _time_active_label.style,
       {
         position: "absolute",
-        left: (_time_disp.size * 0.33).toString() + "px",
-        top: (_time_disp.size * 0.34).toString() + "px",
+        left: _left_time_active_label.toString() + "px",
+        top: _top_time_active_label.toString() + "px",
         visibility: "visible",
         fontSize: (parseInt(_time_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
         fontFamily: A.all_font_families,
@@ -904,6 +915,8 @@ function display_select_listener()
     let _no_of_channels = (_screen.channels).length;
     A.chan_index_string = "";
 
+    let _unique_channel_index_strings = [];
+
     for (let _i = 0; _i < _no_of_channels; _i++)
     {
       let _channel = _screen.channels[_i];
@@ -912,8 +925,12 @@ function display_select_listener()
       let _color = _disp.col;
 
       let _chan_index_string = (_channel.index).toString();
-      A.chan_index_string += _chan_index_string + ";";
 
+      if ( ! _unique_channel_index_strings.includes(_chan_index_string) )
+      {
+        A.chan_index_string += _chan_index_string + ";";
+        _unique_channel_index_strings.push(_chan_index_string);
+      }
       const _chanElemKey = (GetSafe.byKey(_channel, "key", "")).toString();
 
       let _chanbkg = document.createElement("DIV");
@@ -928,13 +945,15 @@ function display_select_listener()
 
       _chanbkg.title = "";
       //height: (_disp.size * 4.1 + 4).toString() + "px",
+      const _left_chanbkg = _disp.pos.x * A.display_img_scale + A.CANVAS_POS_X + A.canvas_shift_x - _disp.size/2 + 1 ;
+      const _top_chanbkg = _disp.pos.y * A.display_img_scale + A.CANVAS_POS_Y + A.canvas_shift_y - _disp.size + 1 ;
       Disp.setProperties( _chanbkg.style,
       {
         width: (_disp.size * 13.9).toString() + "px",
         height: (_disp.size * 2.8 + 3).toString() + "px",
         position: "absolute",
-        left: (_disp.pos.x * A.display_img_scale + A.CANVAS_POS_X + A.canvas_shift_x - _disp.size/2 + 1).toString() + "px",
-        top: (_disp.pos.y * A.display_img_scale + A.CANVAS_POS_Y + A.canvas_shift_y - _disp.size + 1).toString() + "px",
+        left: _left_chanbkg.toString() + "px",
+        top: _top_chanbkg.toString() + "px",
         visibility: "hidden",
         fontSize: (parseInt(_disp.size * A.display_img_scale)).toString() + "px",
         fontFamily: A.all_font_families,
@@ -943,11 +962,13 @@ function display_select_listener()
       } ) ;
 
       _active_label.title = "";
+      const _left_active_label = _disp.size * 0.33 ;
+      const _top_active_label = _disp.size * 0.34 ;
       Disp.setProperties( _active_label.style,
       {
         position: "absolute",
-        left: (_disp.size * 0.33).toString() + "px",
-        top: (_disp.size * 0.34).toString() + "px",
+        left: _left_active_label.toString() + "px",
+        top: _top_active_label.toString() + "px",
         visibility: "visible",
         fontSize: (parseInt(_disp.size * A.display_img_scale/A.display_img_scale)).toString() + "px",
         fontFamily: A.all_font_families,
