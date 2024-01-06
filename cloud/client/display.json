@@ -1,288 +1,324 @@
 {
 
-"disp_timeout": 900,
-"disp_viewport_size": {"w": 1067, "h": 600},
-"disp_override_font": {"filename": "arimo-regular.woff", "path": "/fonts/"},
-
-
-"displays":
-
-[
-
-  {
-    "title": "Select display",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs":
-        [
-          { "file": "0.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "time": null,
-        "channels": [],
-        "img_channels": [],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Water treatment plant (plan)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs":
-        [
-          { "file": "4.jpg", "dim": "source", "disp": {"h": 600, "pos": "center"} }
-        ],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 200} } },
-        "channels":
-        [
-          { "index": 97, "show": true, "label": "Makeup water conductivity", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e6, "unit": "\u03BCS", "disp": {"len": 5, "size": 12, "pos": {"x": 95, "y": 315}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 200}} }
-        ],
-        "img_channels": [],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "SCC camera mockup (live)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
-        "channels": [],
-        "img_channels":
-        [
-          { "index": 180, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Condensing turbine (view)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs":
-        [
-          { "file": "1.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
-        "channels":
-        [
-          { "index": 98, "show": true, "label": "Cooling water temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 5, "size": 16, "pos": {"x": 210, "y": 380}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
-        ],
-        "img_channels": [],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Thermal condition monitor 1 (live)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 20}, "col": {"r": 255, "g": 255, "b": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
-        "channels": [],
-        "img_channels":
-        [
-          { "index": 200, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 560, "pos": "center"} }
-        ],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Thermal condition monitor 2 (live)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 20}, "col": {"r": 255, "g": 255, "b": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
-        "channels": [],
-        "img_channels":
-        [
-          { "index": 220, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 560, "pos": "center"} }
-        ],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Weather station (view)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs":
-        [
-          { "file": "2.png", "dim": "source", "disp": {"h": 600, "pos": "center"} }
-        ],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
-        "channels":
-        [
-          { "index": 21, "show": true, "label": "Global insolation", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e-0, "unit": "W/m\u00B2", "disp": {"len": 5, "size": 16, "pos": { "x": 130, "y": 290 }, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} },
-          { "index": 23, "show": true, "label": "Ambient temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 2.0e-1, "unit": "\u00B0C", "disp": {"len": 4 , "size": 16, "pos": { "x": 245, "y": 375 }, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} },
-          { "index": 143, "show": true, "label": "Barometric pressure", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "hPa", "disp": {"len": 7, "size": 16, "pos": {"x": 360, "y": 240}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
-        ],
-        "img_channels": [],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Test supervision display (live)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 10, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 127, "g": 127, "b": 127, "a": 127} } },
-        "channels": [],
-        "img_channels":
-        [
-          { "index": 601, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Duty watch station camera (live)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
-        "channels": [],
-        "img_channels":
-        [
-          { "index": 140, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Navigation display (live)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 10, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 127, "g": 127, "b": 127, "a": 127} } },
-        "channels": [],
-        "img_channels":
-        [
-          { "index": 602, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "ctrl_channels":
-        [
-          { "index": 174, "show": true, "lock": true, "type": "", "label": "Autopilot operation", "str_val": "Manual", "val": 0.0, "min_str_val": "Manual<br><br>Autopilot operation", "min_val": 0.0, "max_str_val": "Auto", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br>blah", "disp": {"len": 5, "size": 14, "pos": {"x": 10, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 175, "show": true, "lock": true, "type": "", "label": "Course setpoint", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": -180.0, "max_str_val": "", "max_val": 180.0, "val_step": 5.0, "scale": 1.0, "unit": "\u00B0<br><br>Course setpoint", "disp": {"len": 3, "size": 14, "pos": {"x": 170, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 176, "show": true, "lock": true, "type": "", "label": "Controller P value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller P value", "disp": {"len": 3, "size": 14, "pos": {"x": 320, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 177, "show": true, "lock": true, "type": "", "label": "Controller I value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller I value", "disp": {"len": 3, "size": 14, "pos": {"x": 470, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 178, "show": true, "lock": true, "type": "", "label": "Controller D value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller D value", "disp": {"len": 3, "size": 14, "pos": {"x": 620, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} }
-        ]
-      }
-    ]
-  },
-  {
-    "title": "Main magnetic compass camera (live)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
-        "channels": [],
-        "img_channels":
-        [
-          { "index": 160, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "ctrl_channels":
-        [
-          { "index": 174, "show": true, "lock": true, "type": "", "label": "Autopilot operation", "str_val": "Manual", "val": 0.0, "min_str_val": "Manual<br><br>Autopilot operation", "min_val": 0.0, "max_str_val": "Auto", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br>blah", "disp": {"len": 5, "size": 14, "pos": {"x": 10, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 175, "show": true, "lock": true, "type": "", "label": "Course setpoint", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": -180.0, "max_str_val": "", "max_val": 180.0, "val_step": 5.0, "scale": 1.0, "unit": "\u00B0<br><br>Course setpoint", "disp": {"len": 3, "size": 14, "pos": {"x": 170, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 176, "show": true, "lock": true, "type": "", "label": "Controller P value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller P value", "disp": {"len": 3, "size": 14, "pos": {"x": 320, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 177, "show": true, "lock": true, "type": "", "label": "Controller I value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller I value", "disp": {"len": 3, "size": 14, "pos": {"x": 470, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 178, "show": true, "lock": true, "type": "", "label": "Controller D value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller D value", "disp": {"len": 3, "size": 14, "pos": {"x": 620, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} }
-        ]
-      }
-    ]
-  },
-  {
-    "title": "Radar image mockup original",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 10, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 127, "g": 127, "b": 127, "a": 127} } },
-        "channels": [],
-        "img_channels":
-        [
-          { "index": 2000, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "ctrl_channels":
-        [
-          { "index": 174, "show": true, "lock": true, "type": "", "label": "Autopilot operation", "str_val": "Manual", "val": 0.0, "min_str_val": "Manual<br><br>Autopilot operation", "min_val": 0.0, "max_str_val": "Auto", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br>blah", "disp": {"len": 5, "size": 14, "pos": {"x": 10, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 175, "show": true, "lock": true, "type": "", "label": "Course setpoint", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": -180.0, "max_str_val": "", "max_val": 180.0, "val_step": 5.0, "scale": 1.0, "unit": "\u00B0<br><br>Course setpoint", "disp": {"len": 3, "size": 14, "pos": {"x": 170, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 176, "show": true, "lock": true, "type": "", "label": "Controller P value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller P value", "disp": {"len": 3, "size": 14, "pos": {"x": 320, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 177, "show": true, "lock": true, "type": "", "label": "Controller I value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller I value", "disp": {"len": 3, "size": 14, "pos": {"x": 470, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 178, "show": true, "lock": true, "type": "", "label": "Controller D value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller D value", "disp": {"len": 3, "size": 14, "pos": {"x": 620, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} }
-        ]
-      }
-    ]
-  },
-  {
-    "title": "Radar image mockup low bandwidth",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 10, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 127, "g": 127, "b": 127, "a": 127} } },
-        "channels": [],
-        "img_channels":
-        [
-          { "index": 2002, "show": true, "label": "", "ext": "png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "ctrl_channels":
-        [
-          { "index": 174, "show": true, "lock": true, "type": "", "label": "Autopilot operation", "str_val": "Manual", "val": 0.0, "min_str_val": "Manual<br><br>Autopilot operation", "min_val": 0.0, "max_str_val": "Auto", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br>blah", "disp": {"len": 5, "size": 14, "pos": {"x": 10, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 175, "show": true, "lock": true, "type": "", "label": "Course setpoint", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": -180.0, "max_str_val": "", "max_val": 180.0, "val_step": 5.0, "scale": 1.0, "unit": "\u00B0<br><br>Course setpoint", "disp": {"len": 3, "size": 14, "pos": {"x": 170, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 176, "show": true, "lock": true, "type": "", "label": "Controller P value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller P value", "disp": {"len": 3, "size": 14, "pos": {"x": 320, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 177, "show": true, "lock": true, "type": "", "label": "Controller I value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller I value", "disp": {"len": 3, "size": 14, "pos": {"x": 470, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
-          { "index": 178, "show": true, "lock": true, "type": "", "label": "Controller D value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller D value", "disp": {"len": 3, "size": 14, "pos": {"x": 620, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} }
-        ]
-      }
-    ]
+  "disp_timeout": 900,
+  "disp_viewport_size": {"w": 1067, "h": 600},
+  "disp_override_font": {"filename": "arimo-regular.woff", "path": "/fonts/"},
+  
+  
+  "displays":
+  
+  [
+  
+    {
+      "title": "Select display",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs":
+          [
+            { "file": "0.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "time": null,
+          "channels": [],
+          "img_channels": [],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Diesel genset (view)",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs":
+          [
+            { "file": "20.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "time": { "label": "", "val": 0, "str_val": "Requesting...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 0, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+          "channels":
+          [
+            { "index": 156, "key": "SS", "show": true, "label": "Apparent Power (tot.)", "str_val": "Requesting...", "val": -9999.0, "scale": 1.0, "unit": "kVA", "disp": {"len": 3, "size": 14, "pos": { "x": 560, "y": 135 }, "col": {"r":255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} },
+            { "index": 156, "key": "P", "show": true, "label": "Active Power (tot.)", "str_val": "Requesting...", "val": -9999.0, "scale": 1.0, "unit": "kW", "disp": {"len": 3, "size": 14, "pos": { "x": 560, "y": 180 }, "col": {"r":255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} },
+            { "index": 156, "key": "Q", "show": true, "label": "Reactive Power (tot.)", "str_val": "Requesting...", "val": -9999.0, "scale": 1.0, "unit": "kVAr", "disp": {"len": 5, "size": 14, "pos": { "x": 560, "y": 225 }, "col": {"r":255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} },
+            { "index": 156, "key": "ILS", "show": true, "label": "Line Current (avg.)", "str_val": "Requesting...", "val": -9999.0, "scale": 1.0, "unit": "A", "disp": {"len": 5, "size": 14, "pos": { "x": 700, "y": 135 }, "col": {"r":255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} },
+            { "index": 156, "key": "PF", "show": true, "label": "Power Factor (avg.)", "str_val": "Requesting...", "val": -9999.0, "scale": 1.0, "unit": "", "disp": {"len": 5, "size": 14, "pos": { "x": 700, "y": 180 }, "col": {"r":255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} },
+            { "index": 156, "key": "F", "show": true, "label": "Grid Frequency", "str_val": "Requesting...", "val": -9999.0, "scale": 1.0, "unit": "Hz", "disp": {"len": 4, "size": 14, "pos": {"x": 700, "y": 225}, "col": {"r":255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} },
+            { "index": 156, "key": "IL1", "show": true, "label": "Line Current (abs.), Ph. 1", "str_val": "Requesting...", "val": -9999.0, "scale": 1.0, "unit": "A", "disp": {"len": 5, "size": 14, "pos": { "x": 550, "y": 370 }, "col": {"r":255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} },
+            { "index": 156, "key": "IL2", "show": true, "label": "Line Current (abs.), Ph. 2", "str_val": "Requesting...", "val": -9999.0, "scale": 1.0, "unit": "A", "disp": {"len": 5, "size": 14, "pos": { "x": 635, "y": 370 }, "col": {"r":255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} },
+            { "index": 156, "key": "IL3", "show": true, "label": "Line Current (abs.), Ph. 3", "str_val": "Requesting...", "val": -9999.0, "scale": 1.0, "unit": "A", "disp": {"len": 5, "size": 14, "pos": { "x": 720, "y": 370 }, "col": {"r":255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} },
+            { "index": 156, "key": "VL12", "show": true, "label": "Line-Line Voltage, Ph. 1", "str_val": "Requesting...", "val": -9999.0, "scale": 1.0, "unit": "V", "disp": {"len": 3 , "size": 14, "pos": { "x": 550, "y": 415 }, "col": {"r":255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} },
+            { "index": 156, "key": "VL23", "show": true, "label": "Line-Line Voltage, Ph. 2", "str_val": "Requesting...", "val": -9999.0, "scale": 1.0, "unit": "V", "disp": {"len": 3 , "size": 14, "pos": { "x": 635, "y": 415 }, "col": {"r":255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} },
+            { "index": 156, "key": "VL31", "show": true, "label": "Line-Line Voltage, Ph. 3", "str_val": "Requesting...", "val": -9999.0, "scale": 1.0, "unit": "V", "disp": {"len": 3 , "size": 14, "pos": { "x": 720, "y": 415 }, "col": {"r":255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} },
+            { "index": 156, "key": "VL1N", "show": true, "label": "Line-Neutral Voltage, Ph. 1", "str_val": "Requesting...", "val": -9999.0, "scale": 1.0, "unit": "V", "disp": {"len": 3 , "size": 14, "pos": { "x": 550, "y": 460 }, "col": {"r":255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} },
+            { "index": 156, "key": "VL2N", "show": true, "label": "Line-Neutral Voltage, Ph. 2", "str_val": "Requesting...", "val": -9999.0, "scale": 1.0, "unit": "V", "disp": {"len": 3 , "size": 14, "pos": { "x": 635, "y": 460 }, "col": {"r":255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} },
+            { "index": 156, "key": "VL3N", "show": true, "label": "Line-Neutral Voltage, Ph. 3", "str_val": "Requesting...", "val": -9999.0, "scale": 1.0, "unit": "V", "disp": {"len": 3 , "size": 14, "pos": { "x": 720, "y": 460 }, "col": {"r":255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 50}} }
+          ],
+          "img_channels": [],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Water treatment plant (plan)",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs":
+          [
+            { "file": "4.jpg", "dim": "source", "disp": {"h": 600, "pos": "center"} }
+          ],
+          "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 200} } },
+          "channels":
+          [
+            { "index": 97, "show": true, "label": "Makeup water conductivity", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e6, "unit": "\u03BCS", "disp": {"len": 5, "size": 12, "pos": {"x": 95, "y": 315}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 200}} }
+          ],
+          "img_channels": [],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "SCC camera mockup (live)",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs": [],
+          "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+          "channels": [],
+          "img_channels":
+          [
+            { "index": 180, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Condensing turbine (view)",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs":
+          [
+            { "file": "1.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+          "channels":
+          [
+            { "index": 98, "show": true, "label": "Cooling water temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 5, "size": 16, "pos": {"x": 210, "y": 380}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
+          ],
+          "img_channels": [],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Thermal condition monitor 1 (live)",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs": [],
+          "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 20}, "col": {"r": 255, "g": 255, "b": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+          "channels": [],
+          "img_channels":
+          [
+            { "index": 200, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 560, "pos": "center"} }
+          ],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Thermal condition monitor 2 (live)",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs": [],
+          "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 10, "y": 20}, "col": {"r": 255, "g": 255, "b": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+          "channels": [],
+          "img_channels":
+          [
+            { "index": 220, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 560, "pos": "center"} }
+          ],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Weather station (view)",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs":
+          [
+            { "file": "2.png", "dim": "source", "disp": {"h": 600, "pos": "center"} }
+          ],
+          "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+          "channels":
+          [
+            { "index": 21, "show": true, "label": "Global insolation", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e-0, "unit": "W/m\u00B2", "disp": {"len": 5, "size": 16, "pos": { "x": 130, "y": 290 }, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} },
+            { "index": 23, "show": true, "label": "Ambient temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 2.0e-1, "unit": "\u00B0C", "disp": {"len": 4 , "size": 16, "pos": { "x": 245, "y": 375 }, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} },
+            { "index": 143, "show": true, "label": "Barometric pressure", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "hPa", "disp": {"len": 7, "size": 16, "pos": {"x": 360, "y": 240}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
+          ],
+          "img_channels": [],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Test supervision display (live)",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs": [],
+          "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 10, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 127, "g": 127, "b": 127, "a": 127} } },
+          "channels": [],
+          "img_channels":
+          [
+            { "index": 601, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Duty watch station camera (live)",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs": [],
+          "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+          "channels": [],
+          "img_channels":
+          [
+            { "index": 140, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Navigation display (live)",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs": [],
+          "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 10, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 127, "g": 127, "b": 127, "a": 127} } },
+          "channels": [],
+          "img_channels":
+          [
+            { "index": 602, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "ctrl_channels":
+          [
+            { "index": 174, "show": true, "lock": true, "type": "", "label": "Autopilot operation", "str_val": "Manual", "val": 0.0, "min_str_val": "Manual<br><br>Autopilot operation", "min_val": 0.0, "max_str_val": "Auto", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br>blah", "disp": {"len": 5, "size": 14, "pos": {"x": 10, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
+            { "index": 175, "show": true, "lock": true, "type": "", "label": "Course setpoint", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": -180.0, "max_str_val": "", "max_val": 180.0, "val_step": 5.0, "scale": 1.0, "unit": "\u00B0<br><br>Course setpoint", "disp": {"len": 3, "size": 14, "pos": {"x": 170, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
+            { "index": 176, "show": true, "lock": true, "type": "", "label": "Controller P value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller P value", "disp": {"len": 3, "size": 14, "pos": {"x": 320, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
+            { "index": 177, "show": true, "lock": true, "type": "", "label": "Controller I value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller I value", "disp": {"len": 3, "size": 14, "pos": {"x": 470, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
+            { "index": 178, "show": true, "lock": true, "type": "", "label": "Controller D value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller D value", "disp": {"len": 3, "size": 14, "pos": {"x": 620, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Main magnetic compass camera (live)",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs": [],
+          "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+          "channels": [],
+          "img_channels":
+          [
+            { "index": 160, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "ctrl_channels":
+          [
+            { "index": 174, "show": true, "lock": true, "type": "", "label": "Autopilot operation", "str_val": "Manual", "val": 0.0, "min_str_val": "Manual<br><br>Autopilot operation", "min_val": 0.0, "max_str_val": "Auto", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br>blah", "disp": {"len": 5, "size": 14, "pos": {"x": 10, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
+            { "index": 175, "show": true, "lock": true, "type": "", "label": "Course setpoint", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": -180.0, "max_str_val": "", "max_val": 180.0, "val_step": 5.0, "scale": 1.0, "unit": "\u00B0<br><br>Course setpoint", "disp": {"len": 3, "size": 14, "pos": {"x": 170, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
+            { "index": 176, "show": true, "lock": true, "type": "", "label": "Controller P value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller P value", "disp": {"len": 3, "size": 14, "pos": {"x": 320, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
+            { "index": 177, "show": true, "lock": true, "type": "", "label": "Controller I value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller I value", "disp": {"len": 3, "size": 14, "pos": {"x": 470, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
+            { "index": 178, "show": true, "lock": true, "type": "", "label": "Controller D value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller D value", "disp": {"len": 3, "size": 14, "pos": {"x": 620, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Radar image mockup original",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs": [],
+          "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 10, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 127, "g": 127, "b": 127, "a": 127} } },
+          "channels": [],
+          "img_channels":
+          [
+            { "index": 2000, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "ctrl_channels":
+          [
+            { "index": 174, "show": true, "lock": true, "type": "", "label": "Autopilot operation", "str_val": "Manual", "val": 0.0, "min_str_val": "Manual<br><br>Autopilot operation", "min_val": 0.0, "max_str_val": "Auto", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br>blah", "disp": {"len": 5, "size": 14, "pos": {"x": 10, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
+            { "index": 175, "show": true, "lock": true, "type": "", "label": "Course setpoint", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": -180.0, "max_str_val": "", "max_val": 180.0, "val_step": 5.0, "scale": 1.0, "unit": "\u00B0<br><br>Course setpoint", "disp": {"len": 3, "size": 14, "pos": {"x": 170, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
+            { "index": 176, "show": true, "lock": true, "type": "", "label": "Controller P value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller P value", "disp": {"len": 3, "size": 14, "pos": {"x": 320, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
+            { "index": 177, "show": true, "lock": true, "type": "", "label": "Controller I value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller I value", "disp": {"len": 3, "size": 14, "pos": {"x": 470, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
+            { "index": 178, "show": true, "lock": true, "type": "", "label": "Controller D value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller D value", "disp": {"len": 3, "size": 14, "pos": {"x": 620, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Radar image mockup low bandwidth",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs": [],
+          "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 10, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 127, "g": 127, "b": 127, "a": 127} } },
+          "channels": [],
+          "img_channels":
+          [
+            { "index": 2002, "show": true, "label": "", "ext": "png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "ctrl_channels":
+          [
+            { "index": 174, "show": true, "lock": true, "type": "", "label": "Autopilot operation", "str_val": "Manual", "val": 0.0, "min_str_val": "Manual<br><br>Autopilot operation", "min_val": 0.0, "max_str_val": "Auto", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br>blah", "disp": {"len": 5, "size": 14, "pos": {"x": 10, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
+            { "index": 175, "show": true, "lock": true, "type": "", "label": "Course setpoint", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": -180.0, "max_str_val": "", "max_val": 180.0, "val_step": 5.0, "scale": 1.0, "unit": "\u00B0<br><br>Course setpoint", "disp": {"len": 3, "size": 14, "pos": {"x": 170, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
+            { "index": 176, "show": true, "lock": true, "type": "", "label": "Controller P value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller P value", "disp": {"len": 3, "size": 14, "pos": {"x": 320, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
+            { "index": 177, "show": true, "lock": true, "type": "", "label": "Controller I value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller I value", "disp": {"len": 3, "size": 14, "pos": {"x": 470, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} },
+            { "index": 178, "show": true, "lock": true, "type": "", "label": "Controller D value", "str_val": "", "val": 0.0, "min_str_val": "", "min_val": 0.0, "max_str_val": "", "max_val": 10.0, "val_step": 0.5, "scale": 1.0, "unit": "<br><br>Controller D value", "disp": {"len": 3, "size": 14, "pos": {"x": 620, "y": 30}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127}} }
+          ]
+        }
+      ]
+    }
+  
+  ]
+  
   }
-
-]
-
-}
+  

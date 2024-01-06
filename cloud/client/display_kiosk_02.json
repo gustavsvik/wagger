@@ -1,332 +1,333 @@
 {
 
-"disp_timeout": 900,
-"disp_viewport_size": {"w": 933, "h": 525},
-"disp_override_font": {"filename": "carlito.woff", "path": "/fonts/"},
-
-"disp_kiosk_interval": 10,
-"disp_kiosk_adjust": {"x": -10, "y": -7},
-"disp_kiosk_override_height": 525,
-
-
-"displays":
-
-[
-
-  {
-    "title": "Lab building front view",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs":
-        [
-          { "file": "11.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "time": null,
-        "channels": [],
-        "img_channels": [],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Water treatment plant (plan)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs":
-        [
-          { "file": "4.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 200} } },
-        "channels":
-        [
-          { "index": 97, "show": true, "label": "Makeup water conductivity", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e6, "unit": "\u03BCS", "disp": {"len": 5, "size": 12, "pos": {"x": 95, "y": 315}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 200}} }
-        ],
-        "img_channels": [],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Maritime College",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs":
-        [
-          { "file": "9.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "time": null,
-        "channels": [],
-        "img_channels": [],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Shore Control Development Lab (live)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
-        "channels": [],
-        "img_channels":
-        [
-          { "index": 180, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Algae cultivation project",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs":
-        [
-          { "file": "12.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "time": null,
-        "channels": [],
-        "img_channels": [],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Condensing turbine (view)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs":
-        [
-          { "file": "1.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
-        "channels":
-        [
-          { "index": 98, "show": true, "label": "Cooling water temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 4, "size": 16, "pos": {"x": 210, "y": 380}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
-        ],
-        "img_channels": [],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Lesson in the heat pump lab",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs":
-        [
-          { "file": "13.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "time": null,
-        "channels": [],
-        "img_channels": [],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Solar energy measurements",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs":
-        [
-          { "file": "14.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "time": null,
-        "channels": [],
-        "img_channels": [],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "AIS Station Map (live)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 10, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 127, "g": 127, "b": 127, "a": 127} } },
-        "channels": [],
-        "img_channels":
-        [
-          { "index": 601, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Heat pump installation",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs":
-        [
-          { "file": "15.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "time": null,
-        "channels": [],
-        "img_channels": [],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "AIS display view (live)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
-        "channels": [],
-        "img_channels":
-        [
-          { "index": 160, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Solar power test setup",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs":
-        [
-          { "file": "16.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "time": null,
-        "channels": [],
-        "img_channels": [],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Flexible webcam 1 (live)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
-        "channels": [],
-        "img_channels":
-        [
-          { "index": 140, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Heat pump test setups",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs":
-        [
-          { "file": "17.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "time": null,
-        "channels": [],
-        "img_channels": [],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Valmet DNA view (live)",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs": [],
-        "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 20, "y": 8}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
-        "channels": [],
-        "img_channels":
-        [
-          { "index": 600, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Lesson in main boiler hall",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs":
-        [
-          { "file": "10.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "time": null,
-        "channels": [],
-        "img_channels": [],
-        "ctrl_channels": []
-      }
-    ]
-  },
-  {
-    "title": "Solar collector installation",
-    "show": true,
-    "screens":
-    [
-      {
-        "label": "View",
-        "imgs":
-        [
-          { "file": "18.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
-        ],
-        "time": null,
-        "channels": [],
-        "img_channels": [],
-        "ctrl_channels": []
-      }
-    ]
+  "disp_timeout": 900,
+  "disp_viewport_size": {"w": 933, "h": 525},
+  "disp_override_font": {"filename": "carlito.woff", "path": "/fonts/"},
+  
+  "disp_kiosk_interval": 10,
+  "disp_kiosk_adjust": {"x": -10, "y": -7},
+  "disp_kiosk_override_height": 525,
+  
+  
+  "displays":
+  
+  [
+  
+    {
+      "title": "Lab building front view",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs":
+          [
+            { "file": "11.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "time": null,
+          "channels": [],
+          "img_channels": [],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Water treatment plant (plan)",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs":
+          [
+            { "file": "4.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 200} } },
+          "channels":
+          [
+            { "index": 97, "show": true, "label": "Makeup water conductivity", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0e6, "unit": "\u03BCS", "disp": {"len": 5, "size": 12, "pos": {"x": 95, "y": 315}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 0, "a": 200}} }
+          ],
+          "img_channels": [],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Maritime College",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs":
+          [
+            { "file": "21.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "time": null,
+          "channels": [],
+          "img_channels": [],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Shore Control Development Lab (live)",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs": [],
+          "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+          "channels": [],
+          "img_channels":
+          [
+            { "index": 180, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Algae cultivation project",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs":
+          [
+            { "file": "12.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "time": null,
+          "channels": [],
+          "img_channels": [],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Condensing turbine (view)",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs":
+          [
+            { "file": "1.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+          "channels":
+          [
+            { "index": 98, "show": true, "label": "Cooling water temperature", "str_val": "Retrieving data...", "val": -9999.0, "scale": 1.0, "unit": "\u00B0C", "disp": {"len": 4, "size": 16, "pos": {"x": 210, "y": 380}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 0, "g": 0, "b": 255, "a": 127}} }
+          ],
+          "img_channels": [],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Lesson in the heat pump lab",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs":
+          [
+            { "file": "13.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "time": null,
+          "channels": [],
+          "img_channels": [],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Solar energy measurements",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs":
+          [
+            { "file": "14.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "time": null,
+          "channels": [],
+          "img_channels": [],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "AIS Station Map (live)",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs": [],
+          "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 10, "y": 10}, "col": {"r": 255, "g": 0, "b": 0, "a": 255}, "bgcol": {"r": 127, "g": 127, "b": 127, "a": 127} } },
+          "channels": [],
+          "img_channels":
+          [
+            { "index": 601, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Heat pump installation",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs":
+          [
+            { "file": "15.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "time": null,
+          "channels": [],
+          "img_channels": [],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "AIS display view (live)",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs": [],
+          "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+          "channels": [],
+          "img_channels":
+          [
+            { "index": 160, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Solar power test setup",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs":
+          [
+            { "file": "16.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "time": null,
+          "channels": [],
+          "img_channels": [],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Flexible webcam 1 (live)",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs": [],
+          "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 14, "pos": {"x": 5, "y": 10}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+          "channels": [],
+          "img_channels":
+          [
+            { "index": 140, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Heat pump test setups",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs":
+          [
+            { "file": "17.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "time": null,
+          "channels": [],
+          "img_channels": [],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Valmet DNA view (live)",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs": [],
+          "time": { "label": "", "val": 0, "str_val": "Retrieving data...", "bins": 10, "bin_size": 1, "disp": {"size": 12, "pos": {"x": 20, "y": 8}, "col": {"r": 255, "g": 255, "b": 255, "a": 255}, "bgcol": {"r": 255, "g": 0, "b": 0, "a": 127} } },
+          "channels": [],
+          "img_channels":
+          [
+            { "index": 600, "show": true, "label": "", "ext": "jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Lesson in main boiler hall",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs":
+          [
+            { "file": "10.jpg", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "time": null,
+          "channels": [],
+          "img_channels": [],
+          "ctrl_channels": []
+        }
+      ]
+    },
+    {
+      "title": "Solar collector installation",
+      "show": true,
+      "screens":
+      [
+        {
+          "label": "View",
+          "imgs":
+          [
+            { "file": "18.png", "dim": "source", "disp": {"h": 480, "pos": "center"} }
+          ],
+          "time": null,
+          "channels": [],
+          "img_channels": [],
+          "ctrl_channels": []
+        }
+      ]
+    }
+  
+  
+  ]
+  
   }
-
-
-]
-
-}
+  
