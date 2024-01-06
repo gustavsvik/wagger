@@ -6,7 +6,7 @@ include_once("DbIni.php");
 
 
 
-class Sql //extends mysqli
+class Sql
 {
   private static string|null $server_name = DbIni::SERVERNAME;
   private static string|null $user_name = DbIni::USERNAME;
