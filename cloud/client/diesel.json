@@ -3,12 +3,12 @@
   "disp_timeout": 100000000,
   "disp_viewport_size": {"w": 1067, "h": 600},
   "disp_override_font": {"filename": "carlito.woff", "path": "/fonts/"},
-  
-  
+
+
   "displays":
-  
+
   [
-  
+
     {
       "title": "Diesel genset (view)",
       "show": true,
@@ -62,8 +62,7 @@
         }
       ]
     }
-  
+
   ]
-  
-  }
-  
+
+}
