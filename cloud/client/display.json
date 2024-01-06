@@ -3,12 +3,12 @@
   "disp_timeout": 900,
   "disp_viewport_size": {"w": 1067, "h": 600},
   "disp_override_font": {"filename": "arimo-regular.woff", "path": "/fonts/"},
-  
-  
+
+
   "displays":
-  
+
   [
-  
+
     {
       "title": "Select display",
       "show": true,
@@ -317,8 +317,7 @@
         }
       ]
     }
-  
+
   ]
-  
-  }
-  
+
+}
