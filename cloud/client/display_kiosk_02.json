@@ -3,16 +3,16 @@
   "disp_timeout": 900,
   "disp_viewport_size": {"w": 933, "h": 525},
   "disp_override_font": {"filename": "carlito.woff", "path": "/fonts/"},
-  
+
   "disp_kiosk_interval": 10,
   "disp_kiosk_adjust": {"x": -10, "y": -7},
   "disp_kiosk_override_height": 525,
-  
-  
+
+
   "displays":
-  
+
   [
-  
+
     {
       "title": "Lab building front view",
       "show": true,
@@ -325,9 +325,8 @@
         }
       ]
     }
-  
-  
+
+
   ]
-  
-  }
-  
+
+}
