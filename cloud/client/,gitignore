@@ -1,0 +1,18 @@
+# Ignore all html/JSON...
+*.html
+*.json
+
+# ...except samples
+!diesel.html
+!diesel.json
+!display.html
+!display.json
+!display_kiosk_01.html
+!display_kiosk_01.json
+!display_kiosk_02.html
+!display_kiosk_02.json
+!contributed.html
+!contributed.json
+!lisa.html
+!lisa.json
+!index.html
