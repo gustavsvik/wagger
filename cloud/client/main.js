@@ -344,7 +344,14 @@ function populate_display_variables(timestamp_matrix, value_matrix)
       _time.val = A.server_timestamp;
     }
 
-    let _latest_data_timestamp = App.nthMaxOfArray(timestamp_matrix[0], 0);
+    let _latest_data_timestamp = -Infinity;
+    let _timestamp_index = -1;
+    while ( _latest_data_timestamp < 0 )
+    {
+      _timestamp_index++;
+      _latest_data_timestamp = App.nthMaxOfArray(timestamp_matrix[_timestamp_index], 0);
+}
+
     if ( App.isValidGT(_latest_data_timestamp, 0) )
     {
       A.data_timestamp = _latest_data_timestamp;
