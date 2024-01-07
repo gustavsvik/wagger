@@ -20,7 +20,7 @@ $channel_array = $api::get_channel_array();
 
 
 $select_all = FALSE;
-if ($duration === -9999) $select_all = TRUE;
+if ($duration <= -9999) $select_all = TRUE;
 
 
 if ($data_end > 0)
@@ -38,10 +38,10 @@ if ($data_end > 0)
   $return_string = "";
   $base64_string = "";
 
-  debug_log('$channels: ' . $channels);
+  Log::debug('$channels: ' . $channels);
 
   $channel_end = strpos($channels, ';', $channel_start);
-  debug_log('$channel_end: ' . $channel_end);
+  Log::debug('$channel_end: ' . $channel_end);
   $channel_string = mb_substr($channels, $channel_start, $channel_end-$channel_start);
 
   //$valid_channel_data = is_numeric($channel_string);
@@ -49,23 +49,23 @@ if ($data_end > 0)
   while ($channel_start < $data_end)
   {
     $channel_end = strpos($channels, ';', $channel_start);
-    debug_log('$channel_end: ' . $channel_end);
+    Log::debug('$channel_end: ' . $channel_end);
     $channel_string = mb_substr($channels, $channel_start, $channel_end-$channel_start);
     //$valid_channel_data = is_numeric($channel_string);
     $channel = intval($channel_string);
-    debug_log('$channel_string: ' . $channel_string);
+    Log::debug('$channel_string: ' . $channel_string);
     $found_archived_records = FALSE ;
     $archived_record_files = [] ;
-    debug_log('$start_time: ' . $start_time);
-    debug_log('$end_time: ' . $end_time);
+    Log::debug('$start_time: ' . $start_time);
+    Log::debug('$end_time: ' . $end_time);
 
-    if ($start_time === -9999)
+    if ($start_time <= -9999)
     {
-      if ($end_time === -9999)
+      if ($end_time <= -9999)
       {
         $sql_latest_available = "SELECT MAX(AD.ACQUIRED_TIME) FROM " . $ACQUIRED_DATA_TABLE_NAME . " AD WHERE AD.CHANNEL_INDEX = " . $channel_string;
         $sql_latest_available .= " AND AD.STATUS>=" . strval($lowest_status);
-        debug_log('$sql_latest_available: ' . $sql_latest_available);
+        Log::debug('$sql_latest_available: ' . $sql_latest_available);
         $latest_available = $conn->query($sql_latest_available);
         if (!is_null($latest_available) && $latest_available->num_rows > 0)
         {
@@ -77,10 +77,10 @@ if ($data_end > 0)
         else
         {
         }
-        debug_log('$end_time: ' . $end_time);
-        debug_log('gettype($latest_point_time): ' . gettype($latest_point_time));
+        Log::debug('$end_time: ' . $end_time);
+        Log::debug('gettype($latest_point_time): ' . gettype($latest_point_time));
         if (!is_null($latest_point_time)) $end_time = $latest_point_time;
-        debug_log('$end_time: ' . $end_time);
+        Log::debug('$end_time: ' . $end_time);
       }
       $start_time = $end_time ;
       if (!$select_all) $start_time -= $duration*$unit;
@@ -102,7 +102,7 @@ if ($data_end > 0)
     $sql_get_available_values = $sql_get_all_available_values ;
     if (!$select_all) $sql_get_available_values .= " AND AD.ACQUIRED_TIME IN " . $points_range_string ;
     $sql_get_available_values .= " AND AD.STATUS >= " . strval($lowest_status) . " AND AD.STATUS < " . strval($STATUS_STORED) ;
-    debug_log('$sql_get_available_values: ' . $sql_get_available_values);
+    Log::debug('$sql_get_available_values: ' . $sql_get_available_values);
     $available_values = $conn->query($sql_get_available_values);
 
 	if ($available_values)
@@ -170,7 +170,7 @@ if ($data_end > 0)
     }
 
     $return_string .= ";";
-    debug_log('$return_string: ' . mb_substr($return_string, 0, 100));
+    Log::debug('$return_string: ' . mb_substr($return_string, 0, 100));
 
     $channel_start = $channel_end+1;
 
@@ -197,5 +197,5 @@ header("Content-type: application/json");
 $json_array = array('returnstring' => $return_string) ; //, 'receivetime' => $receive_timestamp, 'transmittime' => $transmit_timestamp);
 echo json_encode($json_array);
 
-debug_log('$return_string' . $return_string);
+Log::debug('$return_string' . $return_string);
 
