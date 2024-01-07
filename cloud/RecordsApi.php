@@ -42,8 +42,11 @@ class RecordsApi extends Api
     Log::debug('static::$end_time: ', static::$end_time);
   }
 
-  public static function get_start_time() : int|null {return static::$start_time;}
-  public static function get_end_time() : int|null {return static::$end_time;}
+  public static function get_start_time() : int {return static::$start_time;}
+  public static function get_end_time() : int {return static::$end_time;}
+  public static function get_duration() : int {return static::$duration;}
+  public static function get_unit() : int {return static::$unit;}
+  public static function get_lowest_status() : int {return static::$lowest_status;}
 
   public static function set_start_time(int $start_time) {static::$start_time = $start_time;}
   public static function set_end_time(int $end_time) {static::$end_time = $end_time;}

@@ -15,9 +15,12 @@ Log::debug('$DBNAME: ', $DBNAME);
 
 $api = new ClientAcquiredRecordsApi();
 
-$channel_array = $api::get_channel_array();
-//if ($web_api_channel > 0) $channels = strval($web_api_channel) . ';' ;
+$channels = $api::get_channels();
+$duration = $api::get_duration();
+$unit = $api::get_unit();
 
+//$channel_array = $api::get_channel_array();
+//if ($web_api_channel > 0) $channels = strval($web_api_channel) . ';' ;
 
 $select_all = FALSE;
 if ($duration <= -9999) $select_all = TRUE;

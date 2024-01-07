@@ -37,4 +37,6 @@ class AcquiredRecordsApi extends RecordsApi
     return $channel_array;
   }
 
+  public static function get_channels() : string|null {return static::$channels;}
+
 }
